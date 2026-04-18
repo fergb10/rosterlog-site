@@ -13,62 +13,99 @@
         ul { padding-left: 20px; }
         .date { font-size: 13px; color: #888; margin-bottom: 32px; }
         a { color: #007aff; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+        th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e5e5e5; }
+        th { font-weight: 600; color: #555; }
     </style>
 </head>
 <body>
     <h1>Aviso de Privacidad</h1>
-    <p class="date">Ultima actualizacion: 5 de abril de 2026</p>
+    <p class="date">Ultima actualizacion: 17 de abril de 2026</p>
 
     <p>RosterLog ("la App") es una aplicacion de bitacora de vuelo desarrollada por Fernando Gasperin Brenis ("el Desarrollador"). Este aviso describe como se recopilan, usan y protegen tus datos personales.</p>
 
     <h2>1. Datos que recopilamos</h2>
     <p>La App recopila los siguientes datos, proporcionados directamente por ti:</p>
     <ul>
-        <li><strong>Datos de cuenta:</strong> nombre completo y correo electronico (proporcionados via Sign In with Apple).</li>
-        <li><strong>Datos de perfil profesional:</strong> aerolinea, posicion (capitan, primer oficial, sobrecargo), tipo de avion, base de operaciones, numero de empleado, nombre de rol y numero de licencia.</li>
-        <li><strong>Datos de vuelo:</strong> numeros de vuelo, rutas (origen/destino), horarios, tiempos de vuelo, matriculas de aeronaves y notas personales.</li>
-        <li><strong>Foto de perfil:</strong> imagen opcional seleccionada por el usuario.</li>
+        <li><strong>Datos de cuenta:</strong> nombre completo y correo electronico (proporcionados via Sign In with Apple o registro con correo y contrasena).</li>
+        <li><strong>Datos de perfil profesional:</strong> aerolinea, posicion (capitan, primer oficial, sobrecargo), tipo de avion, base de operaciones, numero de empleado, nombre de rol, numero de licencia y tipo de contrato.</li>
+        <li><strong>Datos de vuelo:</strong> numeros de vuelo, rutas (origen/destino), horarios programados y reales, tiempos de vuelo, matriculas de aeronaves y notas personales.</li>
+        <li><strong>Documentos:</strong> tipo de documento (licencia, pasaporte, certificado medico, etc.), fecha de vencimiento y notas. No almacenamos imagenes de documentos en la nube.</li>
+        <li><strong>Foto de perfil:</strong> imagen opcional seleccionada por el usuario, almacenada en la nube para sincronizacion entre dispositivos.</li>
+        <li><strong>Archivos PDF de rol:</strong> los archivos PDF de roles importados se almacenan en la nube vinculados a tu cuenta.</li>
     </ul>
 
     <h2>2. Como usamos tus datos</h2>
     <p>Tus datos se utilizan exclusivamente para:</p>
     <ul>
         <li>Registrar y visualizar tu bitacora de vuelo personal.</li>
-        <li>Calcular tiempos de vuelo, estadisticas y extras contractuales.</li>
-        <li>Sincronizar tus datos entre tus dispositivos Apple via iCloud.</li>
+        <li>Calcular tiempos de vuelo, estadisticas, extras contractuales y viaticos.</li>
+        <li>Sincronizar tus datos entre tus dispositivos vinculados a tu cuenta.</li>
         <li>Permitir que personas que tu invites ("espectadores") puedan ver tu calendario de vuelos.</li>
+        <li>Identificar tripulantes que comparten vuelo contigo (funcion opcional, desactivable).</li>
+        <li>Gestionar tu suscripcion y acceso a funciones premium.</li>
+        <li>Diagnosticar y corregir errores tecnicos de la aplicacion.</li>
     </ul>
 
     <h2>3. Almacenamiento y sincronizacion</h2>
-    <p>Todos tus datos se almacenan localmente en tu dispositivo y se sincronizan a traves de <strong>Apple iCloud (CloudKit)</strong>, utilizando tu cuenta personal de iCloud. El Desarrollador no tiene acceso a tus datos almacenados en iCloud.</p>
-    <p>No utilizamos servidores propios ni de terceros para almacenar tu informacion.</p>
+    <p>Tus datos se almacenan localmente en tu dispositivo y se sincronizan en la nube a traves de los siguientes servicios:</p>
+    <ul>
+        <li><strong>Google Firebase (Cloud Firestore, Firebase Authentication, Firebase Storage):</strong> almacena tu perfil, actividades, documentos, matriculas, foto de perfil y archivos PDF de rol. Los datos se transmiten de forma cifrada (TLS 1.3) y se almacenan cifrados en reposo (AES-256). Google actua como Data Processor. Los datos se almacenan en datacenters en los Estados Unidos.</li>
+        <li><strong>Apple iCloud (Key-Value Store):</strong> sincroniza tus preferencias de visualizacion (apariencia, opciones de la tarjeta expandida) entre tus dispositivos. No se almacenan datos personales ni de vuelo en iCloud.</li>
+        <li><strong>Apple Keychain:</strong> almacena de forma segura tus credenciales de autenticacion (token de Sign In with Apple) en el dispositivo, cifrado con Secure Enclave.</li>
+    </ul>
+    <p>El Desarrollador es el Data Controller bajo GDPR.</p>
 
-    <h2>4. Comparticion de datos</h2>
-    <p><strong>No compartimos, vendemos ni transferimos tus datos personales a terceros.</strong></p>
-    <p>La unica excepcion es la funcion de "Espectadores": si tu generas un codigo de invitacion, la persona que lo utilice podra ver unicamente tu calendario de vuelos (rutas y horarios). No podra ver tu informacion de perfil, tripulacion, notas ni datos contractuales. Tu puedes revocar el acceso en cualquier momento.</p>
+    <h2>4. Servicios de terceros</h2>
+    <p>La App utiliza los siguientes servicios de terceros:</p>
 
-    <h2>5. Seguimiento y analitica</h2>
-    <p>RosterLog <strong>no utiliza</strong> herramientas de seguimiento, analitica ni publicidad de terceros. No recopilamos datos de uso, no mostramos anuncios y no creamos perfiles de comportamiento.</p>
+    <table>
+        <tr><th>Servicio</th><th>Proveedor</th><th>Proposito</th><th>Datos compartidos</th></tr>
+        <tr><td>Firebase Auth</td><td>Google LLC</td><td>Autenticacion de usuarios</td><td>Email, nombre, UID</td></tr>
+        <tr><td>Cloud Firestore</td><td>Google LLC</td><td>Almacenamiento y sync de datos</td><td>Datos de perfil y vuelo</td></tr>
+        <tr><td>Firebase Storage</td><td>Google LLC</td><td>Fotos de perfil y PDFs de rol</td><td>Archivos del usuario</td></tr>
+        <tr><td>Firebase Crashlytics</td><td>Google LLC</td><td>Reportes de errores tecnicos</td><td>Datos de error (sin PII)</td></tr>
+        <tr><td>Firebase Analytics</td><td>Google LLC</td><td>Metricas de suscripcion</td><td>Eventos anonimos de compra</td></tr>
+        <tr><td>RevenueCat</td><td>RevenueCat, Inc.</td><td>Gestion de suscripciones</td><td>UID, estado de suscripcion</td></tr>
+    </table>
+
+    <p><strong>Firebase Crashlytics</strong> recopila automaticamente datos tecnicos cuando ocurre un error en la App (tipo de dispositivo, version de iOS, traza del error). No se incluyen datos personales en los reportes de error. Se utiliza un identificador truncado (no vinculable directamente a tu identidad) para agrupar errores del mismo usuario.</p>
+    <p><strong>Firebase Analytics</strong> registra unicamente eventos relacionados con el proceso de suscripcion (paywall visto, compra iniciada, compra completada). No se rastrean pantallas visitadas, funciones utilizadas ni comportamiento de uso. No se crean perfiles de comportamiento ni se muestran anuncios.</p>
+
+    <h2>5. Comparticion de datos</h2>
+    <p><strong>No compartimos, vendemos ni transferimos tus datos personales a terceros con fines comerciales o publicitarios.</strong></p>
+    <p>Existen dos funciones opcionales que comparten datos limitados con otros usuarios de la App:</p>
+    <ul>
+        <li><strong>Espectadores:</strong> si generas un codigo de invitacion, la persona que lo utilice podra ver unicamente tu calendario de vuelos (rutas y horarios). No podra ver tu informacion de perfil, tripulacion, notas ni datos contractuales. Tu puedes revocar el acceso en cualquier momento.</li>
+        <li><strong>Tripulacion compartida:</strong> si activas esta opcion, tu nombre, posicion y numero de empleado seran visibles para otros usuarios de RosterLog que compartan tu mismo vuelo. Puedes desactivar esta funcion en cualquier momento desde la configuracion de la App.</li>
+    </ul>
 
     <h2>6. Eliminacion de datos</h2>
-    <p>Puedes eliminar todos tus datos en cualquier momento desde la App:</p>
+    <p>Puedes eliminar todos tus datos en cualquier momento:</p>
     <ul>
-        <li><strong>Cerrar sesion:</strong> elimina tu perfil del dispositivo. Tus vuelos se conservan en iCloud.</li>
-        <li><strong>Borrar perfil:</strong> elimina permanentemente todos tus datos, incluyendo vuelos, perfil, matriculas, configuracion e invitaciones de espectadores. Esta accion es irreversible.</li>
+        <li><strong>Desde la App:</strong> ve a tu Perfil y selecciona "Borrar cuenta". Esto eliminara permanentemente todos tus datos de nuestros servidores y del dispositivo, incluyendo vuelos, perfil, matriculas, documentos, foto de perfil, archivos PDF, configuracion e invitaciones de espectadores. Esta accion es irreversible.</li>
+        <li><strong>Desde la web:</strong> si no tienes acceso a la App, puedes solicitar la eliminacion de tu cuenta enviando un correo a <a href="mailto:contacto@rosterlog.app">contacto@rosterlog.app</a> desde el correo asociado a tu cuenta. Procesaremos tu solicitud en un plazo maximo de 30 dias.</li>
+        <li><strong>Cerrar sesion:</strong> elimina la sesion del dispositivo. Tus datos se conservan en la nube y vuelven al iniciar sesion de nuevo.</li>
     </ul>
-    <p>Tambien puedes eliminar tus datos de iCloud directamente desde Ajustes de iOS > tu cuenta de iCloud > Administrar almacenamiento.</p>
 
-    <h2>7. Seguridad</h2>
-    <p>Utilizamos Sign In with Apple para la autenticacion, y Apple Keychain para almacenar credenciales de forma segura. La sincronizacion via iCloud esta cifrada de extremo a extremo por Apple.</p>
+    <h2>7. Retencion de datos</h2>
+    <ul>
+        <li><strong>Datos de cuenta y vuelo:</strong> se conservan mientras tu cuenta este activa. Se eliminan permanentemente al borrar la cuenta.</li>
+        <li><strong>Reportes de errores (Crashlytics):</strong> se retienen por 90 dias y luego se eliminan automaticamente por Google.</li>
+        <li><strong>Eventos de analitica:</strong> se retienen por 14 meses y luego se eliminan automaticamente por Google.</li>
+    </ul>
 
-    <h2>8. Menores de edad</h2>
-    <p>RosterLog esta disenada para profesionales de la aviacion (mayores de 18 anos). No recopilamos intencionalmente datos de menores de edad. La funcion de espectadores esta destinada a ser utilizada por adultos invitados por el tripulante.</p>
+    <h2>8. Seguridad</h2>
+    <p>Utilizamos Sign In with Apple y (opcionalmente) autenticacion por email/contrasena a traves de Firebase Authentication. Las credenciales se almacenan en el iOS Keychain (cifrado con Secure Enclave). Los datos en transito se cifran con TLS 1.3 y en reposo con AES-256 en los servidores de Google. El acceso a tus datos en la nube esta protegido por reglas de seguridad que garantizan que solo tu puedes leer y escribir tus propios datos.</p>
 
-    <h2>9. Cambios a este aviso</h2>
-    <p>Podemos actualizar este aviso de privacidad periodicamente. La fecha de la ultima actualizacion se indica al inicio del documento. Te recomendamos revisarlo regularmente.</p>
+    <h2>9. Menores de edad</h2>
+    <p>RosterLog esta disenada para profesionales de la aviacion (mayores de 18 anos). No recopilamos intencionalmente datos de menores de edad.</p>
 
-    <h2>10. Contacto</h2>
+    <h2>10. Cambios a este aviso</h2>
+    <p>Podemos actualizar este aviso de privacidad periodicamente. La fecha de la ultima actualizacion se indica al inicio del documento. Te notificaremos de cambios significativos a traves de la App.</p>
+
+    <h2>11. Contacto</h2>
     <p>Si tienes preguntas sobre este aviso de privacidad o sobre tus datos, contactanos en:</p>
-    <p><a href="mailto:fergbrenis@gmail.com">fergbrenis@gmail.com</a></p>
+    <p><a href="mailto:contacto@rosterlog.app">contacto@rosterlog.app</a></p>
 </body>
 </html>
