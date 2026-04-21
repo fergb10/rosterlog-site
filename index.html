@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RosterLog — Tu bitacora de vuelo inteligente</title>
-    <meta name="description" content="Registra tus vuelos, importa tu roster, calcula tiempos extra y sincroniza todo en iCloud. Disenada para pilotos y sobrecargos.">
+    <meta name="description" content="Registra tus vuelos, importa tu roster, calcula tiempos extra y sincroniza todo en la nube. Disenada para pilotos y sobrecargos.">
     <style>
         :root {
             --bg: #ffffff;
@@ -154,24 +154,6 @@
         .feature-card h3 { font-size: 19px; font-weight: 600; margin-bottom: 8px; }
         .feature-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
 
-        /* Stats */
-        .stats { padding: 60px 0; text-align: center; }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .stat { padding: 32px 20px; background: var(--bg-alt); border-radius: 20px; }
-        .stat-number {
-            font-size: 40px; font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #007aff, #5856d6);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
-        .stat-label { font-size: 15px; color: var(--text-secondary); margin-top: 4px; }
-
         /* How it works */
         .how { padding: 80px 0; }
         .steps {
@@ -272,7 +254,7 @@
     <div class="container">
         <div class="hero-badge">Disponible para iPhone y iPad</div>
         <h1>Tu bitacora de vuelo<br><span class="gradient">inteligente</span></h1>
-        <p>Registra tus vuelos, importa tu roster, visualiza estadisticas y sincroniza todo en iCloud. Disenada para pilotos y sobrecargos.</p>
+        <p>Registra tus vuelos, importa tu roster, visualiza estadisticas y sincroniza todo en la nube. Disenada para pilotos y sobrecargos.</p>
         <a href="#" class="hero-cta">
             <svg viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
             Descargar en App Store
@@ -305,8 +287,8 @@
             </div>
             <div class="feature-card">
                 <div class="feature-icon" style="background:rgba(52,199,89,0.1);">&#9729;</div>
-                <h3>Sincronizacion iCloud</h3>
-                <p>Tus datos seguros y sincronizados entre todos tus dispositivos Apple al instante.</p>
+                <h3>Sincronizacion en la nube</h3>
+                <p>Tus datos seguros y sincronizados entre todos tus dispositivos al instante.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon" style="background:rgba(175,82,222,0.1);">&#9992;</div>
@@ -322,25 +304,6 @@
     </div>
 </section>
 
-<section class="stats">
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat">
-                <div class="stat-number">126+</div>
-                <div class="stat-label">Matriculas precargadas</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">50+</div>
-                <div class="stat-label">Aeropuertos en mapa</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">0</div>
-                <div class="stat-label">Datos compartidos con terceros</div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <section class="how" id="how">
     <div class="container">
         <div class="section-header">
@@ -351,7 +314,7 @@
             <div class="step">
                 <div class="step-number">1</div>
                 <h3>Crea tu perfil</h3>
-                <p>Inicia sesion con Apple ID y completa tu informacion profesional.</p>
+                <p>Inicia sesion con Apple, Google o correo y completa tu informacion profesional.</p>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
@@ -361,7 +324,7 @@
             <div class="step">
                 <div class="step-number">3</div>
                 <h3>Listo</h3>
-                <p>Visualiza tus eventos, estadisticas y tiempos. Todo sincronizado en iCloud.</p>
+                <p>Visualiza tus eventos, estadisticas y tiempos. Todo sincronizado en la nube.</p>
             </div>
         </div>
     </div>
@@ -385,11 +348,11 @@
     <div class="container">
         <div class="privacy-card">
             <h2>Tu privacidad es prioridad</h2>
-            <p>RosterLog no recopila analiticas, no muestra anuncios y no comparte tus datos con nadie. Toda tu informacion vive en tu iCloud personal.</p>
+            <p>RosterLog no muestra anuncios ni vende tus datos. Tu informacion se almacena cifrada y puedes borrarla completamente cuando quieras.</p>
             <div class="privacy-badges">
-                <div class="privacy-badge"><span>&#128274;</span> Sin tracking</div>
-                <div class="privacy-badge"><span>&#9989;</span> Sign In with Apple</div>
-                <div class="privacy-badge"><span>&#9729;</span> Solo iCloud</div>
+                <div class="privacy-badge"><span>&#128274;</span> Sin anuncios</div>
+                <div class="privacy-badge"><span>&#9989;</span> Login seguro</div>
+                <div class="privacy-badge"><span>&#9729;</span> Datos cifrados</div>
                 <div class="privacy-badge"><span>&#128465;</span> Borrado total disponible</div>
             </div>
         </div>
