@@ -795,6 +795,25 @@
         }
     });
 
+    // Traduce errores de la Callable (`stripeCheckoutCreate` / Portal) a un
+    // mensaje amigable. Firebase Callable devuelve `code` + `message`; los
+    // códigos vienen del HttpsError lanzado en el servidor.
+    function humanCheckoutError(err) {
+        const code = err?.code ?? "";
+        const msg = err?.message ?? "";
+        if (code.includes("unauthenticated")) return "Tu sesión expiró. Inicia sesión de nuevo.";
+        if (code.includes("resource-exhausted")) return "Demasiadas solicitudes. Espera unos segundos y reintenta.";
+        if (code.includes("permission-denied")) return "No tienes permisos para esta acción.";
+        if (msg.includes("Ya tienes una suscripción activa en Stripe")) return msg;
+        if (msg.includes("Ya tienes Pro activo")) return msg;
+        if (code.includes("failed-precondition") || code.includes("invalid-argument"))
+            return "No pudimos iniciar el pago. Revisa tu conexión y vuelve a intentar.";
+        if (code.includes("network-request-failed") || msg.toLowerCase().includes("network"))
+            return "Problema de conexión. Revisa tu internet e intenta de nuevo.";
+        if (code.includes("internal")) return "El servicio de pagos está temporalmente no disponible. Reintenta en unos momentos.";
+        return "No pudimos iniciar el pago. Si el problema persiste, escríbenos a contacto@rosterlog.app.";
+    }
+
     function mapAuthErr(err) {
         const code = err?.code ?? "";
         if (code.includes("popup-closed")) return "Cerraste la ventana antes de terminar. Intenta de nuevo.";
@@ -1031,8 +1050,8 @@
                 console.error(err);
                 btn.disabled = false;
                 btn.textContent = originalLabel;
-                // Caller necesita onboarding en la app → mostrar tarjeta dedicada
                 const msg = err?.message ?? "";
+                // Caller necesita onboarding en la app → mostrar tarjeta dedicada
                 if (msg.includes("NEEDS_APP_ONBOARDING")) {
                     document.getElementById("needsAppBlock").style.display = "block";
                     document.getElementById("planBlock").style.display = "none";
@@ -1040,7 +1059,7 @@
                     if (hint) hint.style.display = "none";
                     return;
                 }
-                checkoutErr.textContent = msg || "Error creando la sesión de pago.";
+                checkoutErr.textContent = humanCheckoutError(err);
                 checkoutErr.style.display = "block";
             }
         });
@@ -1060,7 +1079,7 @@
             location.href = url;
         } catch (err) {
             console.error(err);
-            alert(err?.message ?? "No se pudo abrir el portal.");
+            alert(humanCheckoutError(err));
             btn.disabled = false;
             btn.textContent = originalLabel;
         }
