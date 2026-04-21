@@ -393,7 +393,7 @@
         getAuth, onAuthStateChanged, signInWithPopup, signOut,
         GoogleAuthProvider, OAuthProvider,
         signInWithEmailAndPassword, createUserWithEmailAndPassword,
-        sendPasswordResetEmail
+        sendPasswordResetEmail, getIdTokenResult
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
     import { getFirestore, doc, getDoc, onSnapshot }
         from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
@@ -479,11 +479,10 @@
 
         // product_id puede venir en diferentes keys según la versión de la Extension
         const productId = sub.product_identifier || sub.product_id || "";
-        const info = PRODUCT_INFO[productId] || {
-            name: productId || "Suscripción Pro",
-            period: null,
-            store: storeLabel(sub.store),
-        };
+        const isPromo = (sub.store || "").toUpperCase() === "PROMOTIONAL" || !productId;
+        const info = PRODUCT_INFO[productId] || (isPromo
+            ? { name: "Pro — Acceso de cortesía", period: null, store: "Promocional" }
+            : { name: productId || "Suscripción Pro", period: null, store: storeLabel(sub.store) });
 
         // Plan + precio
         document.getElementById("planName").textContent = info.name;
@@ -557,18 +556,26 @@
         // Auto-renew
         autoRenewValue.textContent = canceled ? "Desactivada" : "Activa";
 
-        // El Customer Portal solo aplica a subs de Stripe. Si es App Store,
-        // mostrar mensaje diferente y ocultar el botón (o cambiarlo a deep-link).
-        const isStripe = (sub.store || "").toUpperCase() === "STRIPE"
-            || productId.startsWith("price_");
+        // El Customer Portal solo aplica a subs de Stripe. Si es App Store o
+        // un grant promocional, mostrar mensaje distinto y ocultar el botón.
+        const storeUp = (sub.store || "").toUpperCase();
+        const isStripe = storeUp === "STRIPE" || productId.startsWith("price_");
+        const isAppStore = storeUp === "APP_STORE" || storeUp === "MAC_APP_STORE" || productId.startsWith("com.rosterlog.");
+        const isPromoFlow = storeUp === "PROMOTIONAL" || (!isStripe && !isAppStore);
 
         if (isStripe) {
             openPortal.style.display = "";
             openPortal.textContent = canceled ? "Reactivar / cambiar plan" : "Administrar suscripción";
             manageHint.textContent = "Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Stripe.";
-        } else {
+        } else if (isAppStore) {
             openPortal.style.display = "none";
             manageHint.innerHTML = 'Compraste esta suscripción desde tu iPhone. Gestiónala en <a href="https://apps.apple.com/account/subscriptions" style="color:var(--accent)">Ajustes iOS → Apple ID → Suscripciones</a>.';
+        } else {
+            // Promocional u origen desconocido: sin portal, solo mensaje.
+            openPortal.style.display = "none";
+            manageHint.textContent = isPromoFlow
+                ? "Acceso de cortesía otorgado por el equipo de RosterLog. Al terminar, podrás suscribirte desde esta misma página."
+                : "Suscripción activa. Contacta a soporte si necesitas cambios.";
         }
     }
 
@@ -765,22 +772,101 @@
             // Sin perfil → default pilot
         }
 
-        // Suscribirse a /subscriptions/{uid} para detectar sub activa.
-        // La Extension de RevenueCat escribe ahí cuando hay entitlement.
-        subUnsub = onSnapshot(doc(db, "subscriptions", user.uid), (snap) => {
-            const data = snap.data();
+        // Fuentes de verdad del estado Pro:
+        //   1. Doc /subscriptions/{uid} que escribe la Extension de RC — trae
+        //      datos ricos (product_id, expires_date, store, price). Tarda
+        //      algunos segundos en aparecer tras una compra y puede no existir
+        //      nunca para grants promocionales puros.
+        //   2. Custom claim del ID token — RC lo setea vía la Extension cuando
+        //      "Should custom claims be set" está ON. Refleja el entitlement
+        //      casi instantáneamente, pero NO trae product_id ni precio.
+        //
+        // Estrategia: cualquiera de las dos marca la sub como activa. Renderiza
+        // con los datos más ricos disponibles, cayendo a un resumen mínimo
+        // cuando solo tenemos el claim (típico de grants promocionales).
+        let latestSubDoc = null;
+        let latestClaimData = null;
+
+        async function refreshClaimEntitlement() {
+            try {
+                const tokenRes = await getIdTokenResult(user, /* forceRefresh */ true);
+                const c = tokenRes.claims || {};
+                // RC Extension puede escribir el claim en 2 formas:
+                //   - activeEntitlements: ["Premium", ...]
+                //   - entitlements: { Premium: { expires_date: "...", product_identifier: "..." } }
+                const hasArray = Array.isArray(c.activeEntitlements) && c.activeEntitlements.includes("Premium");
+                const entObj = c.entitlements && typeof c.entitlements === "object" ? c.entitlements["Premium"] : null;
+                if (hasArray || entObj) {
+                    latestClaimData = {
+                        active: true,
+                        expires_date_ms: entObj?.expires_date ? Date.parse(entObj.expires_date) : null,
+                        product_identifier: entObj?.product_identifier ?? null,
+                        store: entObj?.store ?? null,
+                    };
+                } else {
+                    latestClaimData = { active: false };
+                }
+            } catch (e) {
+                latestClaimData = { active: false };
+            }
+            applyState();
+        }
+
+        function applyState() {
             const now = Date.now();
-            const expMs = data?.expires_date?.toMillis?.() ?? 0;
-            const active = data && expMs > now;
-            if (active) {
-                manageBlock.style.display = "block";
-                planBlock.style.display   = "none";
-                renderSubscription(data);
-            } else {
+
+            // ¿sub activa por doc?
+            const docExpMs = latestSubDoc?.expires_date?.toMillis?.() ?? 0;
+            const docActive = latestSubDoc && docExpMs > now;
+
+            // ¿sub activa por claim?
+            const claimActive = !!latestClaimData?.active &&
+                (!latestClaimData.expires_date_ms || latestClaimData.expires_date_ms > now);
+
+            const active = docActive || claimActive;
+
+            if (!active) {
                 manageBlock.style.display = "none";
                 planBlock.style.display   = "block";
+                return;
             }
-        }, () => { /* si falla la lectura, dejamos planBlock visible */ });
+
+            manageBlock.style.display = "block";
+            planBlock.style.display   = "none";
+
+            // Si tenemos doc, usa sus datos (más ricos). Si no, construye un
+            // objeto sintético a partir del claim.
+            if (docActive) {
+                renderSubscription(latestSubDoc);
+            } else {
+                renderSubscription({
+                    product_identifier: latestClaimData.product_identifier,
+                    expires_date: latestClaimData.expires_date_ms
+                        ? { toMillis: () => latestClaimData.expires_date_ms }
+                        : null,
+                    store: latestClaimData.store || "PROMOTIONAL",
+                    period_type: "NORMAL",
+                });
+            }
+        }
+
+        // 1. Primer check por claim (rápido, disponible al instante tras un grant)
+        refreshClaimEntitlement();
+
+        // 2. Listener continuo sobre el doc (más datos, actualizaciones automáticas)
+        subUnsub = onSnapshot(doc(db, "subscriptions", user.uid), (snap) => {
+            latestSubDoc = snap.exists() ? snap.data() : null;
+            applyState();
+        }, () => { /* si falla la lectura, dejamos lo que haya del claim */ });
+
+        // 3. Refresca el claim cada 60s mientras la página esté abierta para
+        //    captar grants recién otorgados desde el dashboard admin sin que
+        //    el usuario tenga que cerrar sesión.
+        const claimInterval = setInterval(refreshClaimEntitlement, 60_000);
+        // Limpia al deslogear (el subUnsub se reemplaza al re-login así que
+        // guardamos el interval en el mismo slot).
+        const prevUnsub = subUnsub;
+        subUnsub = () => { prevUnsub && prevUnsub(); clearInterval(claimInterval); };
     });
 
     // Checkout
