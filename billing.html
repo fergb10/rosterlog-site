@@ -464,11 +464,16 @@
     // → info humana. Cubre tanto price IDs de Stripe como App Store product IDs
     // por si el usuario compró desde iOS y ahora entra a la web.
     const PRODUCT_INFO = {
-        // Stripe
-        "price_1TOUHZFCOwamWizcUfrZDnOq": { name: "Piloto — Mensual",   amount: 199,  currency: "MXN", period: "mes",  store: "Stripe" },
-        "price_1TOUHZFCOwamWizcdE33mjgY": { name: "Piloto — Anual",     amount: 1999, currency: "MXN", period: "año",  store: "Stripe" },
-        "price_1TOUDDFCOwamWizcxzrh3Dk2": { name: "Sobrecargo — Mensual", amount: 99, currency: "MXN", period: "mes", store: "Stripe" },
-        "price_1TOUDDFCOwamWizcfJjaWhiy": { name: "Sobrecargo — Anual",   amount: 899, currency: "MXN", period: "año", store: "Stripe" },
+        // Stripe LIVE
+        "price_1TOXsgFCOwamWizcDzbrLEmr": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
+        "price_1TOXsiFCOwamWizccQ3VbVUi": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
+        "price_1TOXsiFCOwamWizcC4vmyq7g": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
+        "price_1TOXsjFCOwamWizcKaFYPu6A": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
+        // Stripe TEST
+        "price_1TOXuvFCOwamWizcbmc2SBSk": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
+        "price_1TOXvDFCOwamWizcnJNKSDpB": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
+        "price_1TOXvYFCOwamWizcnooRW2yV": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
+        "price_1TOXvnFCOwamWizcStqAizlf": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
         // App Store (ids legacy del StoreKit)
         "com.rosterlog.premium.monthly":  { name: "Pro — Mensual", period: "mes", store: "App Store" },
         "com.rosterlog.premium.annual":   { name: "Pro — Anual",   period: "año", store: "App Store" },
@@ -638,9 +643,12 @@
     const checkoutErr = $("checkoutErr");
     const tierToggle = $("tierToggle");
 
-    // Flash tras redirect de Stripe
+    // Flash tras redirect de Stripe. Exigimos `sid` (session ID) además del
+    // status para evitar mostrar el banner si el usuario abrió una URL stale
+    // con `?status=success` guardada de una sesión anterior.
     const params = new URLSearchParams(location.search);
-    if (params.get("status") === "success") {
+    const cameFromCheckout = params.get("status") === "success" && !!params.get("sid");
+    if (cameFromCheckout) {
         flash.className = "flash success";
         flash.textContent = "✓ Suscripción activada. Sincronizando…";
         flash.style.display = "block";
@@ -958,10 +966,9 @@
         // 0. Si viene de un checkout exitoso, o como defensa general, fuerza
         //    sync de RC → Firestore ANTES de leer nada. Así el doc y el claim
         //    reflejan el estado real aunque la Extension no haya corrido.
-        const cameFromSuccess = params.get("status") === "success";
         (async () => {
             const ents = await forceSubscriptionResync();
-            if (cameFromSuccess) {
+            if (cameFromCheckout) {
                 if (ents && ents.includes("Premium")) {
                     flash.className = "flash success";
                     flash.textContent = "✓ Suscripción activada.";
