@@ -642,12 +642,27 @@
     const params = new URLSearchParams(location.search);
     if (params.get("status") === "success") {
         flash.className = "flash success";
-        flash.textContent = "✓ Suscripción activada. Puede tardar unos segundos en reflejarse aquí y en la app.";
+        flash.textContent = "✓ Suscripción activada. Sincronizando…";
         flash.style.display = "block";
     } else if (params.get("status") === "cancel") {
         flash.className = "flash cancel";
         flash.textContent = "Compra cancelada. Puedes intentarlo de nuevo cuando quieras.";
         flash.style.display = "block";
+    }
+
+    // Helper para forzar sync desde RC → Firestore + claims. La Extension de
+    // RC a veces tarda o no se dispara para ciertos eventos (Stripe web), así
+    // que el cliente pide explícitamente un resync cuando regresa del checkout
+    // o al cargar la página. Es idempotente.
+    async function forceSubscriptionResync() {
+        try {
+            const call = httpsCallable(functions, "subscriptionResync");
+            const res = await call({});
+            return res.data?.activeEntitlements ?? [];
+        } catch (e) {
+            console.warn("subscriptionResync failed:", e?.message);
+            return null;
+        }
     }
 
     // Estado de tier seleccionado
@@ -939,6 +954,25 @@
                 });
             }
         }
+
+        // 0. Si viene de un checkout exitoso, o como defensa general, fuerza
+        //    sync de RC → Firestore ANTES de leer nada. Así el doc y el claim
+        //    reflejan el estado real aunque la Extension no haya corrido.
+        const cameFromSuccess = params.get("status") === "success";
+        (async () => {
+            const ents = await forceSubscriptionResync();
+            if (cameFromSuccess) {
+                if (ents && ents.includes("Premium")) {
+                    flash.className = "flash success";
+                    flash.textContent = "✓ Suscripción activada.";
+                } else {
+                    flash.className = "flash cancel";
+                    flash.textContent = "La compra está en proceso. Si no aparece en unos segundos, recarga la página.";
+                }
+            }
+            // Tras el resync, refresca el claim local y el estado.
+            await refreshClaimEntitlement();
+        })();
 
         // 1. Primer check por claim (rápido, disponible al instante tras un grant)
         refreshClaimEntitlement();
