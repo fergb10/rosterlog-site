@@ -127,13 +127,63 @@
         .plan .price small { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
         .plan .hint { font-size: 13px; color: var(--text-secondary); }
 
-        .manage-card { text-align: center; }
-        .manage-card .badge {
-            display: inline-block; background: rgba(48,209,88,0.12); color: var(--success);
-            font-size: 12px; font-weight: 600; padding: 4px 12px;
-            border-radius: 980px; margin-bottom: 16px;
+        /* Subscription summary */
+        .sub-summary {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px;
         }
-        .manage-card p { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; }
+        .sub-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+        }
+        .badge {
+            display: inline-block; font-size: 12px; font-weight: 600;
+            padding: 4px 12px; border-radius: 980px;
+            background: rgba(48,209,88,0.12); color: var(--success);
+        }
+        .badge.warn  { background: rgba(255,149,0,0.12); color: #ff9500; }
+        .badge.err   { background: rgba(255,59,48,0.12);  color: var(--danger); }
+        .badge.trial { background: rgba(88,86,214,0.12); color: #5856d6; }
+        .store-tag {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+            text-transform: uppercase;
+            background: var(--bg-alt); color: var(--text-secondary);
+            padding: 3px 10px; border-radius: 980px;
+            border: 1px solid var(--border);
+        }
+        .sub-plan-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        .plan-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(10,132,255,0.1); color: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .plan-info { flex: 1; min-width: 0; }
+        .plan-name { font-size: 16px; font-weight: 600; color: var(--text); }
+        .plan-price { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        .sub-warning {
+            margin-top: 14px; padding: 12px 14px; border-radius: 10px;
+            background: rgba(255,149,0,0.08); color: #ff9500;
+            font-size: 13px; line-height: 1.4; border: 1px solid rgba(255,149,0,0.2);
+        }
+        .sub-warning.err { background: rgba(255,59,48,0.08); color: var(--danger); border-color: rgba(255,59,48,0.2); }
+
+        .sub-meta { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .meta-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 13px; gap: 12px;
+        }
+        .meta-label { color: var(--text-secondary); }
+        .meta-value { color: var(--text); font-weight: 500; text-align: right; }
+
+        .manage-hint {
+            margin-top: 12px; font-size: 12px; color: var(--text-secondary);
+            text-align: center; line-height: 1.5;
+        }
 
         .err {
             background: rgba(255,59,48,0.08); color: var(--danger);
@@ -259,10 +309,43 @@
                     <button id="signOut">Salir</button>
                 </div>
 
-                <div id="manageBlock" class="manage-card" style="display:none">
-                    <div class="badge">✓ Suscripción activa</div>
-                    <p>Gestiona tu tarjeta, cambia de plan, descarga facturas o cancela cuando quieras.</p>
-                    <button id="openPortal" class="btn block">Administrar suscripción</button>
+                <div id="manageBlock" style="display:none">
+                    <div id="subSummary" class="sub-summary">
+                        <div class="sub-header">
+                            <span id="subStatusBadge" class="badge">✓ Suscripción activa</span>
+                            <span id="subStoreTag" class="store-tag">Stripe</span>
+                        </div>
+
+                        <div class="sub-plan-row">
+                            <div class="plan-icon" id="planIcon">✈️</div>
+                            <div class="plan-info">
+                                <div class="plan-name" id="planName">—</div>
+                                <div class="plan-price" id="planPrice">—</div>
+                            </div>
+                        </div>
+
+                        <div id="subWarning" class="sub-warning" style="display:none"></div>
+
+                        <div class="sub-meta">
+                            <div class="meta-row">
+                                <span class="meta-label" id="dateLabel">Próxima renovación</span>
+                                <span class="meta-value" id="dateValue">—</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">Renovación automática</span>
+                                <span class="meta-value" id="autoRenewValue">—</span>
+                            </div>
+                            <div class="meta-row" id="trialRow" style="display:none">
+                                <span class="meta-label">Estado</span>
+                                <span class="meta-value" id="trialValue">Prueba gratuita</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="openPortal" class="btn block" style="margin-top:20px">Administrar suscripción</button>
+                    <p id="manageHint" class="manage-hint">
+                        Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Stripe.
+                    </p>
                 </div>
 
                 <div id="planBlock">
@@ -336,6 +419,158 @@
         pilot: { monthly: 199, annual: 1999 },
         sob:   { monthly:  99, annual:  899 },
     };
+
+    // Mapa reverso: product_id que viene del doc /subscriptions/{uid}
+    // → info humana. Cubre tanto price IDs de Stripe como App Store product IDs
+    // por si el usuario compró desde iOS y ahora entra a la web.
+    const PRODUCT_INFO = {
+        // Stripe
+        "price_1TOUHZFCOwamWizcUfrZDnOq": { name: "Piloto — Mensual",   amount: 199,  currency: "MXN", period: "mes",  store: "Stripe" },
+        "price_1TOUHZFCOwamWizcdE33mjgY": { name: "Piloto — Anual",     amount: 1999, currency: "MXN", period: "año",  store: "Stripe" },
+        "price_1TOUDDFCOwamWizcxzrh3Dk2": { name: "Sobrecargo — Mensual", amount: 99, currency: "MXN", period: "mes", store: "Stripe" },
+        "price_1TOUDDFCOwamWizcfJjaWhiy": { name: "Sobrecargo — Anual",   amount: 899, currency: "MXN", period: "año", store: "Stripe" },
+        // App Store (ids legacy del StoreKit)
+        "com.rosterlog.premium.monthly":  { name: "Pro — Mensual", period: "mes", store: "App Store" },
+        "com.rosterlog.premium.annual":   { name: "Pro — Anual",   period: "año", store: "App Store" },
+        "com.rosterlog.sob.monthly":      { name: "Sobrecargo — Mensual", period: "mes", store: "App Store" },
+        "com.rosterlog.sob.annual":       { name: "Sobrecargo — Anual",   period: "año", store: "App Store" },
+    };
+
+    function formatDateEs(date) {
+        try {
+            return new Intl.DateTimeFormat("es-MX", {
+                day: "numeric", month: "long", year: "numeric"
+            }).format(date);
+        } catch {
+            return date.toLocaleDateString();
+        }
+    }
+
+    function formatMoney(amount, currency) {
+        if (typeof amount !== "number") return "—";
+        try {
+            return new Intl.NumberFormat("es-MX", {
+                style: "currency", currency: currency || "MXN",
+                maximumFractionDigits: 0,
+            }).format(amount);
+        } catch {
+            return `$${amount} ${currency || ""}`;
+        }
+    }
+
+    // Normaliza el store tal como viene del doc de la Extension de RC
+    // ("APP_STORE", "MAC_APP_STORE", "PLAY_STORE", "STRIPE", "PROMOTIONAL").
+    function storeLabel(store) {
+        switch ((store || "").toUpperCase()) {
+            case "APP_STORE":     return "App Store";
+            case "MAC_APP_STORE": return "Mac App Store";
+            case "PLAY_STORE":    return "Play Store";
+            case "STRIPE":        return "Stripe";
+            case "PROMOTIONAL":   return "Promocional";
+            default:              return store || "—";
+        }
+    }
+
+    // Pinta toda la UI del manageBlock con los datos del doc sub.
+    function renderSubscription(sub) {
+        const now = Date.now();
+        const expMs = sub?.expires_date?.toMillis?.() ?? 0;
+        const expDate = expMs ? new Date(expMs) : null;
+
+        // product_id puede venir en diferentes keys según la versión de la Extension
+        const productId = sub.product_identifier || sub.product_id || "";
+        const info = PRODUCT_INFO[productId] || {
+            name: productId || "Suscripción Pro",
+            period: null,
+            store: storeLabel(sub.store),
+        };
+
+        // Plan + precio
+        document.getElementById("planName").textContent = info.name;
+        const priceAmount = sub.price_in_purchased_currency ?? info.amount;
+        const priceCurrency = (sub.currency || info.currency || "MXN").toUpperCase();
+        const priceStr = (typeof priceAmount === "number")
+            ? `${formatMoney(priceAmount, priceCurrency)} / ${info.period || "periodo"}`
+            : (info.period ? `por ${info.period}` : "—");
+        document.getElementById("planPrice").textContent = priceStr;
+
+        // Ícono según tier
+        const icon = productId.includes("sob") ? "🧑‍✈️" : "✈️";
+        document.getElementById("planIcon").textContent = icon;
+
+        // Store tag
+        const store = storeLabel(sub.store) || info.store || "—";
+        document.getElementById("subStoreTag").textContent = store;
+
+        // Estado: calcula prioridades — billing issue > canceled > trial > activa
+        const badge = document.getElementById("subStatusBadge");
+        const warningEl = document.getElementById("subWarning");
+        const trialRow = document.getElementById("trialRow");
+        const dateLabel = document.getElementById("dateLabel");
+        const dateValue = document.getElementById("dateValue");
+        const autoRenewValue = document.getElementById("autoRenewValue");
+        const manageHint = document.getElementById("manageHint");
+        const openPortal = document.getElementById("openPortal");
+
+        warningEl.style.display = "none";
+        trialRow.style.display = "none";
+        badge.className = "badge";
+
+        const canceled = !!sub.unsubscribe_detected_at;
+        const billingIssue = !!sub.billing_issues_detected_at;
+        const isTrial = (sub.period_type || "").toUpperCase() === "TRIAL";
+
+        if (billingIssue) {
+            badge.textContent = "⚠ Problema con el pago";
+            badge.classList.add("err");
+            warningEl.className = "sub-warning err";
+            warningEl.style.display = "block";
+            warningEl.textContent = "No pudimos cobrar tu último pago. Actualiza tu tarjeta para no perder el acceso.";
+        } else if (canceled) {
+            badge.textContent = "Suscripción cancelada";
+            badge.classList.add("warn");
+            warningEl.className = "sub-warning";
+            warningEl.style.display = "block";
+            warningEl.textContent = expDate
+                ? `No se renovará automáticamente. Mantienes acceso Pro hasta el ${formatDateEs(expDate)}.`
+                : "No se renovará automáticamente.";
+        } else if (isTrial) {
+            badge.textContent = "✓ Prueba gratuita";
+            badge.classList.add("trial");
+            trialRow.style.display = "flex";
+            document.getElementById("trialValue").textContent =
+                expDate ? `Termina el ${formatDateEs(expDate)}` : "Activa";
+        } else {
+            badge.textContent = "✓ Suscripción activa";
+        }
+
+        // Fecha: renovación vs. fin de acceso si canceló
+        if (canceled) {
+            dateLabel.textContent = "Acceso Pro hasta";
+        } else if (isTrial) {
+            dateLabel.textContent = "Siguiente cobro";
+        } else {
+            dateLabel.textContent = "Próxima renovación";
+        }
+        dateValue.textContent = expDate ? formatDateEs(expDate) : "—";
+
+        // Auto-renew
+        autoRenewValue.textContent = canceled ? "Desactivada" : "Activa";
+
+        // El Customer Portal solo aplica a subs de Stripe. Si es App Store,
+        // mostrar mensaje diferente y ocultar el botón (o cambiarlo a deep-link).
+        const isStripe = (sub.store || "").toUpperCase() === "STRIPE"
+            || productId.startsWith("price_");
+
+        if (isStripe) {
+            openPortal.style.display = "";
+            openPortal.textContent = canceled ? "Reactivar / cambiar plan" : "Administrar suscripción";
+            manageHint.textContent = "Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Stripe.";
+        } else {
+            openPortal.style.display = "none";
+            manageHint.innerHTML = 'Compraste esta suscripción desde tu iPhone. Gestiónala en <a href="https://apps.apple.com/account/subscriptions" style="color:var(--accent)">Ajustes iOS → Apple ID → Suscripciones</a>.';
+        }
+    }
 
     // UI refs
     const $ = (id) => document.getElementById(id);
@@ -537,8 +772,14 @@
             const now = Date.now();
             const expMs = data?.expires_date?.toMillis?.() ?? 0;
             const active = data && expMs > now;
-            manageBlock.style.display = active ? "block" : "none";
-            planBlock.style.display   = active ? "none"  : "block";
+            if (active) {
+                manageBlock.style.display = "block";
+                planBlock.style.display   = "none";
+                renderSubscription(data);
+            } else {
+                manageBlock.style.display = "none";
+                planBlock.style.display   = "block";
+            }
         }, () => { /* si falla la lectura, dejamos planBlock visible */ });
     });
 
