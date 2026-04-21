@@ -584,7 +584,10 @@
         }
 
         // Fecha: renovación vs. fin de acceso si canceló
-        if (canceled) {
+        const isPromoPlan = (sub.store || "").toUpperCase() === "PROMOTIONAL";
+        if (isPromoPlan) {
+            dateLabel.textContent = "Acceso Pro hasta";
+        } else if (canceled) {
             dateLabel.textContent = "Acceso Pro hasta";
         } else if (isTrial) {
             dateLabel.textContent = "Siguiente cobro";
@@ -593,8 +596,12 @@
         }
         dateValue.textContent = expDate ? formatDateEs(expDate) : "—";
 
-        // Auto-renew
-        autoRenewValue.textContent = canceled ? "Desactivada" : "Activa";
+        // Auto-renew — los promocionales no se renuevan, son acceso fijo.
+        if (isPromoPlan) {
+            autoRenewValue.textContent = "No aplica (regalo)";
+        } else {
+            autoRenewValue.textContent = canceled ? "Desactivada" : "Activa";
+        }
 
         // El Customer Portal solo aplica a subs de Stripe. Si es App Store o
         // un grant promocional, mostrar mensaje distinto y ocultar el botón.
