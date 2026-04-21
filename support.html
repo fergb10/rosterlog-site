@@ -3,68 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RosterLog — Soporte</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1d1d1f; background: #fff; padding: 24px; max-width: 720px; margin: 0 auto; }
-        h1 { font-size: 28px; margin-bottom: 8px; }
-        h2 { font-size: 20px; margin-top: 32px; margin-bottom: 12px; }
-        p { font-size: 15px; color: #333; margin-bottom: 12px; }
-        .subtitle { font-size: 15px; color: #888; margin-bottom: 32px; }
-        a { color: #007aff; text-decoration: none; }
-        .card { background: #f5f5f7; border-radius: 12px; padding: 20px; margin-top: 16px; }
-        .card h3 { font-size: 17px; margin-bottom: 8px; }
-        .delete-card { background: #fff5f5; border: 1px solid #ffcccc; border-radius: 12px; padding: 20px; margin-top: 16px; }
-        .delete-card h3 { font-size: 17px; margin-bottom: 8px; color: #cc0000; }
-    </style>
+    <title>Soporte — RosterLog</title>
+    <meta name="description" content="Ayuda, preguntas frecuentes y contacto para usuarios de RosterLog.">
+    <link rel="stylesheet" href="assets/shared.css">
 </head>
 <body>
-    <h1>Soporte</h1>
-    <p class="subtitle">RosterLog — Tu bitacora de vuelo inteligente</p>
 
-    <p>Si tienes preguntas, problemas tecnicos o sugerencias, no dudes en contactarnos.</p>
-
-    <div class="card">
-        <h3>Correo electronico</h3>
-        <p><a href="mailto:soporte@rosterlog.app">soporte@rosterlog.app</a></p>
-        <p>Respondemos en un plazo maximo de 48 horas.</p>
+<nav class="site-nav">
+    <div class="container">
+        <a href="/" class="logo">&#9992; RosterLog</a>
+        <div class="nav-links">
+            <a href="/#features">Funciones</a>
+            <a href="/billing.html">Suscripción</a>
+            <a href="/support.html" class="active">Soporte</a>
+            <button class="theme-toggle" type="button" aria-label="Cambiar tema">
+                <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 4.5a1 1 0 0 1-1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 1-1 1zm0 17a1 1 0 0 1-1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 1-1 1zm8.5-8.5a1 1 0 0 1 0-2h1a1 1 0 1 1 0 2h-1zm-17 0a1 1 0 0 1 0-2h1a1 1 0 1 1 0 2h-1zm14.04-6.04a1 1 0 0 1 0-1.41l.7-.71a1 1 0 1 1 1.42 1.41l-.71.71a1 1 0 0 1-1.41 0zm-12.08 12.08a1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0zm12.08 0a1 1 0 0 1-1.41 0l-.71-.7a1 1 0 1 1 1.41-1.42l.71.71a1 1 0 0 1 0 1.41zm-12.08-12.08a1 1 0 0 1-1.42 0l-.7-.71A1 1 0 1 1 4.17 4.33l.71.7a1 1 0 0 1 0 1.42zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+            </button>
+        </div>
     </div>
+</nav>
 
-    <h2>Preguntas frecuentes</h2>
+<main class="page">
+    <div class="container">
+        <div class="page-header">
+            <h1>Soporte</h1>
+            <p>Estamos aquí para ayudarte. Escríbenos y te respondemos en máximo 48 horas.</p>
+        </div>
 
-    <div class="card">
-        <h3>¿Como sincronizo mis datos entre dispositivos?</h3>
-        <p>RosterLog sincroniza automaticamente a traves de tu cuenta. Inicia sesion con la misma cuenta (Sign In with Apple o correo) en todos tus dispositivos y tus datos se sincronizaran automaticamente.</p>
+        <div class="content-card">
+            <h2>Contacto</h2>
+            <div class="info-card">
+                <h3>Correo electrónico</h3>
+                <p><a href="mailto:contacto@rosterlog.app">contacto@rosterlog.app</a></p>
+                <p>Incluye: versión de la App, modelo de iPhone/iPad y una descripción
+                   clara del problema con capturas si es posible.</p>
+            </div>
+
+            <h2>Preguntas frecuentes</h2>
+
+            <div class="info-card">
+                <h3>¿Cómo sincronizo mis datos entre dispositivos?</h3>
+                <p>RosterLog sincroniza automáticamente a través de tu cuenta. Inicia sesión
+                   con el mismo método (Apple, Google o correo) en todos tus dispositivos
+                   y tus datos se sincronizarán al instante.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Cómo importo mi rol de servicios?</h3>
+                <p>Abre RosterLog → pestaña "Roster" → "Importar PDF" y selecciona el PDF
+                   que descargaste de Aeroméxico. El parser extrae automáticamente todos
+                   tus vuelos, simuladores y días libres.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Qué aerolíneas son compatibles?</h3>
+                <p>Actualmente soportamos Aeroméxico y Aeroméxico Connect para importación
+                   automática del PDF de rol. Puedes registrar vuelos manualmente de
+                   cualquier aerolínea.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Cómo comparto mi rol con un familiar?</h3>
+                <p>Más → Espectadores → "Invitar espectador". Genera un código y compártelo.
+                   Tu familiar descarga RosterLog y toca "Entrar como espectador" ingresando
+                   el código. Puede ver solo tus rutas y horarios — nada más. Revocable al
+                   instante desde la misma pantalla.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Cómo gestiono mi suscripción Pro?</h3>
+                <p><strong>Si te suscribiste desde iPhone/iPad:</strong> Ajustes iOS →
+                   [tu Apple ID] → Suscripciones → RosterLog.</p>
+                <p><strong>Si te suscribiste desde la web:</strong> entra a
+                   <a href="billing.html">rosterlog.app/billing</a> → "Administrar
+                   suscripción" (abre el portal seguro de Stripe).</p>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Cómo restauro mi suscripción en un dispositivo nuevo?</h3>
+                <p>Inicia sesión con el mismo método (Apple, Google o correo) que usaste
+                   al suscribirte y tu plan Pro se activará automáticamente.
+                   Si no aparece en unos segundos, cierra y abre la app.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>¿Los cálculos de tiempos extra son oficiales?</h3>
+                <p>No. RosterLog calcula con base en el Contrato Colectivo vigente de forma
+                   informativa. Siempre verifica con tus reportes oficiales de la aerolínea
+                   o tu sindicato.</p>
+            </div>
+
+            <h2>Eliminar tu cuenta</h2>
+
+            <div class="info-card">
+                <h3>Desde la App</h3>
+                <p>Perfil → "Borrar cuenta". Elimina permanentemente todos tus datos
+                   (vuelos, perfil, documentos, matrículas, foto, PDFs, configuración).
+                   Irreversible.</p>
+            </div>
+
+            <div class="danger-card">
+                <h3>Si no tienes acceso a la App</h3>
+                <p>Envía un correo a
+                   <a href="mailto:contacto@rosterlog.app?subject=Solicitud%20de%20eliminaci%C3%B3n%20de%20cuenta%20RosterLog">contacto@rosterlog.app</a>
+                   <strong>desde el correo asociado a tu cuenta</strong>,
+                   indicando en el asunto: "Solicitud de eliminación de cuenta RosterLog".</p>
+                <p>Procesamos la solicitud en un plazo máximo de 30 días y te confirmamos
+                   por correo una vez completada.</p>
+                <p><strong>Datos que se eliminan:</strong> perfil, vuelos, documentos,
+                   matrículas, foto de perfil, PDFs de rol, invitaciones de espectadores,
+                   configuración de contrato y registros de tripulación compartida.</p>
+            </div>
+
+            <h2>Problemas conocidos</h2>
+            <div class="info-card">
+                <h3>La app marca "Pro" con retraso tras comprar</h3>
+                <p>Si te suscribiste desde la web y la app aún no marca Pro, cierra sesión
+                   y vuelve a entrar, o fuerza cierre desde el selector de apps. La
+                   activación suele tardar menos de 60 segundos.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Un vuelo no se importó correctamente del PDF</h3>
+                <p>Puede pasar con formatos poco comunes o PDFs escaneados. Escríbenos
+                   adjuntando (sin datos sensibles) un ejemplo del PDF para ajustar el
+                   parser.</p>
+            </div>
+        </div>
     </div>
+</main>
 
-    <div class="card">
-        <h3>¿Como elimino mis datos desde la App?</h3>
-        <p>Ve a tu Perfil y selecciona "Borrar cuenta". Esto eliminara permanentemente todos tus vuelos, datos de perfil, documentos, foto de perfil, archivos PDF y configuracion. Esta accion no se puede deshacer.</p>
+<footer class="site-footer">
+    <div class="container">
+        <p>Hecho con ❤ para pilotos y sobrecargos · © 2026 RosterLog</p>
+        <div class="footer-links">
+            <a href="privacy.html">Aviso de Privacidad</a>
+            <a href="terms.html">Términos</a>
+            <a href="support.html">Soporte</a>
+        </div>
     </div>
+</footer>
 
-    <div class="card">
-        <h3>¿Como comparto mi rol con un familiar?</h3>
-        <p>Ve a Mas > Espectadores > Invitar espectador. Genera un codigo y compartelo. Tu familiar descarga RosterLog y selecciona "Entrar como espectador" ingresando el codigo.</p>
-    </div>
+<script src="assets/theme.js"></script>
 
-    <div class="card">
-        <h3>¿La App funciona con otras aerolineas?</h3>
-        <p>Actualmente RosterLog soporta importacion de rol para Aeromexico y Aeromexico Connect. Estamos trabajando en agregar mas aerolineas en futuras actualizaciones.</p>
-    </div>
-
-    <h2>Eliminacion de cuenta</h2>
-
-    <div class="delete-card">
-        <h3>Solicitar eliminacion de cuenta</h3>
-        <p>Si no tienes acceso a la App, puedes solicitar la eliminacion de tu cuenta y todos tus datos enviando un correo a:</p>
-        <p><a href="mailto:contacto@rosterlog.app?subject=Solicitud%20de%20eliminacion%20de%20cuenta%20RosterLog">contacto@rosterlog.app</a></p>
-        <p>Envia tu solicitud desde el correo electronico asociado a tu cuenta. Procesaremos la eliminacion en un plazo maximo de 30 dias. Recibiras una confirmacion por correo cuando tus datos hayan sido eliminados.</p>
-        <p><strong>Datos que se eliminan:</strong> perfil, vuelos, documentos, matriculas, foto de perfil, archivos PDF de rol, invitaciones de espectadores, configuracion de contrato y registros de tripulacion compartida.</p>
-    </div>
-
-    <p style="margin-top: 32px; color: #888; font-size: 13px;">
-        <a href="privacy.html">Aviso de Privacidad</a> ·
-        <a href="terms.html">Terminos de Servicio</a>
-    </p>
 </body>
 </html>
