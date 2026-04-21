@@ -464,16 +464,26 @@
     // → info humana. Cubre tanto price IDs de Stripe como App Store product IDs
     // por si el usuario compró desde iOS y ahora entra a la web.
     const PRODUCT_INFO = {
-        // Stripe LIVE
+        // Stripe LIVE — price IDs
         "price_1TOXsgFCOwamWizcDzbrLEmr": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
         "price_1TOXsiFCOwamWizccQ3VbVUi": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
         "price_1TOXsiFCOwamWizcC4vmyq7g": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
         "price_1TOXsjFCOwamWizcKaFYPu6A": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
-        // Stripe TEST
+        // Stripe LIVE — product IDs (RC guarda product_identifier como prod_...)
+        "prod_UNIToTu0I6KXWi": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
+        "prod_UNIT5R2yHhW4gB": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
+        "prod_UNIT6vLk3bjIkk": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
+        "prod_UNITcbxwFDRznz": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
+        // Stripe TEST — price IDs
         "price_1TOXuvFCOwamWizcbmc2SBSk": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
         "price_1TOXvDFCOwamWizcnJNKSDpB": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
         "price_1TOXvYFCOwamWizcnooRW2yV": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
         "price_1TOXvnFCOwamWizcStqAizlf": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
+        // Stripe TEST — product IDs
+        "prod_UNIV3olOVrOkmK": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
+        "prod_UNIW2uxmotYZjH": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
+        "prod_UNIWtwPhJHYfba": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
+        "prod_UNIWFiaMYxxjci": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
         // App Store (ids legacy del StoreKit)
         "com.rosterlog.premium.monthly":  { name: "Pro — Mensual", period: "mes", store: "App Store" },
         "com.rosterlog.premium.annual":   { name: "Pro — Anual",   period: "año", store: "App Store" },
@@ -538,9 +548,10 @@
             : (info.period ? `por ${info.period}` : "—");
         document.getElementById("planPrice").textContent = priceStr;
 
-        // Ícono según tier
-        const icon = productId.includes("sob") ? "🧑‍✈️" : "✈️";
-        document.getElementById("planIcon").textContent = icon;
+        // Ícono según tier. El productId (prod_... o price_...) no contiene
+        // el tier, así que miramos el nombre humano del mapeo.
+        const isSob = /sobrecargo/i.test(info.name || "") || productId.includes("sob");
+        document.getElementById("planIcon").textContent = isSob ? "🧑‍✈️" : "✈️";
 
         // Store tag
         const store = storeLabel(sub.store) || info.store || "—";
