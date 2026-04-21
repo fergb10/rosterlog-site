@@ -140,6 +140,37 @@
             padding: 12px 16px; border-radius: 10px; font-size: 14px;
             margin-top: 16px;
         }
+        .ok {
+            background: rgba(48,209,88,0.12); color: var(--success);
+            padding: 12px 16px; border-radius: 10px; font-size: 14px;
+            margin-top: 16px;
+        }
+
+        /* Email form */
+        #emailForm input {
+            width: 100%; padding: 12px 14px; font-size: 15px;
+            background: var(--bg); color: var(--text);
+            border: 1px solid var(--border); border-radius: 10px;
+            font-family: inherit; outline: none;
+            transition: border-color 0.15s;
+        }
+        #emailForm input:focus { border-color: var(--accent); }
+
+        .divider {
+            display: flex; align-items: center; gap: 12px;
+            color: var(--text-secondary); font-size: 12px;
+            margin: 4px 0 4px;
+        }
+        .divider::before, .divider::after {
+            content: ""; flex: 1; height: 1px; background: var(--border);
+        }
+
+        .linkbtn {
+            background: none; border: none; padding: 4px 0;
+            color: var(--accent); font-size: 13px; font-weight: 500;
+            cursor: pointer; font-family: inherit; text-align: left;
+        }
+        .linkbtn:hover { text-decoration: underline; }
 
         .spinner {
             display: inline-block; width: 16px; height: 16px;
@@ -197,10 +228,25 @@
                     <svg viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                     Continuar con Apple
                 </button>
-                <button id="signInGoogle" class="btn block secondary">
+                <button id="signInGoogle" class="btn block secondary" style="margin-bottom:20px">
                     Continuar con Google
                 </button>
+
+                <div class="divider"><span>o con correo</span></div>
+
+                <form id="emailForm" style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+                    <input id="emailInput" type="email" placeholder="tu@correo.com" autocomplete="email" required>
+                    <input id="passInput" type="password" placeholder="Contraseña" autocomplete="current-password" required minlength="6">
+                    <button id="emailSubmit" type="submit" class="btn block">Iniciar sesión</button>
+                </form>
+
+                <div style="display:flex;justify-content:space-between;margin-top:12px;gap:8px;flex-wrap:wrap">
+                    <button id="toggleMode" type="button" class="linkbtn">¿No tienes cuenta? Crear cuenta</button>
+                    <button id="forgotPass" type="button" class="linkbtn">Olvidé mi contraseña</button>
+                </div>
+
                 <div id="authErr" class="err" style="display:none"></div>
+                <div id="authOk" class="ok" style="display:none"></div>
             </div>
 
             <!-- Estado 3: autenticado, eligiendo plan -->
@@ -262,7 +308,9 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
     import {
         getAuth, onAuthStateChanged, signInWithPopup, signOut,
-        GoogleAuthProvider, OAuthProvider
+        GoogleAuthProvider, OAuthProvider,
+        signInWithEmailAndPassword, createUserWithEmailAndPassword,
+        sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
     import { getFirestore, doc, getDoc, onSnapshot }
         from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
@@ -366,6 +414,68 @@
         await signOut(auth);
     });
 
+    // Email / password: alterna entre "Iniciar sesión" y "Crear cuenta"
+    let emailMode = "signin"; // "signin" | "signup"
+    const emailForm = $("emailForm");
+    const emailSubmit = $("emailSubmit");
+    const toggleMode = $("toggleMode");
+    const forgotPass = $("forgotPass");
+    const authOk = $("authOk");
+
+    toggleMode.addEventListener("click", () => {
+        emailMode = emailMode === "signin" ? "signup" : "signin";
+        emailSubmit.textContent = emailMode === "signin" ? "Iniciar sesión" : "Crear cuenta";
+        toggleMode.textContent  = emailMode === "signin"
+            ? "¿No tienes cuenta? Crear cuenta"
+            : "¿Ya tienes cuenta? Iniciar sesión";
+        authErr.style.display = "none";
+        authOk.style.display = "none";
+    });
+
+    emailForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        authErr.style.display = "none";
+        authOk.style.display = "none";
+        const email = $("emailInput").value.trim();
+        const pass  = $("passInput").value;
+        if (!email || !pass) return;
+        emailSubmit.disabled = true;
+        const originalLabel = emailSubmit.textContent;
+        emailSubmit.innerHTML = '<span class="spinner"></span>';
+        try {
+            if (emailMode === "signup") {
+                await createUserWithEmailAndPassword(auth, email, pass);
+            } else {
+                await signInWithEmailAndPassword(auth, email, pass);
+            }
+        } catch (err) {
+            authErr.textContent = mapAuthErr(err);
+            authErr.style.display = "block";
+        } finally {
+            emailSubmit.disabled = false;
+            emailSubmit.textContent = originalLabel;
+        }
+    });
+
+    forgotPass.addEventListener("click", async () => {
+        authErr.style.display = "none";
+        authOk.style.display = "none";
+        const email = $("emailInput").value.trim();
+        if (!email) {
+            authErr.textContent = "Escribe tu correo primero para recibir el enlace de recuperación.";
+            authErr.style.display = "block";
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            authOk.textContent = "Te enviamos un correo para restablecer tu contraseña. Revisa tu bandeja.";
+            authOk.style.display = "block";
+        } catch (err) {
+            authErr.textContent = mapAuthErr(err);
+            authErr.style.display = "block";
+        }
+    });
+
     function mapAuthErr(err) {
         const code = err?.code ?? "";
         if (code.includes("popup-closed")) return "Cerraste la ventana antes de terminar. Intenta de nuevo.";
@@ -374,6 +484,17 @@
             return "Ya tienes una cuenta con otro proveedor (Apple/Google). Usa el mismo método que en la app.";
         if (code.includes("unauthorized-domain"))
             return "Este dominio no está autorizado en Firebase Auth. Agrega rosterlog.app en Console → Auth → Settings.";
+        if (code.includes("invalid-email"))  return "El correo no tiene un formato válido.";
+        if (code.includes("missing-password")) return "Escribe tu contraseña.";
+        if (code.includes("weak-password")) return "La contraseña debe tener al menos 6 caracteres.";
+        if (code.includes("email-already-in-use"))
+            return "Ya existe una cuenta con ese correo. Usa 'Iniciar sesión' o recupera tu contraseña.";
+        if (code.includes("user-not-found") || code.includes("invalid-credential") || code.includes("wrong-password"))
+            return "Correo o contraseña incorrectos.";
+        if (code.includes("too-many-requests"))
+            return "Demasiados intentos fallidos. Espera unos minutos y vuelve a intentar.";
+        if (code.includes("network-request-failed"))
+            return "Problema de conexión. Revisa tu internet y reintenta.";
         return err?.message ?? "Error iniciando sesión.";
     }
 
