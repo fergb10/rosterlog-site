@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suscripción — RosterLog</title>
+    <meta name="description" content="Gestiona tu suscripción Pro de RosterLog. Pagos seguros con Stripe.">
+    <style>
+        :root {
+            --bg: #ffffff; --bg-alt: #f5f5f7; --text: #1d1d1f;
+            --text-secondary: #86868b; --accent: #007aff; --accent-hover: #0056cc;
+            --card-bg: #ffffff; --border: rgba(0,0,0,0.06);
+            --success: #30d158; --danger: #ff3b30;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #000000; --bg-alt: #1c1c1e; --text: #f5f5f7;
+                --text-secondary: #98989d; --accent: #0a84ff; --accent-hover: #409cff;
+                --card-bg: #1c1c1e; --border: rgba(255,255,255,0.08);
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { nav { background: rgba(0,0,0,0.72); } }
+        nav .container { display: flex; justify-content: space-between; align-items: center; height: 48px; }
+        nav .logo { font-size: 18px; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        nav .nav-links { display: flex; gap: 24px; }
+        nav .nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+        nav .nav-links a:hover { color: var(--text); }
+
+        main { padding: 100px 0 60px; }
+        .page-header { text-align: center; margin-bottom: 48px; }
+        .page-header h1 {
+            font-size: clamp(32px, 5vw, 44px); font-weight: 700;
+            letter-spacing: -0.02em; margin-bottom: 12px;
+        }
+        .page-header p { font-size: 17px; color: var(--text-secondary); }
+
+        .flash {
+            max-width: 640px; margin: 0 auto 32px;
+            padding: 14px 20px; border-radius: 12px; font-size: 15px;
+        }
+        .flash.success { background: rgba(48,209,88,0.12); color: var(--success); }
+        .flash.cancel  { background: rgba(255,59,48,0.08); color: var(--danger); }
+
+        .card {
+            background: var(--bg-alt); border-radius: 20px; padding: 32px;
+            max-width: 640px; margin: 0 auto;
+        }
+
+        /* Auth */
+        .auth-state { text-align: center; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--accent); color: white; font-size: 15px; font-weight: 600;
+            padding: 12px 24px; border-radius: 980px; border: none; cursor: pointer;
+            text-decoration: none; transition: background 0.2s, transform 0.2s;
+            font-family: inherit;
+        }
+        .btn:hover:not(:disabled) { background: var(--accent-hover); transform: scale(1.02); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn.secondary:hover:not(:disabled) { background: var(--bg); }
+        .btn.block { display: flex; width: 100%; }
+        .btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .user-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; background: var(--bg); border-radius: 12px;
+            margin-bottom: 24px; border: 1px solid var(--border);
+        }
+        .user-bar .info { font-size: 14px; }
+        .user-bar .info strong { display: block; color: var(--text); }
+        .user-bar .info span { color: var(--text-secondary); font-size: 13px; }
+        .user-bar button {
+            background: none; border: none; color: var(--accent);
+            font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+        }
+
+        /* Tier toggle */
+        .tier-toggle {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 4px; padding: 4px; background: var(--bg);
+            border-radius: 12px; margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        .tier-toggle button {
+            padding: 10px 16px; background: transparent; border: none;
+            border-radius: 8px; font-size: 14px; font-weight: 600;
+            color: var(--text-secondary); cursor: pointer; font-family: inherit;
+            transition: background 0.2s, color 0.2s;
+        }
+        .tier-toggle button.active { background: var(--accent); color: white; }
+
+        /* Plan cards */
+        .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 520px) { .plans { grid-template-columns: 1fr; } }
+        .plan {
+            background: var(--bg); border-radius: 16px; padding: 24px;
+            border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 12px;
+            position: relative;
+        }
+        .plan.featured { border-color: var(--accent); }
+        .plan-badge {
+            position: absolute; top: -10px; right: 16px;
+            background: var(--accent); color: white;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 10px; border-radius: 980px;
+        }
+        .plan h3 { font-size: 15px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .plan .price { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+        .plan .price small { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+        .plan .hint { font-size: 13px; color: var(--text-secondary); }
+
+        .manage-card { text-align: center; }
+        .manage-card .badge {
+            display: inline-block; background: rgba(48,209,88,0.12); color: var(--success);
+            font-size: 12px; font-weight: 600; padding: 4px 12px;
+            border-radius: 980px; margin-bottom: 16px;
+        }
+        .manage-card p { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; }
+
+        .err {
+            background: rgba(255,59,48,0.08); color: var(--danger);
+            padding: 12px 16px; border-radius: 10px; font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid currentColor; border-right-color: transparent;
+            border-radius: 50%; animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        footer {
+            padding: 40px 0; border-top: 1px solid var(--border);
+            text-align: center; margin-top: 60px;
+        }
+        footer p { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+        footer .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        footer .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; }
+        footer .footer-links a:hover { color: var(--text); }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container">
+        <a href="/" class="logo">&#9992; RosterLog</a>
+        <div class="nav-links">
+            <a href="/#features">Funciones</a>
+            <a href="/billing.html">Suscripción</a>
+            <a href="/support.html">Soporte</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+        <div class="page-header">
+            <h1>Suscripción Pro</h1>
+            <p>Pago seguro con Stripe. También puedes suscribirte desde la app en tu iPhone.</p>
+        </div>
+
+        <div id="flash" class="flash" style="display:none"></div>
+
+        <div class="card">
+            <!-- Estado 1: cargando auth -->
+            <div id="loading" class="auth-state">
+                <div class="spinner" style="color:var(--accent-hover)"></div>
+                <p style="margin-top:12px;color:var(--text-secondary);font-size:14px">Cargando…</p>
+            </div>
+
+            <!-- Estado 2: no autenticado -->
+            <div id="signedOut" class="auth-state" style="display:none">
+                <h2 style="font-size:20px;margin-bottom:8px">Inicia sesión para continuar</h2>
+                <p style="color:var(--text-secondary);font-size:15px;margin-bottom:24px">
+                    Usa la misma cuenta de la app para que tu suscripción se active automáticamente.
+                </p>
+                <button id="signInApple" class="btn block" style="background:#000;margin-bottom:8px">
+                    <svg viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                    Continuar con Apple
+                </button>
+                <button id="signInGoogle" class="btn block secondary">
+                    Continuar con Google
+                </button>
+                <div id="authErr" class="err" style="display:none"></div>
+            </div>
+
+            <!-- Estado 3: autenticado, eligiendo plan -->
+            <div id="signedIn" style="display:none">
+                <div class="user-bar">
+                    <div class="info">
+                        <strong id="userEmail">—</strong>
+                        <span id="userUidPreview">—</span>
+                    </div>
+                    <button id="signOut">Salir</button>
+                </div>
+
+                <div id="manageBlock" class="manage-card" style="display:none">
+                    <div class="badge">✓ Suscripción activa</div>
+                    <p>Gestiona tu tarjeta, cambia de plan, descarga facturas o cancela cuando quieras.</p>
+                    <button id="openPortal" class="btn block">Administrar suscripción</button>
+                </div>
+
+                <div id="planBlock">
+                    <div class="tier-toggle" id="tierToggle">
+                        <button data-tier="pilot" class="active">Piloto (CAP / FO)</button>
+                        <button data-tier="sob">Sobrecargo</button>
+                    </div>
+
+                    <div class="plans">
+                        <div class="plan" data-duration="monthly">
+                            <h3>Mensual</h3>
+                            <div class="price"><span data-price="monthly">—</span> <small>MXN / mes</small></div>
+                            <p class="hint">Cancela cuando quieras.</p>
+                            <button class="btn block checkout" data-duration="monthly">Suscribirme mensual</button>
+                        </div>
+                        <div class="plan featured" data-duration="annual">
+                            <div class="plan-badge">Ahorra</div>
+                            <h3>Anual</h3>
+                            <div class="price"><span data-price="annual">—</span> <small>MXN / año</small></div>
+                            <p class="hint" data-hint="annual">—</p>
+                            <button class="btn block checkout" data-duration="annual">Suscribirme anual</button>
+                        </div>
+                    </div>
+                    <div id="checkoutErr" class="err" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>Hecho con ❤ para pilotos y sobrecargos · © 2026 RosterLog</p>
+        <div class="footer-links">
+            <a href="/privacy.html">Aviso de Privacidad</a>
+            <a href="/terms.html">Términos</a>
+            <a href="/support.html">Soporte</a>
+        </div>
+    </div>
+</footer>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import {
+        getAuth, onAuthStateChanged, signInWithPopup, signOut,
+        GoogleAuthProvider, OAuthProvider
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, onSnapshot }
+        from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { getFunctions, httpsCallable }
+        from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
+
+    // Config público — no es secret, se protege con rules de Firestore/Functions.
+    const firebaseConfig = {
+        apiKey: "AIzaSyB4uMZCLxWtCgJd7JYPZVHVHN_74dmCpWw",
+        authDomain: "rosterlog-app.firebaseapp.com",
+        projectId: "rosterlog-app",
+        storageBucket: "rosterlog-app.firebasestorage.app",
+        messagingSenderId: "810230347488",
+        appId: "1:810230347488:web:fcd5d1fb8ad54cfb788285",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const functions = getFunctions(app, "us-central1");
+
+    const PRICES = {
+        pilot: { monthly: 199, annual: 1999 },
+        sob:   { monthly:  99, annual:  899 },
+    };
+
+    // UI refs
+    const $ = (id) => document.getElementById(id);
+    const loading = $("loading");
+    const signedOut = $("signedOut");
+    const signedIn = $("signedIn");
+    const manageBlock = $("manageBlock");
+    const planBlock = $("planBlock");
+    const flash = $("flash");
+    const authErr = $("authErr");
+    const checkoutErr = $("checkoutErr");
+    const tierToggle = $("tierToggle");
+
+    // Flash tras redirect de Stripe
+    const params = new URLSearchParams(location.search);
+    if (params.get("status") === "success") {
+        flash.className = "flash success";
+        flash.textContent = "✓ Suscripción activada. Puede tardar unos segundos en reflejarse aquí y en la app.";
+        flash.style.display = "block";
+    } else if (params.get("status") === "cancel") {
+        flash.className = "flash cancel";
+        flash.textContent = "Compra cancelada. Puedes intentarlo de nuevo cuando quieras.";
+        flash.style.display = "block";
+    }
+
+    // Estado de tier seleccionado
+    let currentTier = "pilot";
+    let currentUid = null;
+    let subUnsub = null;
+
+    function updatePriceUI() {
+        const p = PRICES[currentTier];
+        document.querySelector('[data-price="monthly"]').textContent = "$" + p.monthly.toLocaleString("es-MX");
+        document.querySelector('[data-price="annual"]').textContent  = "$" + p.annual.toLocaleString("es-MX");
+        const savings = Math.round((1 - (p.annual / (p.monthly * 12))) * 100);
+        const equiv = Math.round(p.annual / 12);
+        document.querySelector('[data-hint="annual"]').textContent =
+            `Ahorra ${savings}% · ≈ $${equiv.toLocaleString("es-MX")} / mes`;
+    }
+
+    tierToggle.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-tier]");
+        if (!btn) return;
+        currentTier = btn.dataset.tier;
+        tierToggle.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
+        updatePriceUI();
+    });
+    updatePriceUI();
+
+    // Auth handlers
+    $("signInApple").addEventListener("click", async () => {
+        authErr.style.display = "none";
+        const provider = new OAuthProvider("apple.com");
+        provider.addScope("email");
+        provider.addScope("name");
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (err) {
+            authErr.textContent = mapAuthErr(err);
+            authErr.style.display = "block";
+        }
+    });
+
+    $("signInGoogle").addEventListener("click", async () => {
+        authErr.style.display = "none";
+        try {
+            await signInWithPopup(auth, new GoogleAuthProvider());
+        } catch (err) {
+            authErr.textContent = mapAuthErr(err);
+            authErr.style.display = "block";
+        }
+    });
+
+    $("signOut").addEventListener("click", async () => {
+        if (subUnsub) { subUnsub(); subUnsub = null; }
+        await signOut(auth);
+    });
+
+    function mapAuthErr(err) {
+        const code = err?.code ?? "";
+        if (code.includes("popup-closed")) return "Cerraste la ventana antes de terminar. Intenta de nuevo.";
+        if (code.includes("popup-blocked")) return "Tu navegador bloqueó la ventana emergente. Permítela y reintenta.";
+        if (code.includes("account-exists-with-different-credential"))
+            return "Ya tienes una cuenta con otro proveedor (Apple/Google). Usa el mismo método que en la app.";
+        if (code.includes("unauthorized-domain"))
+            return "Este dominio no está autorizado en Firebase Auth. Agrega rosterlog.app en Console → Auth → Settings.";
+        return err?.message ?? "Error iniciando sesión.";
+    }
+
+    // Auth state
+    onAuthStateChanged(auth, async (user) => {
+        loading.style.display = "none";
+        if (!user) {
+            signedOut.style.display = "block";
+            signedIn.style.display = "none";
+            currentUid = null;
+            if (subUnsub) { subUnsub(); subUnsub = null; }
+            return;
+        }
+        currentUid = user.uid;
+        signedOut.style.display = "none";
+        signedIn.style.display = "block";
+        $("userEmail").textContent = user.email ?? "Sesión iniciada";
+        $("userUidPreview").textContent = "ID: " + user.uid.slice(0, 12) + "…";
+
+        // Auto-detect tier desde /users/{uid}.position
+        try {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            const position = snap.data()?.position;
+            if (position === "SOB") {
+                currentTier = "sob";
+            } else {
+                currentTier = "pilot";
+            }
+            tierToggle.querySelectorAll("button").forEach(b =>
+                b.classList.toggle("active", b.dataset.tier === currentTier));
+            updatePriceUI();
+        } catch (e) {
+            // Sin perfil → default pilot
+        }
+
+        // Suscribirse a /subscriptions/{uid} para detectar sub activa.
+        // La Extension de RevenueCat escribe ahí cuando hay entitlement.
+        subUnsub = onSnapshot(doc(db, "subscriptions", user.uid), (snap) => {
+            const data = snap.data();
+            const now = Date.now();
+            const expMs = data?.expires_date?.toMillis?.() ?? 0;
+            const active = data && expMs > now;
+            manageBlock.style.display = active ? "block" : "none";
+            planBlock.style.display   = active ? "none"  : "block";
+        }, () => { /* si falla la lectura, dejamos planBlock visible */ });
+    });
+
+    // Checkout
+    document.querySelectorAll(".checkout").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            if (!currentUid) return;
+            checkoutErr.style.display = "none";
+            const duration = btn.dataset.duration;
+            const originalLabel = btn.textContent;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>';
+            try {
+                const call = httpsCallable(functions, "stripeCheckoutCreate");
+                const res = await call({
+                    tier: currentTier,
+                    duration,
+                    successUrl: location.origin + "/billing.html?status=success&sid={CHECKOUT_SESSION_ID}",
+                    cancelUrl:  location.origin + "/billing.html?status=cancel",
+                });
+                const url = res.data?.url;
+                if (!url) throw new Error("Respuesta sin URL");
+                location.href = url;
+            } catch (err) {
+                console.error(err);
+                checkoutErr.textContent = err?.message ?? "Error creando la sesión de pago.";
+                checkoutErr.style.display = "block";
+                btn.disabled = false;
+                btn.textContent = originalLabel;
+            }
+        });
+    });
+
+    // Customer Portal
+    $("openPortal").addEventListener("click", async () => {
+        const btn = $("openPortal");
+        const originalLabel = btn.textContent;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>';
+        try {
+            const call = httpsCallable(functions, "stripeCustomerPortalLink");
+            const res = await call({ returnUrl: location.origin + "/billing.html" });
+            const url = res.data?.url;
+            if (!url) throw new Error("Respuesta sin URL");
+            location.href = url;
+        } catch (err) {
+            console.error(err);
+            alert(err?.message ?? "No se pudo abrir el portal.");
+            btn.disabled = false;
+            btn.textContent = originalLabel;
+        }
+    });
+</script>
+
+</body>
+</html>
