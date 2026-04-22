@@ -856,6 +856,37 @@
             if (subUnsub) { subUnsub(); subUnsub = null; }
             return;
         }
+
+        // Guardrail: billing.html requiere cuenta creada desde la app iOS
+        // (con onboarding completado → doc /users/{uid} en Firestore).
+        // Si el uid existe en Auth pero NO tiene doc en Firestore, es una
+        // cuenta fantasma (creada por signInWithPopup con email nuevo o
+        // residuo de versión anterior de billing). La cerramos y mostramos
+        // mensaje guiando a descargar la app.
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (!userDoc.exists()) {
+                // Intentamos borrar el user de Auth para que no quede huérfano.
+                // deleteUser requiere sesión reciente; si falla, al menos signOut.
+                try {
+                    await deleteUser(user);
+                } catch (e) {
+                    await signOut(auth);
+                }
+                signedOut.style.display = "block";
+                signedIn.style.display = "none";
+                authErr.textContent = "No encontramos tu cuenta en RosterLog. Primero descarga la app, completa el onboarding (perfil + aerolínea + puesto), y luego regresa aquí para gestionar tu suscripción.";
+                authErr.style.display = "block";
+                currentUid = null;
+                if (subUnsub) { subUnsub(); subUnsub = null; }
+                return;
+            }
+        } catch (e) {
+            // Error de red al consultar Firestore: no bloqueamos al usuario,
+            // la suscripción se validará contra /subscriptions/{uid} abajo.
+            console.warn("No se pudo validar /users/{uid}:", e);
+        }
+
         currentUid = user.uid;
         signedOut.style.display = "none";
         signedIn.style.display = "block";
