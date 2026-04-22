@@ -559,9 +559,25 @@
         // product_id puede venir en diferentes keys según la versión de la Extension
         const productId = sub.product_identifier || sub.product_id || "";
         const isPromo = (sub.store || "").toUpperCase() === "PROMOTIONAL" || !productId;
-        const info = PRODUCT_INFO[productId] || (isPromo
+
+        // Fallback: si el productId no está en el mapa (p. ej. un price/product
+        // ID nuevo de Stripe test o live que no registramos), derivamos el
+        // nombre del monto + período en vez de mostrar el raw "prod_...".
+        function inferFromAmount(sub) {
+            const amount = sub.price_in_purchased_currency;
+            if (typeof amount !== "number") return null;
+            const byAmount = {
+                199:  { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes" },
+                1999: { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año" },
+                99:   { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes" },
+                899:  { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año" },
+            };
+            return byAmount[amount] ? { ...byAmount[amount], store: storeLabel(sub.store) } : null;
+        }
+
+        const info = PRODUCT_INFO[productId] || inferFromAmount(sub) || (isPromo
             ? { name: "Pro — Acceso de cortesía", period: null, store: "Promocional" }
-            : { name: productId || "Suscripción Pro", period: null, store: storeLabel(sub.store) });
+            : { name: "Suscripción Pro", period: null, store: storeLabel(sub.store) });
 
         // Plan + precio
         document.getElementById("planName").textContent = info.name;
