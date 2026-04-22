@@ -560,9 +560,21 @@
         const productId = sub.product_identifier || sub.product_id || "";
         const isPromo = (sub.store || "").toUpperCase() === "PROMOTIONAL" || !productId;
 
-        // Fallback: si el productId no está en el mapa (p. ej. un price/product
-        // ID nuevo de Stripe test o live que no registramos), derivamos el
-        // nombre del monto + período en vez de mostrar el raw "prod_...".
+        // Prioridad: product_name (escrito por resyncCustomClaimsFromRC con
+        // lookup autoritativo a Stripe) → PRODUCT_INFO hardcodeado →
+        // derivación por monto/tier → fallback genérico.
+        function buildInfoFromDoc(sub) {
+            if (!sub.product_name) return null;
+            const period = sub.period === "annual" ? "año"
+                : sub.period === "monthly" ? "mes" : null;
+            return {
+                name: sub.product_name,
+                period,
+                store: storeLabel(sub.store),
+                amount: sub.price_in_purchased_currency,
+                currency: (sub.currency || "MXN").toUpperCase(),
+            };
+        }
         function inferFromAmount(sub) {
             const amount = sub.price_in_purchased_currency;
             if (typeof amount !== "number") return null;
@@ -575,9 +587,12 @@
             return byAmount[amount] ? { ...byAmount[amount], store: storeLabel(sub.store) } : null;
         }
 
-        const info = PRODUCT_INFO[productId] || inferFromAmount(sub) || (isPromo
-            ? { name: "Pro — Acceso de cortesía", period: null, store: "Promocional" }
-            : { name: "Suscripción Pro", period: null, store: storeLabel(sub.store) });
+        const info = buildInfoFromDoc(sub)
+            || PRODUCT_INFO[productId]
+            || inferFromAmount(sub)
+            || (isPromo
+                ? { name: "Pro — Acceso de cortesía", period: null, store: "Promocional" }
+                : { name: "Suscripción Pro", period: null, store: storeLabel(sub.store) });
 
         // Plan + precio
         document.getElementById("planName").textContent = info.name;
