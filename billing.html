@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suscripción — RosterLog</title>
     <meta name="description" content="Gestiona tu suscripción Pro de RosterLog. Pagos seguros con Stripe.">
+    <meta name="theme-color" content="#007aff">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://rosterlog.app/billing.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Suscripción — RosterLog">
+    <meta property="og:description" content="Gestiona tu suscripción Pro de RosterLog.">
+    <meta property="og:image" content="https://rosterlog.app/assets/og-image.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://rosterlog.app/assets/og-image.svg">
+    <script defer data-domain="rosterlog.app" src="https://plausible.io/js/script.js"></script>
     <link rel="stylesheet" href="assets/shared.css">
     <style>
         /* Tokens específicos de billing — los mismos que shared.css pero agrego
@@ -236,6 +246,45 @@
             margin-top: 16px;
         }
 
+        /* Trial countdown */
+        .trial-countdown {
+            margin: 12px 0;
+            padding: 12px 14px; border-radius: 12px;
+            background: rgba(88,86,214,0.08); color: #5856d6;
+            border: 1px solid rgba(88,86,214,0.2);
+            font-size: 13px; line-height: 1.4;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .trial-countdown strong { font-weight: 700; }
+        .trial-countdown.urgent {
+            background: rgba(255,149,0,0.1); color: #ff9500;
+            border-color: rgba(255,149,0,0.25);
+        }
+
+        /* Cancel survey */
+        .cancel-survey {
+            margin-top: 20px; padding: 18px 20px; border-radius: 14px;
+            background: var(--bg-alt); border: 1px solid var(--border);
+        }
+        .cancel-survey h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .cancel-survey > p { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+        .survey-opts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .survey-opts button {
+            background: var(--bg); color: var(--text);
+            border: 1px solid var(--border); border-radius: 999px;
+            padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer;
+            font-family: inherit; transition: all 0.15s;
+        }
+        .survey-opts button:hover { border-color: var(--accent); }
+        .survey-opts button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        #surveyDetail {
+            width: 100%; padding: 10px 12px; font-size: 14px;
+            background: var(--bg); color: var(--text);
+            border: 1px solid var(--border); border-radius: 10px;
+            font-family: inherit; outline: none; resize: vertical;
+        }
+        #surveyDetail:focus { border-color: var(--accent); }
+
         /* Email form */
         #emailForm input {
             width: 100%; padding: 12px 14px; font-size: 15px;
@@ -375,6 +424,8 @@
 
                         <div id="subWarning" class="sub-warning" style="display:none"></div>
 
+                        <div id="trialCountdown" class="trial-countdown" style="display:none"></div>
+
                         <div class="sub-meta">
                             <div class="meta-row">
                                 <span class="meta-label" id="dateLabel">Próxima renovación</span>
@@ -395,6 +446,23 @@
                     <p id="manageHint" class="manage-hint">
                         Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Stripe.
                     </p>
+
+                    <div id="cancelSurvey" class="cancel-survey" style="display:none">
+                        <h3>¿Nos ayudas con una pregunta?</h3>
+                        <p>¿Por qué decidiste cancelar? (Anónimo, solo para mejorar.)</p>
+                        <div class="survey-opts" id="surveyOpts">
+                            <button data-reason="caro">Es muy caro</button>
+                            <button data-reason="no_uso">No la uso lo suficiente</button>
+                            <button data-reason="faltan_features">Faltan funciones</button>
+                            <button data-reason="bugs">Encontré bugs</button>
+                            <button data-reason="otro">Otro</button>
+                        </div>
+                        <textarea id="surveyDetail" placeholder="Cuéntanos más (opcional)" rows="2"></textarea>
+                        <button id="surveySubmit" class="btn secondary" style="margin-top:10px">Enviar</button>
+                        <p id="surveyThanks" style="display:none; font-size:13px; color:var(--success); margin-top:10px;">
+                            ¡Gracias! Lo revisamos personalmente.
+                        </p>
+                    </div>
                 </div>
 
                 <div id="needsAppBlock" class="needs-app" style="display:none">
@@ -459,7 +527,7 @@
         sendPasswordResetEmail, getIdTokenResult,
         getAdditionalUserInfo, deleteUser
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, onSnapshot }
+    import { getFirestore, doc, getDoc, onSnapshot, setDoc, serverTimestamp }
         from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
     import { getFunctions, httpsCallable }
         from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
@@ -626,6 +694,12 @@
         trialRow.style.display = "none";
         badge.className = "badge";
 
+        const countdownEl = document.getElementById("trialCountdown");
+        countdownEl.style.display = "none";
+        countdownEl.className = "trial-countdown";
+        const surveyEl = document.getElementById("cancelSurvey");
+        surveyEl.style.display = "none";
+
         const canceled = !!sub.unsubscribe_detected_at;
         const billingIssue = !!sub.billing_issues_detected_at;
         const isTrial = (sub.period_type || "").toUpperCase() === "TRIAL";
@@ -644,6 +718,12 @@
             warningEl.textContent = expDate
                 ? `No se renovará automáticamente. Mantienes acceso Pro hasta el ${formatDateEs(expDate)}.`
                 : "No se renovará automáticamente.";
+            // Mostrar survey si no se ha enviado para esta cancelación
+            const surveyKey = `cancel_fb_${sub.uid || currentUser?.uid || "?"}_${expMs || 0}`;
+            if (!localStorage.getItem(surveyKey)) {
+                surveyEl.style.display = "block";
+                surveyEl.dataset.key = surveyKey;
+            }
         } else if (isTrial) {
             badge.textContent = "✓ Prueba gratuita";
             badge.classList.add("trial");
@@ -652,6 +732,21 @@
                 expDate ? `Termina el ${formatDateEs(expDate)}` : "Activa";
         } else {
             badge.textContent = "✓ Suscripción activa";
+        }
+
+        // Countdown banner: trial o renovación próxima (≤7 días)
+        if (expDate && !canceled && !billingIssue) {
+            const diasRestantes = Math.ceil((expMs - now) / 86400000);
+            if (isTrial && diasRestantes >= 0 && diasRestantes <= 14) {
+                countdownEl.innerHTML = diasRestantes <= 2
+                    ? `⏰ <span><strong>Tu prueba gratuita termina ${diasRestantes === 0 ? "hoy" : diasRestantes === 1 ? "mañana" : `en ${diasRestantes} días`}.</strong> Después empezará el cobro automático. Cancela antes si no quieres continuar.</span>`
+                    : `🎁 <span>Estás en prueba gratuita. Faltan <strong>${diasRestantes} días</strong> para el primer cobro.</span>`;
+                if (diasRestantes <= 2) countdownEl.classList.add("urgent");
+                countdownEl.style.display = "flex";
+            } else if (!isTrial && diasRestantes >= 0 && diasRestantes <= 7) {
+                countdownEl.innerHTML = `🔄 <span>Tu suscripción se renueva <strong>${diasRestantes === 0 ? "hoy" : diasRestantes === 1 ? "mañana" : `en ${diasRestantes} días`}</strong>. Cambia o cancela antes si lo necesitas.</span>`;
+                countdownEl.style.display = "flex";
+            }
         }
 
         // Fecha: renovación vs. fin de acceso si canceló
@@ -1183,6 +1278,47 @@
     });
 
     // Customer Portal
+    // Survey de cancelación
+    (function wireSurvey() {
+        const opts = document.getElementById("surveyOpts");
+        const submit = document.getElementById("surveySubmit");
+        const detail = document.getElementById("surveyDetail");
+        const thanks = document.getElementById("surveyThanks");
+        const container = document.getElementById("cancelSurvey");
+        let reason = null;
+        opts.addEventListener("click", (e) => {
+            const btn = e.target.closest("button[data-reason]");
+            if (!btn) return;
+            reason = btn.dataset.reason;
+            [...opts.querySelectorAll("button")].forEach((b) => b.classList.toggle("active", b === btn));
+        });
+        submit.addEventListener("click", async () => {
+            if (!reason) { submit.textContent = "Elige una opción"; return; }
+            if (!currentUser) return;
+            submit.disabled = true;
+            submit.textContent = "Enviando…";
+            try {
+                const key = container.dataset.key || `cancel_fb_${currentUser.uid}_${Date.now()}`;
+                await setDoc(doc(db, "cancelFeedback", key), {
+                    uid: currentUser.uid,
+                    email: currentUser.email || null,
+                    reason,
+                    detail: detail.value.trim().slice(0, 500),
+                    createdAt: serverTimestamp(),
+                });
+                localStorage.setItem(key, "1");
+                opts.style.display = "none";
+                detail.style.display = "none";
+                submit.style.display = "none";
+                thanks.style.display = "block";
+            } catch (err) {
+                console.error(err);
+                submit.disabled = false;
+                submit.textContent = "Reintentar";
+            }
+        });
+    })();
+
     $("openPortal").addEventListener("click", async () => {
         const btn = $("openPortal");
         const originalLabel = btn.textContent;
