@@ -308,8 +308,7 @@
                     <button id="emailSubmit" type="submit" class="btn block">Iniciar sesión</button>
                 </form>
 
-                <div style="display:flex;justify-content:space-between;margin-top:12px;gap:8px;flex-wrap:wrap">
-                    <button id="toggleMode" type="button" class="linkbtn">¿No tienes cuenta? Crear cuenta</button>
+                <div style="display:flex;justify-content:flex-end;margin-top:12px">
                     <button id="forgotPass" type="button" class="linkbtn">Olvidé mi contraseña</button>
                 </div>
 
@@ -428,8 +427,9 @@
     import {
         getAuth, onAuthStateChanged, signInWithPopup, signOut,
         GoogleAuthProvider, OAuthProvider,
-        signInWithEmailAndPassword, createUserWithEmailAndPassword,
-        sendPasswordResetEmail, getIdTokenResult
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail, getIdTokenResult,
+        getAdditionalUserInfo, deleteUser
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
     import { getFirestore, doc, getDoc, onSnapshot }
         from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
@@ -704,6 +704,26 @@
     });
     updatePriceUI();
 
+    // Helper: si el popup creó una cuenta NUEVA, la borramos y deslogueamos.
+    // Razón: billing.html es solo para gestionar suscripciones existentes.
+    // Las cuentas se crean ÚNICAMENTE desde la app iOS (donde hay onboarding
+    // obligatorio con perfil: aerolínea, puesto, base, etc.). Permitir signup
+    // aquí deja cuentas huérfanas en Firebase Auth sin doc /users/{uid},
+    // lo que rompe suposiciones del backend y de las security rules.
+    async function rejectIfNewUser(cred) {
+        const info = getAdditionalUserInfo(cred);
+        if (info?.isNewUser) {
+            const user = cred.user;
+            try {
+                await deleteUser(user);
+            } catch (e) {
+                // Si falla el delete (ej. requiere reauth reciente), al menos signOut.
+                await signOut(auth);
+            }
+            throw Object.assign(new Error("no-account"), { code: "auth/no-account-in-app" });
+        }
+    }
+
     // Auth handlers
     $("signInApple").addEventListener("click", async () => {
         authErr.style.display = "none";
@@ -711,7 +731,8 @@
         provider.addScope("email");
         provider.addScope("name");
         try {
-            await signInWithPopup(auth, provider);
+            const cred = await signInWithPopup(auth, provider);
+            await rejectIfNewUser(cred);
         } catch (err) {
             authErr.textContent = mapAuthErr(err);
             authErr.style.display = "block";
@@ -721,7 +742,8 @@
     $("signInGoogle").addEventListener("click", async () => {
         authErr.style.display = "none";
         try {
-            await signInWithPopup(auth, new GoogleAuthProvider());
+            const cred = await signInWithPopup(auth, new GoogleAuthProvider());
+            await rejectIfNewUser(cred);
         } catch (err) {
             authErr.textContent = mapAuthErr(err);
             authErr.style.display = "block";
@@ -734,22 +756,12 @@
     });
 
     // Email / password: alterna entre "Iniciar sesión" y "Crear cuenta"
-    let emailMode = "signin"; // "signin" | "signup"
+    // billing.html solo permite iniciar sesión con cuentas existentes.
+    // El signup ocurre únicamente en la app iOS (con onboarding obligatorio).
     const emailForm = $("emailForm");
     const emailSubmit = $("emailSubmit");
-    const toggleMode = $("toggleMode");
     const forgotPass = $("forgotPass");
     const authOk = $("authOk");
-
-    toggleMode.addEventListener("click", () => {
-        emailMode = emailMode === "signin" ? "signup" : "signin";
-        emailSubmit.textContent = emailMode === "signin" ? "Iniciar sesión" : "Crear cuenta";
-        toggleMode.textContent  = emailMode === "signin"
-            ? "¿No tienes cuenta? Crear cuenta"
-            : "¿Ya tienes cuenta? Iniciar sesión";
-        authErr.style.display = "none";
-        authOk.style.display = "none";
-    });
 
     emailForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -762,11 +774,7 @@
         const originalLabel = emailSubmit.textContent;
         emailSubmit.innerHTML = '<span class="spinner"></span>';
         try {
-            if (emailMode === "signup") {
-                await createUserWithEmailAndPassword(auth, email, pass);
-            } else {
-                await signInWithEmailAndPassword(auth, email, pass);
-            }
+            await signInWithEmailAndPassword(auth, email, pass);
         } catch (err) {
             authErr.textContent = mapAuthErr(err);
             authErr.style.display = "block";
@@ -816,6 +824,8 @@
 
     function mapAuthErr(err) {
         const code = err?.code ?? "";
+        if (code === "auth/no-account-in-app")
+            return "No encontramos tu cuenta en RosterLog. Primero descarga la app, completa el onboarding (perfil + aerolínea + puesto), y luego regresa aquí para gestionar tu suscripción.";
         if (code.includes("popup-closed")) return "Cerraste la ventana antes de terminar. Intenta de nuevo.";
         if (code.includes("popup-blocked")) return "Tu navegador bloqueó la ventana emergente. Permítela y reintenta.";
         if (code.includes("account-exists-with-different-credential"))
