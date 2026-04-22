@@ -117,6 +117,11 @@
             transition: background 0.2s, color 0.2s;
         }
         .tier-toggle button.active { background: var(--accent); color: white; }
+        .tier-toggle button:disabled { opacity: 0.35; cursor: not-allowed; }
+        .tier-locked-hint {
+            font-size: 12px; color: var(--text-secondary); text-align: center;
+            margin-top: -16px; margin-bottom: 20px;
+        }
 
         /* Plan cards */
         .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -410,6 +415,7 @@
                         <button data-tier="pilot" class="active">Piloto (CAP / FO)</button>
                         <button data-tier="sob">Sobrecargo</button>
                     </div>
+                    <div id="tierLockedHint" class="tier-locked-hint" style="display:none"></div>
 
                     <div class="plans">
                         <div class="plan" data-duration="monthly">
@@ -719,12 +725,32 @@
 
     tierToggle.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-tier]");
-        if (!btn) return;
+        if (!btn || btn.disabled) return;
         currentTier = btn.dataset.tier;
         tierToggle.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
         updatePriceUI();
     });
     updatePriceUI();
+
+    // Bloquea el tier que NO corresponde al puesto registrado en /users/{uid}.
+    // Evita que un piloto compre SOB (más barato) o viceversa. El backend
+    // también valida, esto es solo UX-first defense.
+    function lockTierByPosition(position) {
+        const isSob = position === "SOB";
+        const allowedTier = isSob ? "sob" : "pilot";
+        currentTier = allowedTier;
+        tierToggle.querySelectorAll("button").forEach(b => {
+            const match = b.dataset.tier === allowedTier;
+            b.classList.toggle("active", match);
+            b.disabled = !match;
+        });
+        const hint = $("tierLockedHint");
+        hint.textContent = isSob
+            ? "Tu perfil es Sobrecargo. Solo puedes contratar el plan Sobrecargo."
+            : "Tu perfil es Piloto (CAP/FO). Solo puedes contratar el plan Piloto.";
+        hint.style.display = "block";
+        updatePriceUI();
+    }
 
     // Helper: si el popup creó una cuenta NUEVA, la borramos y deslogueamos.
     // Razón: billing.html es solo para gestionar suscripciones existentes.
@@ -915,20 +941,17 @@
         $("userEmail").textContent = user.email ?? "Sesión iniciada";
         $("userUidPreview").textContent = "ID: " + user.uid.slice(0, 12) + "…";
 
-        // Auto-detect tier desde /users/{uid}.position
+        // Auto-detect y bloqueo de tier según /users/{uid}.position.
+        // Si no podemos leer el perfil, dejamos el toggle libre (edge case de
+        // red caída). El backend validará igual antes de crear el Checkout.
         try {
             const snap = await getDoc(doc(db, "users", user.uid));
             const position = snap.data()?.position;
-            if (position === "SOB") {
-                currentTier = "sob";
-            } else {
-                currentTier = "pilot";
+            if (position === "SOB" || position === "CAP" || position === "FO") {
+                lockTierByPosition(position);
             }
-            tierToggle.querySelectorAll("button").forEach(b =>
-                b.classList.toggle("active", b.dataset.tier === currentTier));
-            updatePriceUI();
         } catch (e) {
-            // Sin perfil → default pilot
+            // Sin perfil → toggle libre, backend validará
         }
 
         // Fuentes de verdad del estado Pro:
