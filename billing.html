@@ -332,11 +332,6 @@
            Aplica en auth-state#signedOut
            ═════════════════════════════════════════════════════════ */
         #signedOut.auth-state { text-align: left; }
-        #signedOut .welcome-title {
-            font-size: clamp(40px, 7vw, 56px);
-            font-weight: 600; letter-spacing: -0.03em;
-            line-height: 1.05; margin-bottom: 20px;
-        }
         #signedOut .welcome-sub {
             font-size: 15px; color: var(--text-secondary);
             margin-bottom: 32px; line-height: 1.4;
@@ -363,13 +358,13 @@
             margin: 14px 0 20px; gap: 12px;
         }
         #signedOut .auth-row .checkbox {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 14px; color: var(--text); cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+            font-size: 13px; color: var(--text-secondary); cursor: pointer;
             user-select: none;
         }
         #signedOut .auth-row .checkbox input[type="checkbox"] {
             appearance: none; -webkit-appearance: none;
-            width: 18px; height: 18px; border-radius: 50%;
+            width: 14px; height: 14px; border-radius: 50%;
             border: 1.5px solid var(--text-secondary);
             background: transparent; cursor: pointer;
             display: inline-flex; align-items: center; justify-content: center;
@@ -379,22 +374,27 @@
             background: var(--accent); border-color: var(--accent);
         }
         #signedOut .auth-row .checkbox input[type="checkbox"]:checked::after {
-            content: ""; width: 6px; height: 6px;
+            content: ""; width: 4px; height: 4px;
             border-radius: 50%; background: white;
         }
         #signedOut .auth-row .linkbtn {
             color: var(--accent); font-size: 14px; font-weight: 500;
         }
-        /* Botón Sign In primario — blanco sólido, texto oscuro */
+        /* Botón Sign In — estilo con borde tipo OAuth (no sólido) */
         #signedOut .btn-signin-primary {
             display: flex; width: 100%; align-items: center; justify-content: center;
-            background: var(--text); color: var(--bg);
-            font-size: 16px; font-weight: 600;
-            padding: 16px 24px; border-radius: 14px;
-            border: none; cursor: pointer; font-family: inherit;
-            transition: transform 0.15s, opacity 0.15s;
+            gap: 8px;
+            background: transparent; color: var(--text);
+            font-size: 15px; font-weight: 500;
+            padding: 14px 20px; border-radius: 14px;
+            border: 1px solid var(--border); cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s;
         }
-        #signedOut .btn-signin-primary:hover:not(:disabled) { transform: scale(1.01); }
+        #signedOut .btn-signin-primary:hover:not(:disabled) {
+            background: rgba(127,127,127,0.06);
+            border-color: var(--text-secondary);
+        }
         #signedOut .btn-signin-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         /* Separador con texto en el centro */
         #signedOut .divider-or {
@@ -406,7 +406,7 @@
         #signedOut .divider-or::after {
             content: ""; flex: 1; height: 1px; background: var(--border);
         }
-        /* Botones OAuth — fondo transparente con borde */
+        /* Botones OAuth — fondo transparente con borde (Google) */
         #signedOut .btn-oauth {
             display: flex; width: 100%; align-items: center; justify-content: center;
             gap: 12px; padding: 14px 20px;
@@ -421,7 +421,14 @@
             border-color: var(--text-secondary);
         }
         #signedOut .btn-oauth svg { width: 20px; height: 20px; }
-        #signedOut .btn-oauth.apple svg { fill: currentColor; }
+        /* Apple — HIG compliant: fondo negro, texto blanco (siempre) */
+        #signedOut .btn-oauth.apple {
+            background: #000; color: #fff; border-color: #000;
+        }
+        #signedOut .btn-oauth.apple:hover:not(:disabled) {
+            background: #1c1c1e; border-color: #1c1c1e;
+        }
+        #signedOut .btn-oauth.apple svg { fill: #fff; }
         /* Pie: "¿Nuevo? Crear cuenta" */
         #signedOut .create-account-hint {
             text-align: center; margin-top: 28px;
@@ -476,12 +483,12 @@
 
             <!-- Estado 2: no autenticado -->
             <div id="signedOut" class="auth-state" style="display:none">
-                <h2 class="welcome-title">Bienvenido</h2>
                 <p class="welcome-sub">
                     Accede con la misma cuenta que usas en la app para que tu suscripción se active automáticamente.
                 </p>
 
                 <form id="emailForm">
+
                     <div class="field-group">
                         <label class="field-label" for="emailInput">Correo electrónico</label>
                         <input id="emailInput" type="email" placeholder="tu@correo.com" autocomplete="email" required>
