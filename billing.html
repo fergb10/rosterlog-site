@@ -1293,17 +1293,25 @@
             // según la versión de la Extension.
             let docActive = false;
             if (latestSubDoc) {
-                const raw = latestSubDoc.expires_date;
-                if (raw == null) {
-                    docActive = true;                       // sin fecha → lifetime/legacy
-                } else if (typeof raw.toMillis === "function") {
-                    docActive = raw.toMillis() > now;
-                } else if (typeof raw === "number") {
-                    docActive = raw > now;
-                } else if (typeof raw === "string") {
-                    docActive = Date.parse(raw) > now;
-                } else if (raw instanceof Date) {
-                    docActive = raw.getTime() > now;
+                // Soft-delete check: cuando la sub fue revocada/refundeada
+                // la Cloud Function pone `active: false` y `entitlement_identifier: null`
+                // pero conserva expires_date para histórico. Ignoramos esos
+                // docs aunque expires_date esté en el futuro.
+                const explicitlyInactive = latestSubDoc.active === false ||
+                    latestSubDoc.entitlement_identifier === null;
+                if (!explicitlyInactive) {
+                    const raw = latestSubDoc.expires_date;
+                    if (raw == null) {
+                        docActive = true;                       // sin fecha → lifetime/legacy
+                    } else if (typeof raw.toMillis === "function") {
+                        docActive = raw.toMillis() > now;
+                    } else if (typeof raw === "number") {
+                        docActive = raw > now;
+                    } else if (typeof raw === "string") {
+                        docActive = Date.parse(raw) > now;
+                    } else if (raw instanceof Date) {
+                        docActive = raw.getTime() > now;
+                    }
                 }
             }
 
