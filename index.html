@@ -159,36 +159,115 @@
             .hero-mockup { max-width: 92%; margin-top: 36px; }
         }
 
-        /* Galería de screenshots adicionales */
+        /* ───────── Showcase (estilo Apple marketing) ─────────
+         * Cada bloque: imagen grande + headline + descripción + eyebrow.
+         * Alternamos imagen izquierda/derecha en desktop. En mobile,
+         * stack vertical con imagen primero. Usa CSS Grid order para
+         * swap (sin direction: rtl que rompe puntuación).
+         */
         .showcase {
-            padding: 0 0 80px;
+            padding: 100px 0 40px;
+            background: linear-gradient(
+                180deg,
+                var(--bg) 0%,
+                color-mix(in oklab, var(--bg), var(--accent) 3%) 50%,
+                var(--bg) 100%
+            );
         }
-        .showcase-grid {
+        .showcase-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
+            grid-template-columns: 1.05fr 1fr;
             align-items: center;
-            max-width: 1100px;
+            gap: 80px;
+            max-width: 1180px;
             margin: 0 auto;
+            padding: 60px 0;
         }
-        .showcase-grid img {
-            width: 100%; height: auto;
-            border-radius: 14px;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.18));
+        .showcase-row + .showcase-row { border-top: 1px solid var(--border); }
+        .showcase-row.reverse .showcase-media { order: 2; }
+        .showcase-row.reverse .showcase-text { order: 1; }
+        .showcase-media {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .showcase-text h2 { font-size: clamp(24px, 3vw, 34px); margin-bottom: 12px; }
-        .showcase-text p { font-size: 17px; color: var(--text-secondary); line-height: 1.6; }
-        .showcase-row + .showcase-row { margin-top: 72px; }
-        .showcase-row.reverse .showcase-grid {
-            direction: rtl;
+        .showcase-media img {
+            width: 100%;
+            max-width: 560px;
+            height: auto;
+            border-radius: 22px;
+            filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.22));
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .showcase-row.reverse .showcase-grid > * {
-            direction: ltr;
+        .showcase-media:hover img { transform: translateY(-4px) scale(1.01); }
+        .showcase-text { padding: 0 8px; }
+        .showcase-eyebrow {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 14px;
         }
-        @media (max-width: 800px) {
-            .showcase-grid { grid-template-columns: 1fr; gap: 24px; }
-            .showcase-row + .showcase-row { margin-top: 56px; }
-            .showcase-row.reverse .showcase-grid { direction: ltr; }
+        .showcase-text h2 {
+            font-size: clamp(30px, 4vw, 44px);
+            font-weight: 700;
+            letter-spacing: -0.022em;
+            line-height: 1.1;
+            margin-bottom: 18px;
+            color: var(--text-primary);
+        }
+        .showcase-text p {
+            font-size: 18px;
+            line-height: 1.55;
+            color: var(--text-secondary);
+            max-width: 460px;
+        }
+        .showcase-bullets {
+            list-style: none;
+            padding: 0;
+            margin: 22px 0 0;
+            display: grid;
+            gap: 12px;
+        }
+        .showcase-bullets li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 16px;
+            color: var(--text-primary);
+            line-height: 1.45;
+        }
+        .showcase-bullets li::before {
+            content: "";
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            margin-top: 1px;
+            border-radius: 50%;
+            background:
+                linear-gradient(135deg, var(--accent) 0%, color-mix(in oklab, var(--accent), #5856d6 40%) 100%);
+            background-image:
+                url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>"),
+                linear-gradient(135deg, #0a84ff 0%, #5856d6 100%);
+            background-size: 14px 14px, cover;
+            background-position: center, center;
+            background-repeat: no-repeat;
+        }
+        @media (max-width: 880px) {
+            .showcase { padding: 60px 0 20px; }
+            .showcase-row {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                padding: 44px 0;
+            }
+            .showcase-row .showcase-media { order: 1 !important; }
+            .showcase-row .showcase-text { order: 2 !important; padding: 0; }
+            .showcase-text h2 { font-size: 28px; }
+            .showcase-text p { font-size: 16px; max-width: none; }
+            .showcase-media img { max-width: 92%; }
         }
 
         /* Features */
@@ -460,24 +539,37 @@
 
 <section class="showcase">
     <div class="container">
-        <div class="showcase-row">
-            <div class="showcase-grid">
-                <img src="assets/screenshots/ipad-02.png" alt="Vista de calendario de RosterLog" loading="lazy">
-                <div class="showcase-text">
-                    <h2>Tu calendario, claro y completo</h2>
-                    <p>Visualiza tus servicios día por día con horarios locales y Zulu, rutas, countdown al próximo check-in y todo lo que necesitas para planear tu mes.</p>
-                </div>
+        <article class="showcase-row">
+            <div class="showcase-media">
+                <img src="assets/screenshots/ipad-02.png" alt="Calendario de servicios en RosterLog" loading="lazy">
             </div>
-        </div>
-        <div class="showcase-row reverse">
-            <div class="showcase-grid">
-                <img src="assets/screenshots/ipad-03.png" alt="Cálculo automático de tiempos extra" loading="lazy">
-                <div class="showcase-text">
-                    <h2>Tiempos extra al instante</h2>
-                    <p>Cálculo automático según tu Contrato Colectivo de Trabajo. Sin hojas de cálculo, sin errores, sin estrés a fin de mes.</p>
-                </div>
+            <div class="showcase-text">
+                <span class="showcase-eyebrow">Calendario</span>
+                <h2>Tu mes,<br>claro de un vistazo.</h2>
+                <p>Visualiza tus servicios día por día. Horarios locales y Zulu, rutas, countdown al próximo check-in.</p>
+                <ul class="showcase-bullets">
+                    <li>Vista mensual y semanal con un toque.</li>
+                    <li>Detalle de cada vuelo en un swipe.</li>
+                    <li>Sincronizado entre iPhone y iPad al instante.</li>
+                </ul>
             </div>
-        </div>
+        </article>
+
+        <article class="showcase-row reverse">
+            <div class="showcase-media">
+                <img src="assets/screenshots/ipad-03.png" alt="Cálculo de tiempos extra en RosterLog" loading="lazy">
+            </div>
+            <div class="showcase-text">
+                <span class="showcase-eyebrow">Tiempos extra</span>
+                <h2>El cálculo lo hace<br>la app por ti.</h2>
+                <p>Tiempos extra automáticos según tu Contrato Colectivo de Trabajo. Sin hojas de cálculo. Sin errores. Sin estrés a fin de mes.</p>
+                <ul class="showcase-bullets">
+                    <li>CCT actualizado: Contrato A y B.</li>
+                    <li>Servicio diario, mensual e irrebasable.</li>
+                    <li>Reporte exportable listo para revisar.</li>
+                </ul>
+            </div>
+        </article>
     </div>
 </section>
 
