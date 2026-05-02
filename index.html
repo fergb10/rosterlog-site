@@ -145,12 +145,50 @@
             border: 1px solid var(--border);
         }
         .hero-mockup {
-            margin: 56px auto 0; max-width: 300px;
+            margin: 56px auto 0; max-width: 720px;
             filter: drop-shadow(0 30px 60px rgba(0,0,0,0.25));
         }
-        .hero-mockup svg { width: 100%; height: auto; display: block; }
+        .hero-mockup img {
+            width: 100%; height: auto; display: block;
+            border-radius: 18px;
+        }
+        @media (max-width: 900px) {
+            .hero-mockup { max-width: 540px; margin-top: 48px; }
+        }
         @media (max-width: 600px) {
-            .hero-mockup { max-width: 240px; margin-top: 40px; }
+            .hero-mockup { max-width: 92%; margin-top: 36px; }
+        }
+
+        /* Galería de screenshots adicionales */
+        .showcase {
+            padding: 0 0 80px;
+        }
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .showcase-grid img {
+            width: 100%; height: auto;
+            border-radius: 14px;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.18));
+        }
+        .showcase-text h2 { font-size: clamp(24px, 3vw, 34px); margin-bottom: 12px; }
+        .showcase-text p { font-size: 17px; color: var(--text-secondary); line-height: 1.6; }
+        .showcase-row + .showcase-row { margin-top: 72px; }
+        .showcase-row.reverse .showcase-grid {
+            direction: rtl;
+        }
+        .showcase-row.reverse .showcase-grid > * {
+            direction: ltr;
+        }
+        @media (max-width: 800px) {
+            .showcase-grid { grid-template-columns: 1fr; gap: 24px; }
+            .showcase-row + .showcase-row { margin-top: 56px; }
+            .showcase-row.reverse .showcase-grid { direction: ltr; }
         }
 
         /* Features */
@@ -368,36 +406,13 @@
         <p class="hero-sub">1 semana gratis de prueba &middot; Requiere iOS 17 o posterior</p>
 
         <div class="hero-proof">
-            <span class="proof-pill">&#9992; Pilotos AMX &amp; Connect</span>
-            <span class="proof-pill">&#127467;&#127477; Sobrecargos</span>
+            <span class="proof-pill">&#128747; Pilotos</span>
+            <span class="proof-pill">&#129489;&#8205;&#9992;&#65039; Sobrecargos</span>
             <span class="proof-pill">&#11088; Hecho por tripulación</span>
         </div>
 
-        <div class="hero-mockup" aria-hidden="true">
-            <svg viewBox="0 0 360 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vista previa de RosterLog en iPhone">
-                <defs>
-                    <linearGradient id="rlScreen" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#0a84ff"/>
-                        <stop offset="1" stop-color="#5856d6"/>
-                    </linearGradient>
-                </defs>
-                <rect x="10" y="10" width="340" height="700" rx="54" fill="#1c1c1e" stroke="#2c2c2e" stroke-width="2"/>
-                <rect x="22" y="22" width="316" height="676" rx="44" fill="url(#rlScreen)"/>
-                <rect x="140" y="30" width="80" height="22" rx="11" fill="#000"/>
-                <rect x="40" y="80" width="120" height="10" rx="5" fill="rgba(255,255,255,0.9)"/>
-                <rect x="40" y="100" width="200" height="20" rx="6" fill="rgba(255,255,255,0.95)"/>
-                <g font-family="-apple-system, SF Pro Display, Helvetica" fill="#fff">
-                    <rect x="40" y="150" width="280" height="80" rx="16" fill="rgba(255,255,255,0.12)"/>
-                    <text x="58" y="180" font-size="13" opacity=".8">VUELO</text>
-                    <text x="58" y="210" font-size="24" font-weight="700">AM 404 &#8226; MEX &#8594; MIA</text>
-                    <rect x="40" y="245" width="280" height="80" rx="16" fill="rgba(255,255,255,0.12)"/>
-                    <text x="58" y="275" font-size="13" opacity=".8">TIEMPO EXTRA</text>
-                    <text x="58" y="305" font-size="24" font-weight="700">04:35 hrs</text>
-                    <rect x="40" y="340" width="280" height="80" rx="16" fill="rgba(255,255,255,0.12)"/>
-                    <text x="58" y="370" font-size="13" opacity=".8">PRÓXIMO CHECK-IN</text>
-                    <text x="58" y="400" font-size="24" font-weight="700">en 6h 22m</text>
-                </g>
-            </svg>
+        <div class="hero-mockup">
+            <img src="assets/screenshots/ipad-01.png" alt="RosterLog en iPad" loading="lazy">
         </div>
     </div>
 </section>
@@ -438,6 +453,29 @@
                 <div class="feature-icon" style="background:rgba(255,69,58,0.1);">&#128197;</div>
                 <h3>Calendario de eventos</h3>
                 <p>Visualiza tus servicios por día con detalle de rutas, horarios locales, Zulu y countdown.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="showcase">
+    <div class="container">
+        <div class="showcase-row">
+            <div class="showcase-grid">
+                <img src="assets/screenshots/ipad-02.png" alt="Vista de calendario de RosterLog" loading="lazy">
+                <div class="showcase-text">
+                    <h2>Tu calendario, claro y completo</h2>
+                    <p>Visualiza tus servicios día por día con horarios locales y Zulu, rutas, countdown al próximo check-in y todo lo que necesitas para planear tu mes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="showcase-row reverse">
+            <div class="showcase-grid">
+                <img src="assets/screenshots/ipad-03.png" alt="Cálculo automático de tiempos extra" loading="lazy">
+                <div class="showcase-text">
+                    <h2>Tiempos extra al instante</h2>
+                    <p>Cálculo automático según tu Contrato Colectivo de Trabajo. Sin hojas de cálculo, sin errores, sin estrés a fin de mes.</p>
+                </div>
             </div>
         </div>
     </div>
