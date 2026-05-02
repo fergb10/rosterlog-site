@@ -584,7 +584,10 @@
                         </div>
                     </div>
 
-                    <button id="openPortal" class="btn block" style="margin-top:20px">Administrar suscripción</button>
+                    <button id="resumeSub" class="btn block" style="margin-top:20px;display:none;background:#34c759">
+                        Reanudar suscripción
+                    </button>
+                    <button id="openPortal" class="btn block" style="margin-top:12px">Administrar suscripción</button>
                     <p id="manageHint" class="manage-hint">
                         Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Stripe.
                     </p>
@@ -919,16 +922,23 @@
         const isAppStore = storeUp === "APP_STORE" || storeUp === "MAC_APP_STORE" || productId.startsWith("com.rosterlog.");
         const isPromoFlow = storeUp === "PROMOTIONAL" || (!isStripe && !isAppStore);
 
+        const resumeBtn = document.getElementById("resumeSub");
         if (isStripe) {
             openPortal.style.display = "";
-            openPortal.textContent = canceled ? "Reactivar / cambiar plan" : "Administrar suscripción";
+            openPortal.textContent = canceled ? "Cambiar plan o gestionar pago" : "Administrar suscripción";
             manageHint.textContent = "Cambia de plan, actualiza tu tarjeta, descarga facturas o cancela en el portal seguro de Stripe.";
+            // Botón directo "Reanudar" — solo visible cuando la sub está
+            // cancel_at_period_end. Llama Cloud Function que pone
+            // cancel_at_period_end=false sin abrir el portal de Stripe.
+            resumeBtn.style.display = canceled ? "" : "none";
         } else if (isAppStore) {
             openPortal.style.display = "none";
+            resumeBtn.style.display = "none";
             manageHint.innerHTML = 'Compraste esta suscripción desde tu iPhone. Gestiónala en <a href="https://apps.apple.com/account/subscriptions" style="color:var(--accent)">Ajustes iOS → Apple ID → Suscripciones</a>.';
         } else {
             // Promocional u origen desconocido: sin portal, solo mensaje.
             openPortal.style.display = "none";
+            resumeBtn.style.display = "none";
             manageHint.textContent = isPromoFlow
                 ? "Acceso de cortesía otorgado por el equipo de RosterLog. Al terminar, podrás suscribirte desde esta misma página."
                 : "Suscripción activa. Contacta a soporte si necesitas cambios.";
@@ -1487,6 +1497,35 @@
         } catch (err) {
             console.error(err);
             alert(humanCheckoutError(err));
+            btn.disabled = false;
+            btn.textContent = originalLabel;
+        }
+    });
+
+    // Handler "Reanudar suscripción": llama Cloud Function que pone
+    // cancel_at_period_end=false en Stripe sin abrir el portal. Más
+    // directo y predecible que pasar por el portal donde el botón
+    // Resume puede no estar visible según versión/config.
+    $("resumeSub").addEventListener("click", async () => {
+        const btn = $("resumeSub");
+        const originalLabel = btn.textContent;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>';
+        try {
+            const call = httpsCallable(functions, "stripeResumeSubscription");
+            const res = await call({});
+            if (res.data?.alreadyActive) {
+                alert("Tu suscripción ya está activa. No hay nada que reanudar.");
+            } else if (res.data?.ok) {
+                alert("¡Listo! Tu suscripción se reanudó. La renovación automática volvió a activarse.");
+                // Refrescar la pantalla con el estado nuevo.
+                location.reload();
+            } else {
+                throw new Error("Respuesta inesperada");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("No se pudo reanudar: " + (err?.message || "intenta de nuevo en unos segundos."));
             btn.disabled = false;
             btn.textContent = originalLabel;
         }
