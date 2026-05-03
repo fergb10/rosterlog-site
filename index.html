@@ -144,18 +144,100 @@
             border: 1px solid var(--border);
         }
         .hero-mockup {
-            margin: 64px auto 0;
-            max-width: 720px;
+            margin: 72px auto 0;
+            max-width: 920px;
         }
-        .hero-mockup img {
-            width: 100%; height: auto; display: block;
-            border-radius: 14px;
+
+        /* ────────── iPad device frame (CSS) ──────────
+         * Marco renderizado puro CSS: bezel oscuro, screen redondeada,
+         * camera dot. Se adapta automáticamente a dark/light mode.
+         * El screenshot raw va dentro y queda perfectamente integrado
+         * sin importar el theme — el bezel cubre los bordes raros.
+         */
+        .device-ipad {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1501 / 1048;
+            border-radius: 24px;
+            background: #1d1d1f;
+            padding: 14px;
+            box-sizing: border-box;
         }
+        @media (prefers-color-scheme: light) {
+            .device-ipad { background: #1d1d1f; }
+        }
+        @media (prefers-color-scheme: dark) {
+            .device-ipad { background: #2c2c2e; }
+        }
+        .device-ipad::before {
+            /* camera dot superior centrada */
+            content: "";
+            position: absolute;
+            top: 6px; left: 50%;
+            transform: translateX(-50%);
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: #3a3a3c;
+        }
+        .device-ipad .screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg);
+        }
+        .device-ipad .screen img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ────────── iPhone device frame (CSS) ──────────
+         * Bezel más fino, dynamic island arriba.
+         */
+        .device-iphone {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 852 / 1846;
+            border-radius: 38px;
+            background: #1d1d1f;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        @media (prefers-color-scheme: dark) {
+            .device-iphone { background: #2c2c2e; }
+        }
+        .device-iphone::before {
+            /* Dynamic Island */
+            content: "";
+            position: absolute;
+            top: 14px; left: 50%;
+            transform: translateX(-50%);
+            width: 90px; height: 22px;
+            border-radius: 22px;
+            background: #000;
+            z-index: 2;
+        }
+        .device-iphone .screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            overflow: hidden;
+            background: var(--bg);
+        }
+        .device-iphone .screen img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         @media (max-width: 900px) {
-            .hero-mockup { max-width: 560px; margin-top: 56px; }
+            .hero-mockup { max-width: 720px; margin-top: 60px; }
         }
         @media (max-width: 600px) {
-            .hero-mockup { max-width: 100%; margin-top: 40px; }
+            .hero-mockup { max-width: 100%; margin-top: 44px; }
+            .device-ipad { padding: 10px; border-radius: 18px; }
+            .device-ipad .screen { border-radius: 9px; }
         }
 
         /* ───────── Showcase (estilo Apple marketing) ─────────
@@ -167,10 +249,10 @@
         }
         .showcase-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.4fr 1fr;
             align-items: center;
-            gap: 96px;
-            max-width: 1100px;
+            gap: 80px;
+            max-width: 1180px;
             margin: 0 auto;
             padding: 80px 0;
         }
@@ -184,20 +266,8 @@
             justify-content: center;
             align-items: center;
         }
-        .showcase-media .frame {
-            width: 100%;
-            max-width: 420px;
-            /* Imágenes son 2064x2752 (portrait 3:4 nativo del iPad). */
-            aspect-ratio: 2064 / 2752;
-            border-radius: 18px;
-            overflow: hidden;
-            background: var(--bg-alt);
-        }
-        .showcase-media .frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
+        .showcase-media .device-ipad {
+            max-width: 560px;
         }
         .showcase-text {
             padding: 0;
@@ -548,7 +618,11 @@
         </div>
 
         <div class="hero-mockup">
-            <img src="assets/screenshots/ipad-01.png" alt="RosterLog en iPad" loading="lazy">
+            <div class="device-ipad" aria-label="RosterLog en iPad">
+                <div class="screen">
+                    <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog en iPad">
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -598,14 +672,16 @@
     <div class="container">
         <article class="showcase-row">
             <div class="showcase-media">
-                <div class="frame">
-                    <img src="assets/screenshots/ipad-02.png" alt="Calendario de servicios en RosterLog" loading="lazy">
+                <div class="device-ipad">
+                    <div class="screen">
+                        <img src="assets/screenshots/raw/ipad-eventos.png" alt="Calendario de eventos en RosterLog" loading="lazy">
+                    </div>
                 </div>
             </div>
             <div class="showcase-text">
-                <span class="showcase-eyebrow">Calendario</span>
-                <h2>Tu mes,<br>claro de un vistazo.</h2>
-                <p>Visualiza tus servicios día por día. Horarios locales y Zulu, rutas, countdown al próximo check-in.</p>
+                <span class="showcase-eyebrow">Eventos</span>
+                <h2>Tu mes, claro de un vistazo.</h2>
+                <p>Visualiza tus servicios día por día. Horarios locales y Zulu, rutas, y countdown al próximo check-in.</p>
                 <ul class="showcase-bullets">
                     <li>Vista mensual y semanal con un toque.</li>
                     <li>Detalle de cada vuelo en un swipe.</li>
@@ -616,18 +692,60 @@
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <div class="frame">
-                    <img src="assets/screenshots/ipad-03.png" alt="Cálculo de tiempos extra en RosterLog" loading="lazy">
+                <div class="device-ipad">
+                    <div class="screen">
+                        <img src="assets/screenshots/raw/ipad-roster.jpg" alt="Roster del piloto en RosterLog" loading="lazy">
+                    </div>
                 </div>
             </div>
             <div class="showcase-text">
-                <span class="showcase-eyebrow">Tiempos extra</span>
-                <h2>El cálculo lo hace<br>la app por ti.</h2>
-                <p>Tiempos extra automáticos según tu Contrato Colectivo de Trabajo. Sin hojas de cálculo. Sin errores. Sin estrés a fin de mes.</p>
+                <span class="showcase-eyebrow">Roster</span>
+                <h2>Tu rol completo, importado en segundos.</h2>
+                <p>Sube el PDF y la app organiza todos tus vuelos. Sin escribir nada a mano.</p>
                 <ul class="showcase-bullets">
-                    <li>CCT actualizado: Contrato A y B.</li>
-                    <li>Servicio diario, mensual e irrebasable.</li>
-                    <li>Reporte exportable listo para revisar.</li>
+                    <li>Aeroméxico y Connect soportados.</li>
+                    <li>Detección automática de mes y horarios.</li>
+                    <li>Servicios, intocables y reservas reconocidos.</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="showcase-row">
+            <div class="showcase-media">
+                <div class="device-ipad">
+                    <div class="screen">
+                        <img src="assets/screenshots/raw/ipad-estadisticas.jpg" alt="Estadísticas de vuelo en RosterLog" loading="lazy">
+                    </div>
+                </div>
+            </div>
+            <div class="showcase-text">
+                <span class="showcase-eyebrow">Estadísticas</span>
+                <h2>Mira hasta dónde has volado.</h2>
+                <p>Mapas de rutas, países visitados, aeropuertos y distancias. Tu carrera entera en una vista.</p>
+                <ul class="showcase-bullets">
+                    <li>Resumen mensual y anual.</li>
+                    <li>Tiempo total volado y rutas más frecuentes.</li>
+                    <li>Logbook clásico para tus archivos.</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="showcase-row reverse">
+            <div class="showcase-media">
+                <div class="device-ipad">
+                    <div class="screen">
+                        <img src="assets/screenshots/raw/ipad-metar.jpg" alt="Información de aeropuertos y METAR" loading="lazy">
+                    </div>
+                </div>
+            </div>
+            <div class="showcase-text">
+                <span class="showcase-eyebrow">Aeropuertos</span>
+                <h2>METAR, TAF y datos al instante.</h2>
+                <p>Información actualizada de cada aeropuerto que visitas. Sin abrir 5 apps distintas.</p>
+                <ul class="showcase-bullets">
+                    <li>METAR y TAF en formato legible.</li>
+                    <li>Coordenadas, elevación y zona horaria.</li>
+                    <li>Histórico de tus visitas a cada aeropuerto.</li>
                 </ul>
             </div>
         </article>
