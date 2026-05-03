@@ -145,7 +145,64 @@
         }
         .hero-mockup {
             margin: 72px auto 0;
-            max-width: 720px;
+            max-width: 640px;
+            position: relative;
+        }
+        /* Duo iPad + iPhone — efecto profundidad para hero. iPhone se
+         * posiciona absoluto, ligeramente a la derecha y abajo del iPad,
+         * creando una composición con jerarquía visual. Animación sutil
+         * de levitar al cargar.
+         */
+        .hero-mockup .device-iphone {
+            position: absolute;
+            right: -8%;
+            bottom: -10%;
+            width: 26%;
+            z-index: 2;
+            animation: floatIn 0.9s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+        }
+        .hero-mockup .device-ipad {
+            animation: floatIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+        }
+        /* Glow ambient debajo del duo, da sensación de levitar */
+        .hero-mockup::before {
+            content: "";
+            position: absolute;
+            left: 10%; right: 10%; bottom: -40px;
+            height: 80px;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(0, 122, 255, 0.18) 0%,
+                rgba(88, 86, 214, 0.10) 40%,
+                transparent 70%
+            );
+            filter: blur(20px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        @media (prefers-color-scheme: dark) {
+            .hero-mockup::before {
+                background: radial-gradient(
+                    ellipse at center,
+                    rgba(10, 132, 255, 0.32) 0%,
+                    rgba(88, 86, 214, 0.18) 40%,
+                    transparent 70%
+                );
+            }
+        }
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-mockup .device-ipad,
+            .hero-mockup .device-iphone { animation: none; }
         }
 
         /* ────────── iPad device frame (CSS) ──────────
@@ -233,12 +290,25 @@
         }
 
         @media (max-width: 900px) {
-            .hero-mockup { max-width: 600px; margin-top: 56px; }
+            .hero-mockup { max-width: 540px; margin-top: 56px; }
+            .hero-mockup .device-iphone {
+                right: -6%; bottom: -8%; width: 24%;
+            }
         }
         @media (max-width: 600px) {
-            .hero-mockup { max-width: 100%; margin-top: 40px; }
+            .hero-mockup { max-width: 92%; margin-top: 40px; }
             .device-ipad { padding: 8px; border-radius: 16px; }
             .device-ipad .screen { border-radius: 8px; }
+            .hero-mockup .device-iphone {
+                width: 22%;
+                right: -4%; bottom: -6%;
+            }
+            .device-iphone { padding: 5px; border-radius: 24px; }
+            .device-iphone .screen { border-radius: 19px; }
+            .device-iphone .screen::before {
+                width: 60px; height: 14px; top: 6px;
+            }
+            .hero-mockup::before { display: none; }
         }
 
         /* ───────── Showcase (estilo Apple marketing) ─────────
@@ -624,6 +694,11 @@
                     <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog en iPad">
                 </div>
             </div>
+            <div class="device-iphone" aria-hidden="true">
+                <div class="screen">
+                    <img src="assets/screenshots/raw/iphone-eventos.png" alt="">
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -695,7 +770,7 @@
             <div class="showcase-media">
                 <div class="device-ipad">
                     <div class="screen">
-                        <img src="assets/screenshots/raw/ipad-roster.jpg" alt="Roster del piloto en RosterLog" loading="lazy">
+                        <img src="assets/screenshots/raw/ipad-roster.png" alt="Roster del piloto en RosterLog" loading="lazy">
                     </div>
                 </div>
             </div>
