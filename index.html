@@ -133,12 +133,12 @@
              * Chrome ~6px) que ignora `font-size` menores. Usamos
              * font-size 10px + transform: scale(0.5) para visualmente
              * tener 5px sin chocar con el límite del browser.
-             * `display: inline-block` para que el scale tome efecto.
-             * `transform-origin: top center` mantiene el centrado debajo
-             * del CTA al escalar.
+             * Bloque con text-align center heredado del padre `.hero`
+             * + transform-origin: center top mantiene el centrado bajo el CTA.
              */
-            margin: 14px auto 0;
-            display: inline-block;
+            margin: 14px 0 -10px;
+            width: 100%;
+            text-align: center;
             font-size: 10px;
             font-weight: 600;
             letter-spacing: 0.06em;
@@ -146,9 +146,7 @@
             color: var(--text-secondary);
             opacity: 0.55;
             transform: scale(0.5);
-            transform-origin: top center;
-            /* Compensa el espacio vacío que deja el scale */
-            margin-bottom: -10px;
+            transform-origin: center top;
         }
         .hero-proof {
             margin-top: 40px;
