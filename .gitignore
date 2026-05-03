@@ -1,0 +1,27 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Dependencies (por si en el futuro agregas npm)
+node_modules/
+
+# Variables de entorno (NUNCA commitear)
+.env
+.env.local
+.env.*.local
+
+# Secrets
+serviceAccount*.json
+*-key.json
+*.pem
+*.p12
+
+# Build artifacts
+/dist
+/build
+/.cache
