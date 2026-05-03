@@ -181,14 +181,20 @@
                     0 16px 40px -10px rgba(0, 0, 0, 0.5);
             }
         }
-        /* Camera frontal — 3 capas: ring exterior, lente, reflex */
+        /* Camera frontal del iPad Pro 11" M2 — 3 capas: ring exterior,
+         * lente con reflejo, sombra interior. Posición: lado IZQUIERDO
+         * vertical-center (orientación landscape estándar — el camera
+         * está en el lado largo del device cuando lo sostienes en
+         * landscape con el conector USB-C abajo).
+         */
         .ipad-frame::before {
             content: "";
             position: absolute;
-            top: 1.5%; left: 50%;
-            transform: translateX(-50%);
-            width: 0.55%; height: 0.55%;
-            min-width: 5px; min-height: 5px;
+            top: 50%; left: 1.6%;
+            transform: translateY(-50%);
+            width: 0.6%;
+            aspect-ratio: 1;
+            min-width: 5px;
             border-radius: 50%;
             background:
                 radial-gradient(circle at 30% 30%,
