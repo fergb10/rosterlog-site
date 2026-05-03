@@ -239,75 +239,83 @@
          * IMPORTANTE: usamos notación X%/Y% en border-radius para que las
          * esquinas sean CIRCULARES (no elípticas como sale con un solo %).
          * ────────────────────────────────────────────────────────── */
+        /* iPhone 15 Pro Max — bezel ULTRA fino real (~1.55mm sobre body
+         * 76.7mm = 2% pero visualmente Apple los hace lucir aún más
+         * delgados con tono casi-negro continuo entre bezel y screen).
+         * Trick clave: el bezel y el área del Dynamic Island deben ser
+         * del MISMO color para que se fundan visualmente. El screenshot
+         * propio del iOS ya lleva el área negra del status bar, así que
+         * la "thickness aparente" del top viene de eso, no del bezel CSS.
+         */
         .iphone-frame {
             position: relative;
             display: inline-block;
             width: 100%;
-            padding: 2.02%;
+            padding: 1.4%;
             box-sizing: border-box;
-            border-radius: 17.6% / 8.4%;
-            background:
-                linear-gradient(135deg, #2a2a2c 0%, #1d1d1f 50%, #1a1a1c 100%);
+            border-radius: 18% / 8.6%;
+            background: #0a0a0c;
             box-shadow:
-                inset 0 0.5px 0 rgba(255, 255, 255, 0.1),
-                inset 0 -0.5px 0 rgba(0, 0, 0, 0.55),
-                0 1px 2px rgba(0, 0, 0, 0.18),
-                0 14px 36px -8px rgba(0, 0, 0, 0.28);
+                inset 0 0.5px 0 rgba(255, 255, 255, 0.12),
+                inset 0 -0.5px 0 rgba(0, 0, 0, 0.6),
+                inset 0 0 0 0.5px rgba(60, 60, 65, 0.5),
+                0 1px 2px rgba(0, 0, 0, 0.2),
+                0 14px 36px -8px rgba(0, 0, 0, 0.3);
         }
         @media (prefers-color-scheme: dark) {
             .iphone-frame {
-                background:
-                    linear-gradient(135deg, #38383a 0%, #2c2c2e 50%, #28282a 100%);
+                background: #1a1a1c;
                 box-shadow:
-                    inset 0 0.5px 0 rgba(255, 255, 255, 0.07),
+                    inset 0 0.5px 0 rgba(255, 255, 255, 0.08),
                     inset 0 -0.5px 0 rgba(0, 0, 0, 0.7),
-                    0 1px 2px rgba(0, 0, 0, 0.45),
-                    0 18px 48px -10px rgba(0, 0, 0, 0.6);
+                    inset 0 0 0 0.5px rgba(80, 80, 85, 0.4),
+                    0 1px 2px rgba(0, 0, 0, 0.5),
+                    0 18px 48px -10px rgba(0, 0, 0, 0.65);
             }
         }
         .iphone-frame .iphone-screen {
             position: relative;
             width: 100%;
             aspect-ratio: 1290 / 2796;
-            border-radius: 16.5% / 7.6%;
+            border-radius: 16.5% / 7.9%;
             overflow: hidden;
-            background: var(--bg);
-            box-shadow:
-                inset 0 0 0 0.5px rgba(0, 0, 0, 0.4);
+            background: #000;
         }
-        /* Dynamic Island — width 29% del display, pill shape, gradient sutil */
+        /* Dynamic Island — el screenshot ya tiene el área de status bar
+         * negra; sólo necesitamos overlay del pill shape exacto encima.
+         * Width 28% (real Apple specs), top offset 1.3% (11pt sobre 932pt).
+         */
         .iphone-frame .iphone-screen::before {
             content: "";
             position: absolute;
-            top: 1.5%;
+            top: 1.3%;
             left: 50%;
             transform: translateX(-50%);
-            width: 29%;
+            width: 28%;
             aspect-ratio: 125 / 36;
             border-radius: 999px;
-            background:
-                radial-gradient(ellipse at 30% 35%,
-                    #1a1a1c 0%,
-                    #000 60%);
-            box-shadow:
-                inset 0 0.4px 0 rgba(255, 255, 255, 0.06),
-                inset 0 -0.4px 0 rgba(0, 0, 0, 0.6);
+            background: #000;
             z-index: 2;
         }
-        /* Camera lens dentro del island (lado derecho) */
-        .iphone-frame .iphone-screen::after {
+        .iphone-frame .iphone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        /* Side buttons — Camera Control derecho + Action button izquierdo,
+         * detalles realistas del iPhone 15 Pro Max.
+         */
+        .iphone-frame::after {
+            /* Camera Control button (lado derecho, ~30% from top) */
             content: "";
             position: absolute;
-            top: 1.85%;
-            left: 60%;
-            width: 1.4%;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            background:
-                radial-gradient(circle at 35% 35%,
-                    rgba(70, 100, 130, 0.65) 0%,
-                    rgba(15, 20, 30, 1) 70%);
-            z-index: 3;
+            right: -0.4%;
+            top: 28%;
+            width: 0.8%;
+            height: 9%;
+            border-radius: 1px;
+            background: linear-gradient(90deg, #1a1a1c 0%, #2c2c2e 50%, #1a1a1c 100%);
         }
         .iphone-frame .iphone-screen img {
             width: 100%;
