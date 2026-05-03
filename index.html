@@ -145,50 +145,48 @@
         }
         .hero-mockup {
             margin: 72px auto 0;
-            max-width: 920px;
+            max-width: 720px;
         }
 
         /* ────────── iPad device frame (CSS) ──────────
-         * Marco renderizado puro CSS: bezel oscuro, screen redondeada,
-         * camera dot. Se adapta automáticamente a dark/light mode.
-         * El screenshot raw va dentro y queda perfectamente integrado
-         * sin importar el theme — el bezel cubre los bordes raros.
+         * El aspect-ratio se aplica al .screen (no al frame outer) para
+         * que el screenshot mantenga sus proporciones exactas sin
+         * recortarse. El bezel envuelve el screen con padding fijo.
          */
         .device-ipad {
             position: relative;
+            display: inline-block;
             width: 100%;
-            aspect-ratio: 1501 / 1048;
-            border-radius: 24px;
+            border-radius: 22px;
             background: #1d1d1f;
-            padding: 14px;
+            padding: 12px;
             box-sizing: border-box;
-        }
-        @media (prefers-color-scheme: light) {
-            .device-ipad { background: #1d1d1f; }
         }
         @media (prefers-color-scheme: dark) {
             .device-ipad { background: #2c2c2e; }
         }
         .device-ipad::before {
-            /* camera dot superior centrada */
+            /* camera dot superior centrada (sobre el bezel) */
             content: "";
             position: absolute;
-            top: 6px; left: 50%;
+            top: 5px; left: 50%;
             transform: translateX(-50%);
-            width: 5px; height: 5px;
+            width: 4px; height: 4px;
             border-radius: 50%;
             background: #3a3a3c;
         }
         .device-ipad .screen {
             width: 100%;
-            height: 100%;
-            border-radius: 12px;
+            aspect-ratio: 1501 / 1048;
+            border-radius: 10px;
             overflow: hidden;
             background: var(--bg);
+            display: block;
         }
         .device-ipad .screen img {
-            width: 100%; height: 100%;
-            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             display: block;
         }
 
@@ -197,8 +195,8 @@
          */
         .device-iphone {
             position: relative;
+            display: inline-block;
             width: 100%;
-            aspect-ratio: 852 / 1846;
             border-radius: 38px;
             background: #1d1d1f;
             padding: 8px;
@@ -207,37 +205,40 @@
         @media (prefers-color-scheme: dark) {
             .device-iphone { background: #2c2c2e; }
         }
-        .device-iphone::before {
-            /* Dynamic Island */
+        .device-iphone .screen {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 852 / 1846;
+            border-radius: 30px;
+            overflow: hidden;
+            background: var(--bg);
+            display: block;
+        }
+        .device-iphone .screen::before {
+            /* Dynamic Island dentro del screen */
             content: "";
             position: absolute;
-            top: 14px; left: 50%;
+            top: 10px; left: 50%;
             transform: translateX(-50%);
             width: 90px; height: 22px;
             border-radius: 22px;
             background: #000;
             z-index: 2;
         }
-        .device-iphone .screen {
+        .device-iphone .screen img {
             width: 100%;
             height: 100%;
-            border-radius: 30px;
-            overflow: hidden;
-            background: var(--bg);
-        }
-        .device-iphone .screen img {
-            width: 100%; height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             display: block;
         }
 
         @media (max-width: 900px) {
-            .hero-mockup { max-width: 720px; margin-top: 60px; }
+            .hero-mockup { max-width: 600px; margin-top: 56px; }
         }
         @media (max-width: 600px) {
-            .hero-mockup { max-width: 100%; margin-top: 44px; }
-            .device-ipad { padding: 10px; border-radius: 18px; }
-            .device-ipad .screen { border-radius: 9px; }
+            .hero-mockup { max-width: 100%; margin-top: 40px; }
+            .device-ipad { padding: 8px; border-radius: 16px; }
+            .device-ipad .screen { border-radius: 8px; }
         }
 
         /* ───────── Showcase (estilo Apple marketing) ─────────
