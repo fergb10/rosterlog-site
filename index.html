@@ -143,41 +143,42 @@
             padding: 8px 14px; border-radius: 999px;
             border: 1px solid var(--border);
         }
+        /* ────────── Hero — screenshot principal sin marco ──────────
+         * Imagen iPad landscape con border-radius generoso, sutil border
+         * que ayuda a "sellar" los bordes en dark mode (sin él, los
+         * pixels claros del UI se mezclan con el fondo). Glow ambient
+         * radial debajo da profundidad sin ser invasivo.
+         */
         .hero-mockup {
             margin: 72px auto 0;
-            max-width: 640px;
+            max-width: 580px;
             position: relative;
-        }
-        /* Duo iPad + iPhone — efecto profundidad para hero. iPhone se
-         * posiciona absoluto, ligeramente a la derecha y abajo del iPad,
-         * creando una composición con jerarquía visual. Animación sutil
-         * de levitar al cargar.
-         */
-        .hero-mockup .device-iphone {
-            position: absolute;
-            right: -8%;
-            bottom: -10%;
-            width: 26%;
-            z-index: 2;
-            animation: floatIn 0.9s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-        }
-        .hero-mockup .device-ipad {
             animation: floatIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
         }
-        /* Glow ambient debajo del duo, da sensación de levitar */
+        .hero-mockup img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+        }
+        /* Glow ambient — gradient radial azul→morado, blureado, debajo
+         * del screenshot. Sutil pero da sensación de levitación. Solo
+         * visible en hero (no en showcase) para no sobrecargar.
+         */
         .hero-mockup::before {
             content: "";
             position: absolute;
-            left: 10%; right: 10%; bottom: -40px;
-            height: 80px;
+            left: 8%; right: 8%; bottom: -50px;
+            height: 100px;
             background: radial-gradient(
                 ellipse at center,
-                rgba(0, 122, 255, 0.18) 0%,
-                rgba(88, 86, 214, 0.10) 40%,
-                transparent 70%
+                rgba(0, 122, 255, 0.20) 0%,
+                rgba(88, 86, 214, 0.12) 40%,
+                transparent 75%
             );
-            filter: blur(20px);
-            z-index: 0;
+            filter: blur(28px);
+            z-index: -1;
             pointer-events: none;
         }
         @media (prefers-color-scheme: dark) {
@@ -185,137 +186,63 @@
                 background: radial-gradient(
                     ellipse at center,
                     rgba(10, 132, 255, 0.32) 0%,
-                    rgba(88, 86, 214, 0.18) 40%,
-                    transparent 70%
+                    rgba(88, 86, 214, 0.20) 40%,
+                    transparent 75%
                 );
             }
         }
         @keyframes floatIn {
-            from {
-                opacity: 0;
-                transform: translateY(24px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @media (prefers-reduced-motion: reduce) {
-            .hero-mockup .device-ipad,
-            .hero-mockup .device-iphone { animation: none; }
+            .hero-mockup { animation: none; }
         }
 
-        /* ────────── iPad Pro 11" (M2) ──────────
-         * Specs: 247.6 × 178.5 mm, display 2388 × 1668 px.
-         * Bezel uniforme ~7.85mm = 3.17% del ancho del device.
-         * Corner radius outer: ~30pt, screen: ~17pt.
-         * Camera centrada sobre el bezel superior (orientación landscape).
+        /* ────────── Showcase media — screenshot sin marco ──────────
+         * Bordes sutiles para definir la imagen contra el fondo, sin
+         * sombra agresiva. Hover suave con lift. Reveal-on-scroll vía
+         * IntersectionObserver (CSS class .visible).
          */
-        .device-ipad {
-            position: relative;
-            display: inline-block;
+        .showcase-media img {
             width: 100%;
-            background: #1d1d1f;
-            padding: 3.17%;
-            border-radius: clamp(14px, 2.5%, 28px);
-            box-sizing: border-box;
-        }
-        @media (prefers-color-scheme: dark) {
-            .device-ipad { background: #2c2c2e; }
-        }
-        .device-ipad::before {
-            /* Camera frontal — landscape: top-center sobre bezel.
-             * Real: 1.5mm diámetro. En % del ancho del bezel: ~50% del padding.
-             */
-            content: "";
-            position: absolute;
-            top: 1.5%; left: 50%;
-            transform: translateX(-50%);
-            width: 0.6%; height: 0.6%;
-            min-width: 4px; min-height: 4px;
-            border-radius: 50%;
-            background: #3a3a3c;
-        }
-        .device-ipad .screen {
-            width: 100%;
-            aspect-ratio: 2388 / 1668;
-            border-radius: clamp(8px, 1.4%, 16px);
-            overflow: hidden;
-            background: var(--bg);
+            height: auto;
             display: block;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .device-ipad .screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
+        .showcase-media:hover img {
+            transform: translateY(-4px);
         }
-
-        /* ────────── iPhone 15 Pro Max ──────────
-         * Specs: 159.9 × 76.7 mm, display 2796 × 1290 px.
-         * Bezel uniforme ~2.0mm = 2.6% del ancho del device.
-         * Display corner radius: ~55pt → ~17.5% del ancho.
-         * Outer device corner radius: ~21% del ancho.
-         * Dynamic Island: 124.7×35.5pt → ~32.6% width × 9.3% width-equivalent
-         * height del screen, posicionada 11pt = ~3% from top.
+        /* Reveal on scroll: la imagen empieza ligeramente abajo y opaca,
+         * luego sube y aparece cuando entra al viewport. Más profesional
+         * que un CSS animation directa.
          */
-        .device-iphone {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            background: #1d1d1f;
-            padding: 2.6%;
-            border-radius: 21%;
-            box-sizing: border-box;
+        .showcase-row {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        @media (prefers-color-scheme: dark) {
-            .device-iphone { background: #2c2c2e; }
+        .showcase-row.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .device-iphone .screen {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1290 / 2796;
-            border-radius: 17.5%;
-            overflow: hidden;
-            background: var(--bg);
-            display: block;
-        }
-        .device-iphone .screen::before {
-            /* Dynamic Island — 124.7×35.5pt en specs. Como % del screen:
-             * width ~32%, aspect-ratio ~3.5:1, top offset ~2.5%.
-             * Apple usa border-radius 100px (pill shape).
-             */
-            content: "";
-            position: absolute;
-            top: 2.5%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32%;
-            aspect-ratio: 124.7 / 35.5;
-            border-radius: 999px;
-            background: #000;
-            z-index: 2;
-        }
-        .device-iphone .screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
+        @media (prefers-reduced-motion: reduce) {
+            .showcase-row { opacity: 1; transform: none; transition: none; }
+            .showcase-media img { transition: none; }
+            .showcase-media:hover img { transform: none; }
         }
 
         @media (max-width: 900px) {
-            .hero-mockup { max-width: 540px; margin-top: 56px; }
-            .hero-mockup .device-iphone {
-                right: -6%; bottom: -8%; width: 24%;
-            }
+            .hero-mockup { max-width: 480px; margin-top: 56px; }
         }
         @media (max-width: 600px) {
             .hero-mockup { max-width: 92%; margin-top: 40px; }
-            .hero-mockup .device-iphone {
-                width: 22%;
-                right: -4%; bottom: -6%;
-            }
+            .hero-mockup img { border-radius: 14px; }
             .hero-mockup::before { display: none; }
+            .showcase-media img { border-radius: 12px; }
         }
 
         /* ───────── Showcase (estilo Apple marketing) ─────────
@@ -696,16 +623,7 @@
         </div>
 
         <div class="hero-mockup">
-            <div class="device-ipad" aria-label="RosterLog en iPad">
-                <div class="screen">
-                    <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog en iPad">
-                </div>
-            </div>
-            <div class="device-iphone" aria-hidden="true">
-                <div class="screen">
-                    <img src="assets/screenshots/raw/iphone-eventos.png" alt="">
-                </div>
-            </div>
+            <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog">
         </div>
     </div>
 </section>
@@ -755,11 +673,7 @@
     <div class="container">
         <article class="showcase-row">
             <div class="showcase-media">
-                <div class="device-ipad">
-                    <div class="screen">
-                        <img src="assets/screenshots/raw/ipad-eventos.png" alt="Calendario de eventos en RosterLog" loading="lazy">
-                    </div>
-                </div>
+                <img src="assets/screenshots/raw/ipad-eventos.png" alt="Calendario de eventos en RosterLog" loading="lazy">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Eventos</span>
@@ -775,11 +689,7 @@
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <div class="device-ipad">
-                    <div class="screen">
-                        <img src="assets/screenshots/raw/ipad-roster.png" alt="Roster del piloto en RosterLog" loading="lazy">
-                    </div>
-                </div>
+                <img src="assets/screenshots/raw/ipad-roster.png" alt="Roster del piloto en RosterLog" loading="lazy">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Roster</span>
@@ -795,11 +705,7 @@
 
         <article class="showcase-row">
             <div class="showcase-media">
-                <div class="device-ipad">
-                    <div class="screen">
-                        <img src="assets/screenshots/raw/ipad-estadisticas.jpg" alt="Estadísticas de vuelo en RosterLog" loading="lazy">
-                    </div>
-                </div>
+                <img src="assets/screenshots/raw/ipad-estadisticas.jpg" alt="Estadísticas de vuelo en RosterLog" loading="lazy">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Estadísticas</span>
@@ -815,11 +721,7 @@
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <div class="device-ipad">
-                    <div class="screen">
-                        <img src="assets/screenshots/raw/ipad-metar.jpg" alt="Información de aeropuertos y METAR" loading="lazy">
-                    </div>
-                </div>
+                <img src="assets/screenshots/raw/ipad-metar.jpg" alt="Información de aeropuertos y METAR" loading="lazy">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Aeropuertos</span>
@@ -984,5 +886,30 @@
 </footer>
 
 <script src="assets/theme.js"></script>
+<script>
+    // Reveal-on-scroll para showcase rows. IntersectionObserver es más
+    // performante que listeners de scroll y respeta prefers-reduced-motion
+    // automáticamente porque la transición CSS ya se desactiva en ese caso.
+    (function() {
+        const rows = document.querySelectorAll('.showcase-row');
+        if (!('IntersectionObserver' in window) || rows.length === 0) {
+            // Fallback sin IO: muestra todo de inmediato.
+            rows.forEach(r => r.classList.add('visible'));
+            return;
+        }
+        const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            }
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -80px 0px'
+        });
+        rows.forEach(r => io.observe(r));
+    })();
+</script>
 </body>
 </html>
