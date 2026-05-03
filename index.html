@@ -205,37 +205,41 @@
             .hero-mockup .device-iphone { animation: none; }
         }
 
-        /* ────────── iPad device frame (CSS) ──────────
-         * El aspect-ratio se aplica al .screen (no al frame outer) para
-         * que el screenshot mantenga sus proporciones exactas sin
-         * recortarse. El bezel envuelve el screen con padding fijo.
+        /* ────────── iPad Pro 11" (M2) ──────────
+         * Specs: 247.6 × 178.5 mm, display 2388 × 1668 px.
+         * Bezel uniforme ~7.85mm = 3.17% del ancho del device.
+         * Corner radius outer: ~30pt, screen: ~17pt.
+         * Camera centrada sobre el bezel superior (orientación landscape).
          */
         .device-ipad {
             position: relative;
             display: inline-block;
             width: 100%;
-            border-radius: 22px;
             background: #1d1d1f;
-            padding: 12px;
+            padding: 3.17%;
+            border-radius: clamp(14px, 2.5%, 28px);
             box-sizing: border-box;
         }
         @media (prefers-color-scheme: dark) {
             .device-ipad { background: #2c2c2e; }
         }
         .device-ipad::before {
-            /* camera dot superior centrada (sobre el bezel) */
+            /* Camera frontal — landscape: top-center sobre bezel.
+             * Real: 1.5mm diámetro. En % del ancho del bezel: ~50% del padding.
+             */
             content: "";
             position: absolute;
-            top: 5px; left: 50%;
+            top: 1.5%; left: 50%;
             transform: translateX(-50%);
-            width: 4px; height: 4px;
+            width: 0.6%; height: 0.6%;
+            min-width: 4px; min-height: 4px;
             border-radius: 50%;
             background: #3a3a3c;
         }
         .device-ipad .screen {
             width: 100%;
-            aspect-ratio: 1501 / 1048;
-            border-radius: 10px;
+            aspect-ratio: 2388 / 1668;
+            border-radius: clamp(8px, 1.4%, 16px);
             overflow: hidden;
             background: var(--bg);
             display: block;
@@ -247,16 +251,21 @@
             display: block;
         }
 
-        /* ────────── iPhone device frame (CSS) ──────────
-         * Bezel más fino, dynamic island arriba.
+        /* ────────── iPhone 15 Pro Max ──────────
+         * Specs: 159.9 × 76.7 mm, display 2796 × 1290 px.
+         * Bezel uniforme ~2.0mm = 2.6% del ancho del device.
+         * Display corner radius: ~55pt → ~17.5% del ancho.
+         * Outer device corner radius: ~21% del ancho.
+         * Dynamic Island: 124.7×35.5pt → ~32.6% width × 9.3% width-equivalent
+         * height del screen, posicionada 11pt = ~3% from top.
          */
         .device-iphone {
             position: relative;
             display: inline-block;
             width: 100%;
-            border-radius: 38px;
             background: #1d1d1f;
-            padding: 8px;
+            padding: 2.6%;
+            border-radius: 21%;
             box-sizing: border-box;
         }
         @media (prefers-color-scheme: dark) {
@@ -265,20 +274,25 @@
         .device-iphone .screen {
             position: relative;
             width: 100%;
-            aspect-ratio: 852 / 1846;
-            border-radius: 30px;
+            aspect-ratio: 1290 / 2796;
+            border-radius: 17.5%;
             overflow: hidden;
             background: var(--bg);
             display: block;
         }
         .device-iphone .screen::before {
-            /* Dynamic Island dentro del screen */
+            /* Dynamic Island — 124.7×35.5pt en specs. Como % del screen:
+             * width ~32%, aspect-ratio ~3.5:1, top offset ~2.5%.
+             * Apple usa border-radius 100px (pill shape).
+             */
             content: "";
             position: absolute;
-            top: 10px; left: 50%;
+            top: 2.5%;
+            left: 50%;
             transform: translateX(-50%);
-            width: 90px; height: 22px;
-            border-radius: 22px;
+            width: 32%;
+            aspect-ratio: 124.7 / 35.5;
+            border-radius: 999px;
             background: #000;
             z-index: 2;
         }
@@ -297,16 +311,9 @@
         }
         @media (max-width: 600px) {
             .hero-mockup { max-width: 92%; margin-top: 40px; }
-            .device-ipad { padding: 8px; border-radius: 16px; }
-            .device-ipad .screen { border-radius: 8px; }
             .hero-mockup .device-iphone {
                 width: 22%;
                 right: -4%; bottom: -6%;
-            }
-            .device-iphone { padding: 5px; border-radius: 24px; }
-            .device-iphone .screen { border-radius: 19px; }
-            .device-iphone .screen::before {
-                width: 60px; height: 14px; top: 6px;
             }
             .hero-mockup::before { display: none; }
         }
