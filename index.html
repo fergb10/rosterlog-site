@@ -143,41 +143,102 @@
             padding: 8px 14px; border-radius: 999px;
             border: 1px solid var(--border);
         }
-        /* ────────── Hero — screenshot principal sin marco ──────────
-         * Imagen iPad landscape con border-radius generoso, sutil border
-         * que ayuda a "sellar" los bordes en dark mode (sin él, los
-         * pixels claros del UI se mezclan con el fondo). Glow ambient
-         * radial debajo da profundidad sin ser invasivo.
+        /* ──────────────────────────────────────────────────────────
+         * Marco iPad Pro 11" realista (CSS avanzado)
+         * Técnicas:
+         *  • Layered gradient para bezel (efecto brushed metal sutil)
+         *  • Outer edge highlight con linear-gradient (brillo metálico)
+         *  • Inner shadow en el screen recess (la pantalla parece hundida)
+         *  • Camera multi-layer (ring + lens + reflection point)
+         *  • Bottom shadow ambient (el iPad "descansa" sobre superficie)
+         *  • Aspect-ratio 2388:1668 nativo del iPad Pro 11"
+         * ────────────────────────────────────────────────────────── */
+        .ipad-frame {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            padding: 3.17%;
+            box-sizing: border-box;
+            border-radius: clamp(16px, 2.6%, 30px);
+            /* Bezel: gradient diagonal sutil simula brushed metal */
+            background:
+                linear-gradient(135deg, #2a2a2c 0%, #1d1d1f 50%, #1a1a1c 100%);
+            /* Highlight metálico exterior + ambient shadow inferior */
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+                0 1px 2px rgba(0, 0, 0, 0.15),
+                0 12px 32px -8px rgba(0, 0, 0, 0.18);
+        }
+        @media (prefers-color-scheme: dark) {
+            .ipad-frame {
+                background:
+                    linear-gradient(135deg, #38383a 0%, #2c2c2e 50%, #28282a 100%);
+                box-shadow:
+                    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+                    0 1px 2px rgba(0, 0, 0, 0.4),
+                    0 16px 40px -10px rgba(0, 0, 0, 0.5);
+            }
+        }
+        /* Camera frontal — 3 capas: ring exterior, lente, reflex */
+        .ipad-frame::before {
+            content: "";
+            position: absolute;
+            top: 1.5%; left: 50%;
+            transform: translateX(-50%);
+            width: 0.55%; height: 0.55%;
+            min-width: 5px; min-height: 5px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 30% 30%,
+                    rgba(80, 110, 140, 0.85) 0%,
+                    rgba(20, 25, 35, 0.95) 60%,
+                    rgba(0, 0, 0, 1) 100%);
+            box-shadow:
+                inset 0 0 0 0.5px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+        }
+        /* Pantalla recessed con sombra interior leve */
+        .ipad-frame .ipad-screen {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2388 / 1668;
+            border-radius: clamp(8px, 1.4%, 16px);
+            overflow: hidden;
+            background: var(--bg);
+            box-shadow:
+                inset 0 0 0 0.5px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(0, 0, 0, 0.08);
+        }
+        .ipad-frame .ipad-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ────────── Hero ──────────
+         * iPad frame con glow ambient debajo + animación floatIn al cargar
          */
         .hero-mockup {
             margin: 72px auto 0;
-            max-width: 580px;
+            max-width: 600px;
             position: relative;
             animation: floatIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
         }
-        .hero-mockup img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 18px;
-            border: 1px solid var(--border);
-        }
-        /* Glow ambient — gradient radial azul→morado, blureado, debajo
-         * del screenshot. Sutil pero da sensación de levitación. Solo
-         * visible en hero (no en showcase) para no sobrecargar.
-         */
         .hero-mockup::before {
             content: "";
             position: absolute;
-            left: 8%; right: 8%; bottom: -50px;
+            left: 6%; right: 6%; bottom: -40px;
             height: 100px;
             background: radial-gradient(
                 ellipse at center,
-                rgba(0, 122, 255, 0.20) 0%,
-                rgba(88, 86, 214, 0.12) 40%,
+                rgba(0, 122, 255, 0.22) 0%,
+                rgba(88, 86, 214, 0.13) 40%,
                 transparent 75%
             );
-            filter: blur(28px);
+            filter: blur(32px);
             z-index: -1;
             pointer-events: none;
         }
@@ -185,8 +246,8 @@
             .hero-mockup::before {
                 background: radial-gradient(
                     ellipse at center,
-                    rgba(10, 132, 255, 0.32) 0%,
-                    rgba(88, 86, 214, 0.20) 40%,
+                    rgba(10, 132, 255, 0.36) 0%,
+                    rgba(88, 86, 214, 0.22) 40%,
                     transparent 75%
                 );
             }
@@ -199,26 +260,15 @@
             .hero-mockup { animation: none; }
         }
 
-        /* ────────── Showcase media — screenshot sin marco ──────────
-         * Bordes sutiles para definir la imagen contra el fondo, sin
-         * sombra agresiva. Hover suave con lift. Reveal-on-scroll vía
-         * IntersectionObserver (CSS class .visible).
+        /* ────────── Showcase media ──────────
+         * iPad frame + reveal-on-scroll + hover lift sutil
          */
-        .showcase-media img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 14px;
-            border: 1px solid var(--border);
+        .showcase-media .ipad-frame {
             transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .showcase-media:hover img {
+        .showcase-media:hover .ipad-frame {
             transform: translateY(-4px);
         }
-        /* Reveal on scroll: la imagen empieza ligeramente abajo y opaca,
-         * luego sube y aparece cuando entra al viewport. Más profesional
-         * que un CSS animation directa.
-         */
         .showcase-row {
             opacity: 0;
             transform: translateY(32px);
@@ -231,18 +281,17 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .showcase-row { opacity: 1; transform: none; transition: none; }
-            .showcase-media img { transition: none; }
-            .showcase-media:hover img { transform: none; }
+            .showcase-media .ipad-frame { transition: none; }
+            .showcase-media:hover .ipad-frame { transform: none; }
         }
 
         @media (max-width: 900px) {
-            .hero-mockup { max-width: 480px; margin-top: 56px; }
+            .hero-mockup { max-width: 500px; margin-top: 56px; }
         }
         @media (max-width: 600px) {
-            .hero-mockup { max-width: 92%; margin-top: 40px; }
-            .hero-mockup img { border-radius: 14px; }
+            .hero-mockup { max-width: 96%; margin-top: 40px; }
             .hero-mockup::before { display: none; }
-            .showcase-media img { border-radius: 12px; }
+            .ipad-frame { padding: 2.4%; }
         }
 
         /* ───────── Showcase (estilo Apple marketing) ─────────
@@ -623,7 +672,11 @@
         </div>
 
         <div class="hero-mockup">
-            <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog">
+            <div class="ipad-frame" aria-label="RosterLog en iPad">
+                <div class="ipad-screen">
+                    <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog">
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -673,7 +726,11 @@
     <div class="container">
         <article class="showcase-row">
             <div class="showcase-media">
-                <img src="assets/screenshots/raw/ipad-eventos.png" alt="Calendario de eventos en RosterLog" loading="lazy">
+                <div class="ipad-frame">
+                    <div class="ipad-screen">
+                        <img src="assets/screenshots/raw/ipad-eventos.png" alt="Calendario de eventos en RosterLog" loading="lazy">
+                    </div>
+                </div>
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Eventos</span>
@@ -689,7 +746,11 @@
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <img src="assets/screenshots/raw/ipad-roster.png" alt="Roster del piloto en RosterLog" loading="lazy">
+                <div class="ipad-frame">
+                    <div class="ipad-screen">
+                        <img src="assets/screenshots/raw/ipad-roster.png" alt="Roster del piloto en RosterLog" loading="lazy">
+                    </div>
+                </div>
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Roster</span>
@@ -705,7 +766,11 @@
 
         <article class="showcase-row">
             <div class="showcase-media">
-                <img src="assets/screenshots/raw/ipad-estadisticas.jpg" alt="Estadísticas de vuelo en RosterLog" loading="lazy">
+                <div class="ipad-frame">
+                    <div class="ipad-screen">
+                        <img src="assets/screenshots/raw/ipad-estadisticas.jpg" alt="Estadísticas de vuelo en RosterLog" loading="lazy">
+                    </div>
+                </div>
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Estadísticas</span>
@@ -721,7 +786,11 @@
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <img src="assets/screenshots/raw/ipad-metar.jpg" alt="Información de aeropuertos y METAR" loading="lazy">
+                <div class="ipad-frame">
+                    <div class="ipad-screen">
+                        <img src="assets/screenshots/raw/ipad-metar.jpg" alt="Información de aeropuertos y METAR" loading="lazy">
+                    </div>
+                </div>
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Aeropuertos</span>
