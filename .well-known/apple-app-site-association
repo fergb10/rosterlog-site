@@ -7,5 +7,8 @@
         "paths": ["/invite*", "/amigo*"]
       }
     ]
+  },
+  "webcredentials": {
+    "apps": ["7U3JC398CQ.com.fer.RosterLog"]
   }
 }
