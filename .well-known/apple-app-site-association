@@ -4,7 +4,7 @@
     "details": [
       {
         "appIDs": ["7U3JC398CQ.com.fer.RosterLog"],
-        "paths": ["/invite*"]
+        "paths": ["/invite*", "/amigo*"]
       }
     ]
   }
