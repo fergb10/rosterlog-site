@@ -3,12 +3,20 @@
     "apps": [],
     "details": [
       {
-        "appIDs": ["7U3JC398CQ.com.fer.RosterLog"],
-        "paths": ["/invite*", "/amigo*"]
+        "appIDs": [
+          "7U3JC398CQ.com.fer.RosterLog"
+        ],
+        "paths": [
+          "/invite*",
+          "/amigo*",
+          "/regalo*"
+        ]
       }
     ]
   },
   "webcredentials": {
-    "apps": ["7U3JC398CQ.com.fer.RosterLog"]
+    "apps": [
+      "7U3JC398CQ.com.fer.RosterLog"
+    ]
   }
 }

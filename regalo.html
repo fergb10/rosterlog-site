@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RosterLog — Un regalo te espera</title>
+    <meta name="robots" content="noindex">
+    <meta property="og:title" content="RosterLog — Un regalo te espera 🎁">
+    <meta property="og:description" content="Te regalaron RosterLog Pro. Ábrelo en tu iPhone o iPad para activarlo.">
+    <meta name="apple-itunes-app" content="app-id=6761634082, app-argument=rosterlog://regalo">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1d1d1f; background: #f5f5f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+        .card { background: #fff; border-radius: 20px; padding: 40px 32px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+        .icon { font-size: 56px; margin-bottom: 16px; }
+        h1 { font-size: 22px; margin-bottom: 8px; }
+        .code { font-family: monospace; font-size: 22px; font-weight: 700; color: #007aff; letter-spacing: 2px; margin: 16px 0; word-break: break-all; }
+        p { font-size: 15px; color: #666; margin-bottom: 20px; }
+        .btn { display: inline-block; background: #007aff; color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-size: 17px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
+        .btn:hover { background: #0056cc; }
+        .btn.secondary { background: transparent; color: #007aff; border: 1px solid #007aff; margin-top: 12px; }
+        .btn.secondary:hover { background: #f0f7ff; }
+        .note { font-size: 13px; color: #999; margin-top: 16px; }
+        .pasos { text-align: left; font-size: 14px; color: #444; background: #f5f5f7; border-radius: 12px; padding: 14px 18px; margin: 16px 0; }
+        .pasos li { margin: 6px 0 6px 18px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">🎁</div>
+        <h1>Un regalo te espera</h1>
+        <p>Te regalaron <strong>RosterLog Pro</strong> — la app de las tripulaciones: roster, tiempo extra, viáticos y avisos de puerta.</p>
+        <div class="code hidden" id="code"></div>
+
+        <!-- iPhone / iPad -->
+        <div id="bloque-ios" class="hidden">
+            <ol class="pasos">
+                <li>Descarga RosterLog y crea tu cuenta.</li>
+                <li>Vuelve a este chat y <strong>toca el link de nuevo</strong> — tu regalo se activa con un tap.</li>
+            </ol>
+            <a class="btn" href="https://apps.apple.com/mx/app/rosterlog/id6761634082">Descargar en el App&nbsp;Store</a>
+            <a class="btn secondary" id="open-app" href="rosterlog://regalo">Ya tengo la app — activar</a>
+            <p class="note">Tu regalo no expira: no hay prisa.</p>
+        </div>
+
+        <!-- Computadora -->
+        <div id="bloque-desktop" class="hidden">
+            <p><strong>Este regalo se activa en la app de iPhone o iPad.</strong><br>Ábrete este mismo link en tu iPhone (mándatelo por WhatsApp, AirDrop o correo).</p>
+            <button class="btn" id="copiar">Copiar link</button>
+            <p class="note">Tu regalo queda guardado en este link — no expira.</p>
+        </div>
+
+        <!-- Android / otro -->
+        <div id="bloque-android" class="hidden">
+            <p><strong>RosterLog es una app de iPhone y iPad.</strong><br>Tu regalo queda guardado en este link para cuando tengas uno; también puedes pedirle a quien te lo regaló que se lo comparta a otra persona.</p>
+            <p class="note">El link no expira.</p>
+        </div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = (params.get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const bonito = code.replace(/(.{4})(?=.)/g, '$1-');
+        const ua = navigator.userAgent;
+        const esIOS = /iPhone|iPad|iPod/.test(ua) || (ua.includes('Mac') && 'ontouchend' in document);
+        const esAndroid = /Android/.test(ua);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (code) {
+                const codeEl = document.getElementById('code');
+                codeEl.textContent = bonito;
+                codeEl.classList.remove('hidden');
+                const meta = document.querySelector('meta[name="apple-itunes-app"]');
+                if (meta) meta.setAttribute('content', 'app-id=6761634082, app-argument=rosterlog://regalo?code=' + encodeURIComponent(code));
+                const openBtn = document.getElementById('open-app');
+                if (openBtn) openBtn.href = 'rosterlog://regalo?code=' + encodeURIComponent(code);
+            }
+            const bloque = esIOS ? 'bloque-ios' : (esAndroid ? 'bloque-android' : 'bloque-desktop');
+            document.getElementById(bloque).classList.remove('hidden');
+
+            const copiar = document.getElementById('copiar');
+            if (copiar) {
+                copiar.addEventListener('click', function () {
+                    navigator.clipboard.writeText(window.location.href).then(function () {
+                        copiar.textContent = '✓ Copiado';
+                        setTimeout(function () { copiar.textContent = 'Copiar link'; }, 2000);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
