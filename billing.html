@@ -694,7 +694,7 @@
 
     const PRICES = {
         pilot: { monthly: 199, annual: 1999 },
-        sob:   { monthly:  99, annual:  899 },
+        sob:   { monthly: 149, annual: 1499 },
     };
 
     // Mapa reverso: product_id que viene del doc /subscriptions/{uid}
@@ -706,11 +706,14 @@
         "price_1TOXsiFCOwamWizccQ3VbVUi": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
         "price_1TOXsiFCOwamWizcC4vmyq7g": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
         "price_1TOXsjFCOwamWizcKaFYPu6A": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
+        // SOB alineado a App Store ($149/$1,499) — 2026-08-31
+        "price_1UAZnwFCOwamWizcxI6pWQNs": { name: "Sobrecargo — Mensual", amount: 149,  currency: "MXN", period: "mes", store: "Stripe" },
+        "price_1UAZo6FCOwamWizcp3WZvrQg": { name: "Sobrecargo — Anual",   amount: 1499, currency: "MXN", period: "año", store: "Stripe" },
         // Stripe LIVE — product IDs (RC guarda product_identifier como prod_...)
         "prod_UNIToTu0I6KXWi": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
         "prod_UNIT5R2yHhW4gB": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
-        "prod_UNIT6vLk3bjIkk": { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes", store: "Stripe" },
-        "prod_UNITcbxwFDRznz": { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año", store: "Stripe" },
+        "prod_UNIT6vLk3bjIkk": { name: "Sobrecargo — Mensual", amount: 149,  currency: "MXN", period: "mes", store: "Stripe" },
+        "prod_UNITcbxwFDRznz": { name: "Sobrecargo — Anual",   amount: 1499, currency: "MXN", period: "año", store: "Stripe" },
         // Stripe TEST — price IDs
         "price_1TOXuvFCOwamWizcbmc2SBSk": { name: "Piloto — Mensual",     amount: 199,  currency: "MXN", period: "mes", store: "Stripe" },
         "price_1TOXvDFCOwamWizcnJNKSDpB": { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año", store: "Stripe" },
@@ -796,7 +799,9 @@
                 1799: { name: "Piloto — Anual",       amount: 1799, currency: "MXN", period: "año" },
                 1999: { name: "Piloto — Anual",       amount: 1999, currency: "MXN", period: "año" },
                 99:   { name: "Sobrecargo — Mensual", amount: 99,   currency: "MXN", period: "mes" },
+                149:  { name: "Sobrecargo — Mensual", amount: 149,  currency: "MXN", period: "mes" },
                 899:  { name: "Sobrecargo — Anual",   amount: 899,  currency: "MXN", period: "año" },
+                1499: { name: "Sobrecargo — Anual",   amount: 1499, currency: "MXN", period: "año" },
             };
             return byAmount[amount] ? { ...byAmount[amount], store: storeLabel(sub.store) } : null;
         }
