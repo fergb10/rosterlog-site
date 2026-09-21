@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es" data-endpoint="https://us-central1-rosterlog-app.cloudfunctions.net/androidWaitlistJoin">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RosterLog para Android — Acceso anticipado</title>
+    <meta name="description" content="RosterLog llega a Android. Tu rol y tus puertas en tu teléfono. Apúntate y pruébala antes que nadie.">
+    <meta name="theme-color" content="#3DDC84">
+    <link rel="canonical" href="https://rosterlog.app/android">
+    <!-- Open Graph: es la vista previa que arma WhatsApp al compartir el enlace -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="RosterLog">
+    <meta property="og:title" content="RosterLog llega a Android">
+    <meta property="og:description" content="Tu rol y tus puertas, ahora en tu teléfono. Apúntate y pruébala antes que nadie.">
+    <meta property="og:url" content="https://rosterlog.app/android">
+    <meta property="og:image" content="https://rosterlog.app/assets/og-android.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="RosterLog en un teléfono Android con la puerta de salida en amarillo">
+    <meta property="og:locale" content="es_MX">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RosterLog llega a Android">
+    <meta name="twitter:description" content="Tu rol y tus puertas, ahora en tu teléfono. Apúntate y pruébala antes que nadie.">
+    <meta name="twitter:image" content="https://rosterlog.app/assets/og-android.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Analytics (privacy-friendly, sin cookies) -->
+    <script defer data-domain="rosterlog.app" src="https://plausible.io/js/script.js"></script>
+    <script src="assets/theme.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&icon_names=android,arrow_forward,calendar_month,chevron_right,expand_more,flight,group,home,mail,mark_email_unread,more_horiz,schedule,settings,signal_cellular_alt,wifi&display=block">
+<style>
+/* Tokens del sitio rosterlog.app (index.html), tal cual */
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --accent: #007aff;
+  --accent-hover: #0056cc;
+  --accent-soft: rgba(0,122,255,0.10);
+  --card-bg: #ffffff;
+  --border: rgba(0,0,0,0.08);
+  --field-border: rgba(0,0,0,0.16);
+  --nav-bg: rgba(255,255,255,0.72);
+  --ok: #2E9457;
+  --danger: #D93838;
+  --demo-bg: #fff7e6;
+  --demo-text: #7a5a12;
+  --android: #0f7a43;
+  --android-soft: rgba(61,220,132,0.20);
+  --android-ink: #0b5a31;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000;
+    --bg-alt: #1c1c1e;
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --accent: #0a84ff;
+    --accent-hover: #409cff;
+    --accent-soft: rgba(10,132,255,0.16);
+    --card-bg: #1c1c1e;
+    --border: rgba(255,255,255,0.10);
+    --field-border: rgba(255,255,255,0.22);
+    --nav-bg: rgba(0,0,0,0.72);
+    --ok: #4cc47f;
+    --danger: #ff6b6b;
+    --demo-bg: #2b2413;
+    --demo-text: #e9c97a;
+    --android: #3DDC84;
+    --android-soft: rgba(61,220,132,0.16);
+    --android-ink: #3DDC84;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #000000;
+  --bg-alt: #1c1c1e;
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --accent-soft: rgba(10,132,255,0.16);
+  --card-bg: #1c1c1e;
+  --border: rgba(255,255,255,0.10);
+  --field-border: rgba(255,255,255,0.22);
+  --nav-bg: rgba(0,0,0,0.72);
+  --ok: #4cc47f;
+  --danger: #ff6b6b;
+  --demo-bg: #2b2413;
+  --demo-text: #e9c97a;
+  --android: #3DDC84;
+  --android-soft: rgba(61,220,132,0.16);
+  --android-ink: #3DDC84;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 24px; }
+@media (max-width: 480px) { .wrap { padding-inline: 16px; } }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* Nav del sitio */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 48px; gap: 16px; }
+.logo { font-size: 18px; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
+.nav-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-links a.nav-cta { color: var(--accent); font-weight: 600; }
+@media (max-width: 560px) { .nav-links a.hide-sm { display: none; } }
+
+/* Hero */
+.hero { padding-block: 72px 88px; overflow-x: clip; }
+.hero-grid {
+  display: grid; gap: 56px; align-items: center;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+}
+@media (max-width: 820px) {
+  .hero { padding-block: 44px 64px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--accent);
+  background: var(--accent-soft); padding: 6px 12px; border-radius: 999px;
+}
+h1 {
+  font-size: clamp(36px, 5.4vw, 56px); font-weight: 600;
+  line-height: 1.05; letter-spacing: -0.025em;
+  margin-block: 20px 18px; text-wrap: balance;
+}
+.lead { font-size: clamp(17px, 1.9vw, 20px); color: var(--text-secondary); max-width: 34em; }
+
+/* Formulario: un solo campo, luego dos toques opcionales */
+.badge { color: var(--android-ink); background: var(--android-soft); }
+.badge .ms { font-size: 17px; }
+h1 .droid { color: var(--android); }
+.card { margin-top: 32px; background: var(--bg-alt); border-radius: 22px; padding: 24px; }
+@media (max-width: 480px) { .card { padding: 18px; } }
+.card-h { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.card-h .droid-i { width: 44px; height: 44px; border-radius: 14px; background: #3DDC84; color: #07301a; display: grid; place-items: center; flex: none; }
+.card-h .droid-i .ms { font-size: 28px; }
+.card-h b { display: block; font-size: 19px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.2; }
+.card-h span.s { font-size: 14px; color: var(--text-secondary); }
+form { display: grid; gap: 14px; }
+.pill-in { display: flex; gap: 8px; background: var(--card-bg); border: 1.5px solid var(--field-border); border-radius: 999px; padding: 6px; }
+.pill-in:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.pill-in input { flex: 1; min-width: 0; height: 48px; padding-inline: 16px; border: 0; background: transparent; font: inherit; font-size: 17px; color: var(--text); outline: none; border-radius: 999px; }
+.pill-in input::placeholder { color: var(--text-secondary); opacity: 0.85; }
+.btn { display: inline-flex; justify-content: center; align-items: center; gap: 8px; min-height: 48px; padding: 12px 22px; border: 0; border-radius: 980px; background: var(--accent); color: #fff; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; white-space: nowrap; text-decoration: none; transition: background 0.2s ease; }
+.btn:hover { background: var(--accent-hover); }
+@media (max-width: 480px) {
+  .pill-in { flex-direction: column; border-radius: 22px; padding: 8px; }
+  .pill-in input { text-align: center; }
+}
+.campo input { width: 100%; height: 52px; padding-inline: 20px; font: inherit; font-size: 17px; color: var(--text); background: var(--card-bg); border: 1.5px solid var(--field-border); border-radius: 999px; outline: none; }
+.campo input::placeholder { color: var(--text-secondary); opacity: 0.85; }
+.campo input:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+@media (max-width: 480px) { .campo input { text-align: center; border-radius: 22px; } }
+.trampa { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.btn[disabled] { opacity: 0.6; cursor: progress; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.err { font-size: 13px; color: var(--danger); font-weight: 500; padding-left: 8px; }
+.fine { font-size: 12px; color: var(--text-secondary); padding-left: 8px; }
+.fine a { color: inherit; }
+
+.done { display: grid; gap: 18px; }
+.done-h { display: flex; align-items: center; gap: 12px; }
+.done-h .check { width: 44px; height: 44px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; font-size: 24px; font-weight: 700; flex: none; }
+.done-h h2 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; }
+.done-h p { font-size: 14px; color: var(--text-secondary); }
+.q { display: grid; gap: 8px; border: 0; }
+.q legend { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.q legend small { font-weight: 500; color: var(--text-secondary); font-size: 12px; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { min-height: 44px; padding: 10px 16px; display: inline-flex; align-items: center; font-size: 15px; font-weight: 500; color: var(--text); background: var(--card-bg); border: 1px solid var(--field-border); border-radius: 999px; cursor: pointer; }
+@media (max-width: 480px) {
+  .seg { display: grid; grid-template-columns: 1fr 1fr; }
+  .seg label { justify-content: center; }
+}
+.seg input:checked + label { background: var(--accent); border-color: var(--accent); color: #fff; }
+.seg input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 2px; }
+.saved { font-size: 13px; font-weight: 600; color: var(--ok); }
+.share { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; font-size: 14px; color: var(--text); }
+.share small { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+
+/* Galaxy S26 Ultra: cuerpo 78.1 x 163.6 x 7.9 mm, pantalla 6.9" 19.5:9 (73.4 x 159.1 mm).
+   --pw = ancho del cuerpo. 1 dp = ancho de pantalla / 412. */
+.phone-col { display: grid; justify-items: center; gap: 6px; }
+.stage {
+  --pw: min(300px, 70vw);
+  --dp: calc(var(--pw) * 0.9398 / 412);
+  --t: calc(var(--pw) * 0.1012);
+  position: relative; display: grid; justify-items: center;
+  padding-block: 84px 56px;
+  perspective: 1500px; perspective-origin: 50% 42%;
+}
+.ground {
+  position: absolute; left: 50%; bottom: 16px; width: calc(var(--pw) * 1.05); height: 46px;
+  transform: translateX(-42%);
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.38), rgba(0,0,0,0) 70%);
+  filter: blur(9px);
+}
+.phone {
+  position: relative; width: var(--pw); height: calc(var(--pw) * 2.0948);
+  transform-style: preserve-3d;
+  transform: rotateY(-21deg) rotateX(7deg) rotateZ(1.2deg);
+}
+.layer {
+  position: absolute; inset: 0; border-radius: calc(var(--pw) * 0.115);
+  background: linear-gradient(180deg, #a7a9b0 0%, #7c7e86 18%, #5b5d65 55%, #84868e 100%);
+}
+.layer .kb { position: absolute; right: calc(var(--pw) * -0.009); width: calc(var(--pw) * 0.02); border-radius: 2px; background: linear-gradient(180deg, #9a9ca3, #6a6c74); }
+.layer .kb.vol { top: 24%; height: 11.5%; }
+.layer .kb.pwr { top: 38.5%; height: 6%; }
+.front {
+  position: absolute; inset: 0; border-radius: calc(var(--pw) * 0.115);
+  padding: calc(var(--pw) * 0.0288) calc(var(--pw) * 0.0301);
+  background: #070709;
+  box-shadow: inset 0 0 0 calc(var(--pw) * 0.006) #b3b5bc, inset 0 0 0 calc(var(--pw) * 0.011) #2a2b30;
+  transform: translateZ(0.5px);
+}
+.screen {
+  position: relative; overflow: hidden; width: 100%; height: 100%;
+  border-radius: calc(var(--pw) * 0.088);
+  background: #F2F2F7; color: #000;
+  font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  display: flex; flex-direction: column;
+}
+.screen::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(118deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 26%, rgba(255,255,255,0) 40%);
+}
+.ms { font-family: "Material Symbols Rounded"; font-weight: 400; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; }
+.mono { font-family: "Roboto Mono", ui-monospace, Menlo, monospace; }
+.l2 { color: rgba(60,60,67,0.6); }
+.l3 { color: rgba(60,60,67,0.3); }
+.cam { position: absolute; top: calc(11 * var(--dp)); left: 50%; width: calc(22 * var(--dp)); height: calc(22 * var(--dp)); margin-left: calc(-11 * var(--dp)); border-radius: 50%; background: radial-gradient(circle at 35% 35%, #26303c 0%, #07080a 55%); z-index: 3; }
+.status { flex: none; height: calc(44 * var(--dp)); padding-inline: calc(26 * var(--dp)); display: flex; align-items: center; justify-content: space-between; font-size: calc(14 * var(--dp)); font-weight: 600; }
+.status .ms { font-size: calc(17 * var(--dp)); margin-left: calc(4 * var(--dp)); }
+.status .sic { display: inline-flex; align-items: center; }
+.bat { position: relative; display: inline-grid; place-items: center; width: calc(31 * var(--dp)); height: calc(15 * var(--dp)); margin-left: calc(6 * var(--dp)); border-radius: 999px; background: rgba(0,0,0,0.28); overflow: hidden; }
+.bat i { position: absolute; left: 0; top: 0; bottom: 0; width: 87%; background: #1c1c1e; }
+.bat b { position: relative; color: #fff; font-size: calc(10.5 * var(--dp)); font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
+.topbar { flex: none; height: calc(64 * var(--dp)); padding-inline: calc(16 * var(--dp)); display: flex; align-items: center; justify-content: space-between; }
+.topbar .t { font-size: calc(22 * var(--dp)); font-weight: 600; letter-spacing: -0.01em; }
+.topbar .ms { font-size: calc(24 * var(--dp)); }
+.body { flex: 1; min-height: 0; overflow: hidden; padding: calc(4 * var(--dp)) calc(16 * var(--dp)) 0; display: flex; flex-direction: column; gap: calc(16 * var(--dp)); }
+.body > * { flex: none; }
+.hello { font-size: calc(20 * var(--dp)); line-height: calc(25 * var(--dp)); font-weight: 600; letter-spacing: -0.01em; }
+.acard { background: #fff; border-radius: calc(16 * var(--dp)); overflow: hidden; }
+
+/* Card de perfil: HStack 14, padding 16, foto 44 */
+.perfil { display: flex; align-items: center; gap: calc(14 * var(--dp)); padding: calc(16 * var(--dp)); height: calc(76 * var(--dp)); }
+.perfil .foto { width: calc(44 * var(--dp)); height: calc(44 * var(--dp)); border-radius: 50%; overflow: hidden; flex: none; background: #d5e0f1; }
+.perfil .foto svg { display: block; }
+.perfil .foto .ms { font-size: calc(28 * var(--dp)); }
+.perfil .n { font-size: calc(15 * var(--dp)); line-height: calc(20 * var(--dp)); font-weight: 600; }
+.perfil .d { font-size: calc(12 * var(--dp)); line-height: calc(16 * var(--dp)); margin-top: calc(2 * var(--dp)); }
+.perfil .ms.ch { margin-left: auto; font-size: calc(18 * var(--dp)); }
+
+/* Hueco que deja la card de servicio al salirse de la pantalla */
+.slot { height: calc(176 * var(--dp)); margin-block: calc(12 * var(--dp)); border-radius: calc(16 * var(--dp)); background: rgba(20,25,40,0.16); filter: blur(calc(9 * var(--dp))); }
+
+/* Card PRÓXIMO SERVICIO (HomeView): header brand 0.85, cuerpo VStack 12 con padding 16 */
+.prox { width: calc(380 * var(--dp)); background: #fff; border-radius: calc(16 * var(--dp)); overflow: hidden; color: #000; font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif; }
+.prox-h { background: #316ED5; color: rgba(255,255,255,0.9); height: calc(36 * var(--dp)); padding-inline: calc(16 * var(--dp)); display: flex; align-items: center; justify-content: space-between; font-size: calc(12 * var(--dp)); font-weight: 700; }
+.prox-h span:first-child { display: inline-flex; align-items: center; gap: calc(6 * var(--dp)); }
+.prox-h .ms { font-size: calc(14 * var(--dp)); }
+.prox-h .cnt { font-weight: 600; font-variant-numeric: tabular-nums; }
+.prox-b { padding: calc(16 * var(--dp)); display: grid; gap: calc(12 * var(--dp)); justify-items: center; text-align: center; }
+.prox-t { display: flex; gap: calc(6 * var(--dp)); font-size: calc(15 * var(--dp)); line-height: calc(20 * var(--dp)); }
+.prox-t b { color: #3373D1; font-weight: 600; }
+.prox-t span { font-weight: 500; font-variant-numeric: tabular-nums; }
+.ruta { display: flex; align-items: center; gap: calc(20 * var(--dp)); }
+.ruta .col b { display: block; font-size: calc(20 * var(--dp)); line-height: calc(26 * var(--dp)); font-weight: 700; }
+.ruta .col span { display: block; margin-top: calc(2 * var(--dp)); font-size: calc(15 * var(--dp)); line-height: calc(20 * var(--dp)); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ruta .col i { font-style: normal; font-size: calc(8 * var(--dp)); font-weight: 700; margin-left: calc(1 * var(--dp)); }
+.ruta > .ms { font-size: calc(14 * var(--dp)); }
+.prox-f { font-size: calc(12 * var(--dp)); line-height: calc(16 * var(--dp)); }
+
+/* Tablero HOY (TableroDiaCard), fila de iPhone */
+.tab-h { display: flex; align-items: baseline; gap: calc(8 * var(--dp)); padding: calc(14 * var(--dp)) calc(16 * var(--dp)) calc(10 * var(--dp)); line-height: calc(16 * var(--dp)); }
+.tab-h b { font-size: calc(12 * var(--dp)); font-weight: 700; letter-spacing: 0.07em; }
+.tab-h .c { font-size: calc(11 * var(--dp)); font-weight: 600; }
+.tab-h .f { margin-left: auto; font-size: calc(11 * var(--dp)); font-weight: 700; letter-spacing: 0.055em; }
+.tab-div { height: 1px; background: rgba(60,60,67,0.14); }
+.fila { display: flex; align-items: center; gap: calc(8 * var(--dp)); padding: calc(10 * var(--dp)) calc(16 * var(--dp)); }
+.fila .vuelo { width: calc(64 * var(--dp)); flex: none; display: grid; gap: calc(1 * var(--dp)); }
+.fila .vuelo b { font-size: calc(15 * var(--dp)); font-weight: 700; letter-spacing: -0.013em; line-height: calc(19 * var(--dp)); }
+.fila .vuelo span { font-size: calc(9.5 * var(--dp)); line-height: calc(12 * var(--dp)); font-weight: 500; }
+.fila .est { flex: 1; min-width: 0; display: grid; gap: calc(4 * var(--dp)); justify-items: center; }
+.fila .est .iata { font-size: calc(10 * var(--dp)); font-weight: 700; letter-spacing: 0.04em; line-height: calc(12 * var(--dp)); }
+.fila .est .h { font-size: calc(12.5 * var(--dp)); font-weight: 600; line-height: calc(15 * var(--dp)); }
+.fila .est .h i { font-style: normal; font-size: calc(7 * var(--dp)); font-weight: 700; margin-left: calc(1 * var(--dp)); font-family: Inter, sans-serif; }
+.fila > .ms { font-size: calc(13 * var(--dp)); flex: none; }
+.fila .estado { width: calc(78 * var(--dp)); flex: none; display: flex; justify-content: flex-end; align-items: center; gap: calc(5 * var(--dp)); font-size: calc(10 * var(--dp)); font-weight: 700; letter-spacing: 0.06em; color: rgba(60,60,67,0.45); }
+.fila .estado .ms { font-size: calc(13 * var(--dp)); width: calc(12 * var(--dp)); color: rgba(60,60,67,0.6); }
+.gate { display: inline-flex; align-items: center; justify-content: center; gap: calc(1 * var(--dp)); min-width: calc(58 * var(--dp)); height: calc(26 * var(--dp)); padding-inline: calc(6 * var(--dp)); border-radius: calc(6 * var(--dp)); background: rgba(118,118,128,0.12); font-weight: 700; font-size: calc(14 * var(--dp)); color: rgba(60,60,67,0.42); }
+.gate small { font-size: calc(10 * var(--dp)); font-weight: 700; color: rgba(60,60,67,0.24); }
+.gate.dato { color: #000; }
+.gate.dato small { color: rgba(60,60,67,0.6); }
+.gate.dato.sinterm small { color: rgba(60,60,67,0.24); }
+.fila.pasado .vuelo, .fila.pasado .est { opacity: 0.5; }
+.fila.pasado .h s { text-decoration-thickness: calc(1.2 * var(--dp)); }
+.fila .estado.llego { color: rgba(60,60,67,0.6); }
+.tab-div.in { margin-inline: calc(16 * var(--dp)); }
+.tab-fin { height: calc(6 * var(--dp)); }
+.gate.pro { min-width: calc(66 * var(--dp)); height: calc(30 * var(--dp)); padding-inline: calc(5 * var(--dp)); border-radius: calc(7 * var(--dp)); background: #F5B301; color: rgba(23,15,0,0.88); font-size: calc(16 * var(--dp)); font-weight: 800; }
+.gate.pro small { color: rgba(23,15,0,0.48); font-weight: 800; }
+
+/* Card de Avisos */
+.avisos { display: flex; align-items: center; gap: calc(12 * var(--dp)); padding: calc(14 * var(--dp)); }
+.avisos .ci { width: calc(36 * var(--dp)); height: calc(36 * var(--dp)); border-radius: 50%; background: rgba(0,122,255,0.18); color: #007AFF; display: grid; place-items: center; flex: none; }
+.avisos .ci .ms { font-size: calc(18 * var(--dp)); }
+.avisos .tt { display: flex; align-items: center; gap: calc(6 * var(--dp)); font-size: calc(13 * var(--dp)); font-weight: 600; line-height: calc(18 * var(--dp)); }
+.avisos .tt em { font-style: normal; font-size: calc(11 * var(--dp)); font-weight: 700; color: #007AFF; background: rgba(0,122,255,0.15); border-radius: 999px; padding: calc(1 * var(--dp)) calc(6 * var(--dp)); }
+.avisos .ss { font-size: calc(12 * var(--dp)); line-height: calc(16 * var(--dp)); }
+.avisos > .ms { margin-left: auto; font-size: calc(16 * var(--dp)); }
+
+.bottom { flex: none; height: calc(80 * var(--dp)); background: #fff; border-top: 1px solid rgba(60,60,67,0.10); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; text-align: center; font-size: calc(12 * var(--dp)); font-weight: 500; color: #48484a; }
+.bottom div { display: grid; gap: calc(4 * var(--dp)); justify-items: center; }
+.bottom .pill { width: calc(64 * var(--dp)); height: calc(32 * var(--dp)); border-radius: 999px; display: grid; place-items: center; }
+.bottom .ms { font-size: calc(24 * var(--dp)); }
+.bottom .on { color: #000; font-weight: 700; }
+.bottom .on .pill { background: rgba(51,115,209,0.16); color: #3373D1; }
+.sysnav { flex: none; height: calc(48 * var(--dp)); background: #fff; display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; justify-items: center; padding-inline: calc(56 * var(--dp)); color: #4a4a4f; }
+.sysnav .rec { display: inline-flex; gap: calc(4 * var(--dp)); }
+.sysnav .rec i { width: calc(2 * var(--dp)); height: calc(15 * var(--dp)); border-radius: 1px; background: currentColor; }
+.sysnav .hom { width: calc(16 * var(--dp)); height: calc(16 * var(--dp)); border: calc(2 * var(--dp)) solid currentColor; border-radius: calc(5 * var(--dp)); }
+.sysnav .bck { width: calc(11 * var(--dp)); height: calc(11 * var(--dp)); border-left: calc(2 * var(--dp)) solid currentColor; border-bottom: calc(2 * var(--dp)) solid currentColor; border-radius: calc(1.5 * var(--dp)); transform: translateX(25%) rotate(45deg); }
+
+/* Lo que se sale del teléfono */
+.pop {
+  position: absolute; z-index: 5;
+  left: calc(var(--pw) * 0.0301 + 16 * var(--dp));
+  top: calc(var(--pw) * 0.0288 + 266 * var(--dp));
+  transform: translateZ(74px) scale(1.16);
+  border-radius: calc(16 * var(--dp));
+  box-shadow: 0 calc(26 * var(--dp)) calc(60 * var(--dp)) rgba(15,25,50,0.30), 0 calc(4 * var(--dp)) calc(12 * var(--dp)) rgba(15,25,50,0.16);
+}
+.notif {
+  position: absolute; z-index: 6; width: calc(330 * var(--dp));
+  left: calc(var(--pw) * -0.22); top: calc(var(--pw) * -0.15);
+  transform: translateZ(112px);
+  background: #fff; color: #1f1f1f; border-radius: calc(24 * var(--dp)); padding: calc(13 * var(--dp)) calc(16 * var(--dp));
+  font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-shadow: 0 calc(18 * var(--dp)) calc(44 * var(--dp)) rgba(15,25,50,0.28), 0 calc(2 * var(--dp)) calc(8 * var(--dp)) rgba(15,25,50,0.14);
+  display: grid; gap: calc(3 * var(--dp));
+}
+.notif .app { display: flex; align-items: center; gap: calc(8 * var(--dp)); font-size: calc(12 * var(--dp)); color: #5f6368; }
+.notif .app i { width: calc(18 * var(--dp)); height: calc(18 * var(--dp)); border-radius: 50%; background: #3373D1; display: grid; place-items: center; font-style: normal; }
+.notif .app i .ms { font-size: calc(12 * var(--dp)); color: #fff; }
+.notif b { font-size: calc(15 * var(--dp)); font-weight: 600; }
+.notif p { font-size: calc(14 * var(--dp)); color: #3c4043; }
+@media (prefers-reduced-motion: no-preference) {
+  .pop { animation: flota 7s ease-in-out infinite; }
+  .notif { animation: flota2 7s ease-in-out -2.5s infinite; }
+  @keyframes flota { 0%, 100% { transform: translateZ(74px) scale(1.16); } 50% { transform: translateZ(90px) scale(1.16); } }
+  @keyframes flota2 { 0%, 100% { transform: translateZ(112px); } 50% { transform: translateZ(98px); } }
+}
+.cap { font-size: 12px; color: var(--text-secondary); text-align: center; max-width: 30em; }
+@media (max-width: 820px) { .notif { left: calc(var(--pw) * -0.08); } }
+
+/* Secciones */
+.sec { padding-block: 88px; }
+.sec.alt { background: var(--bg-alt); }
+.sec-h { max-width: 640px; margin-bottom: 40px; }
+.sec-h h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; text-wrap: balance; }
+.sec-h p { margin-top: 12px; color: var(--text-secondary); }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 640px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.feat { background: var(--bg-alt); border-radius: 18px; padding: 32px 28px; }
+.sec.alt .feat { background: var(--card-bg); }
+.feat h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.012em; margin-bottom: 8px; }
+.feat p { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
+/* Mini previews de la app dentro de cada tarjeta. Colores fijos: son recortes de la app en claro */
+.pv { height: 104px; border-radius: 14px; background: #F2F2F7; color: #000; display: grid; place-items: center; margin-bottom: 22px; overflow: hidden; font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif; }
+.pv .mono { font-family: "Roboto Mono", ui-monospace, Menlo, monospace; }
+.pv-gate { display: grid; justify-items: center; gap: 6px; }
+.pv-gate .chip { display: inline-flex; align-items: center; gap: 2px; height: 46px; padding-inline: 14px; border-radius: 11px; background: #F5B301; color: rgba(23,15,0,0.88); font-size: 27px; font-weight: 800; }
+.pv-gate .chip small { font-size: 15px; font-weight: 800; color: rgba(23,15,0,0.48); }
+.pv-rol { width: min(100% - 28px, 330px); background: #3373D1; color: #fff; border-radius: 18px; padding: 12px 16px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; text-align: center; }
+.pv-rol b { display: block; font-size: 14px; font-weight: 700; line-height: 1.25; }
+.pv-rol .n { font-size: 14px; font-weight: 500; }
+.pv-rol .h { font-size: 13px; font-weight: 500; line-height: 1.35; font-variant-numeric: tabular-nums; }
+.pv-rol .z { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.35; font-variant-numeric: tabular-nums; }
+.pv-rol i { font-style: normal; font-size: 8px; font-weight: 700; margin-left: 1px; }
+.pv-rol .t { font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.pv-rol b, .pv-rol .h, .pv-rol .z { white-space: nowrap; }
+.pv-wid { background: #fff; border-radius: 22px; padding: 12px 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 6px 18px rgba(15,25,50,0.10); }
+.pv-wid .l { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: rgba(60,60,67,0.6); }
+.pv-wid .hr { font-size: 26px; font-weight: 600; line-height: 1.1; }
+.pv-wid .r { font-size: 11px; font-weight: 600; color: rgba(60,60,67,0.6); margin-top: 1px; }
+.pv-wid .chip { display: inline-flex; align-items: center; gap: 1px; height: 34px; padding-inline: 10px; border-radius: 8px; background: #F5B301; color: rgba(23,15,0,0.88); font-size: 19px; font-weight: 800; }
+.pv-wid .chip small { font-size: 11px; font-weight: 800; color: rgba(23,15,0,0.48); }
+.pv-wid { max-width: calc(100% - 20px); }
+.pv-am { display: flex; align-items: center; gap: 12px; }
+.pv-am .st { display: flex; }
+.pv-am .st span { width: 40px; height: 40px; border-radius: 50%; border: 3px solid #F2F2F7; margin-left: -7px; display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
+.pv-am .st span:first-child { margin-left: 0; }
+.pv-am b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; }
+.pv-am small { font-size: 12px; color: rgba(60,60,67,0.6); }
+
+@media (max-width: 380px) {
+  .pv-rol { width: calc(100% - 16px); padding: 10px 8px; gap: 6px; border-radius: 16px; }
+  .pv-rol b, .pv-rol .n { font-size: 13px; }
+  .pv-rol .h { font-size: 12px; }
+  .pv-rol .z { font-size: 11px; }
+  .pv-rol .t { font-size: 17px; }
+  .pv-wid { gap: 10px; padding: 10px 12px; border-radius: 18px; }
+  .pv-wid .hr { font-size: 22px; }
+  .pv-wid .r { font-size: 10px; }
+  .pv-wid .chip { height: 30px; font-size: 17px; padding-inline: 8px; }
+  .pv-am { gap: 8px; }
+  .pv-am b { font-size: 14px; }
+  .pv-am small { font-size: 11px; }
+  .mini { gap: 8px; padding: 9px 10px; }
+  .mini .ico { width: 30px; height: 30px; border-radius: 9px; }
+  .mini .ico .ms { font-size: 18px; }
+  .mini .tx b { font-size: 12px; }
+  .mini .get { margin-left: 0; padding: 6px 9px; font-size: 11px; }
+  .step.fin .mini .tx { flex: none; }
+  .step .tile { padding-inline: 8px; }
+}
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.step { position: relative; display: grid; gap: 16px; align-content: start; justify-items: center; text-align: center; }
+.step .num { position: relative; z-index: 1; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 21px; font-weight: 700; display: grid; place-items: center; box-shadow: 0 0 0 6px var(--bg); }
+.step.fin .num { background: #3DDC84; color: #07301a; }
+.step:not(:last-child)::before { content: ""; position: absolute; top: 23px; left: calc(50% + 24px); width: calc(100% + 28px - 48px); height: 2px; background: var(--field-border); }
+.step .tile { width: 100%; height: 96px; border-radius: 16px; background: var(--bg-alt); display: grid; grid-template-columns: minmax(0, auto); justify-content: center; align-items: center; padding-inline: 12px; }
+.step .mini { text-align: left; }
+.step h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.012em; }
+.step p { font-size: 15px; color: var(--text-secondary); margin-top: -8px; min-height: 2.9em; }
+.mini { display: flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; box-shadow: 0 4px 14px rgba(15,25,50,0.06); }
+.mini .ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; color: #fff; }
+.mini .ico .ms { font-size: 20px; }
+.mini .tx { min-width: 0; }
+.mini .tx small { display: block; font-size: 11px; color: var(--text-secondary); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini .tx b { display: block; font-size: 13px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini .ok { margin-left: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--ok); color: #fff; font-size: 13px; font-weight: 700; display: grid; place-items: center; flex: none; }
+.mini .get { margin-left: 6px; background: #01875f; color: #fff; font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 999px; flex: none; }
+@media (max-width: 720px) {
+  .steps { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .step { grid-template-columns: 48px minmax(0, 1fr); column-gap: 16px; row-gap: 12px; justify-items: start; text-align: left; }
+  .step .num { grid-row: 1 / span 3; }
+  .step > :not(.num) { grid-column: 2; }
+  .step:not(:last-child)::before { top: 48px; bottom: -32px; left: 23px; width: 2px; height: auto; }
+  .step h3 { margin-top: 10px; }
+  .step p { min-height: 0; }
+}
+
+.faq { max-width: 760px; display: grid; gap: 0; }
+details { border-bottom: 1px solid var(--border); padding-block: 18px; }
+summary { cursor: pointer; font-size: 17px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--text-secondary); font-weight: 400; font-size: 22px; line-height: 1; }
+details[open] summary::after { content: "–"; }
+details p { margin-top: 10px; font-size: 15px; color: var(--text-secondary); max-width: 60ch; }
+
+.closing { text-align: center; display: grid; gap: 20px; justify-items: center; }
+.closing h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+.closing a.btn { text-decoration: none; }
+footer { padding-block: 48px; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-secondary); }
+footer .fl { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
+footer a { color: var(--text-secondary); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Principal">
+  <div class="wrap">
+    <a class="logo" href="/">&#9992; RosterLog</a>
+    <div class="nav-links">
+      <a class="hide-sm" href="#incluye">Qué trae</a>
+      <a class="hide-sm" href="#preguntas">Preguntas</a>
+      <a class="nav-cta" href="#lista">Apuntarme</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="badge"><span class="ms">android</span>Acceso anticipado</span>
+        <h1>RosterLog llega a <span class="droid">Android.</span></h1>
+        <p class="lead">Tu rol y tus puertas, ahora en tu teléfono. Pruébala antes que nadie.</p>
+
+        <div class="card" id="lista">
+          <form id="f" novalidate>
+            <div class="card-h">
+              <div class="droid-i"><span class="ms">android</span></div>
+              <div><b>Aparta tu lugar en la beta</b></div>
+            </div>
+            <fieldset class="q">
+              <legend>¿Dónde vuelas?</legend>
+              <div class="seg">
+                <input type="radio" name="aerolinea" id="a-amx" value="AMX"><label for="a-amx">Aeroméxico</label>
+                <input type="radio" name="aerolinea" id="a-vol" value="VOLARIS"><label for="a-vol">Volaris</label>
+                <input type="radio" name="aerolinea" id="a-viv" value="VIVA"><label for="a-viv">Viva</label>
+                <input type="radio" name="aerolinea" id="a-otr" value="OTRA"><label for="a-otr">Otra</label>
+              </div>
+            </fieldset>
+            <fieldset class="q">
+              <legend>¿Qué eres?</legend>
+              <div class="seg">
+                <input type="radio" name="puesto" id="p-pil" value="PILOTO"><label for="p-pil">Piloto</label>
+                <input type="radio" name="puesto" id="p-sob" value="SOBRECARGO"><label for="p-sob">Sobrecargo</label>
+              </div>
+            </fieldset>
+            <div class="campo">
+              <label class="sr" for="nombre">Nombre y apellido</label>
+              <input id="nombre" name="nombre" type="text" autocomplete="name" autocapitalize="words" placeholder="Nombre y apellido" maxlength="80" required>
+            </div>
+            <div class="trampa" aria-hidden="true"><label for="sitio">Deja este campo vacío</label><input id="sitio" name="sitio" type="text" tabindex="-1" autocomplete="off"></div>
+            <label class="sr" for="correo">Tu correo</label>
+            <div class="pill-in">
+              <input id="correo" name="correo" type="email" inputmode="email" autocomplete="email" placeholder="tu@correo.com" required>
+              <button class="btn" type="submit" id="enviar">Quiero probarla</button>
+            </div>
+            <p class="err" id="err" role="alert" hidden></p>
+            <p class="fine">Sin spam. Al apuntarte aceptas el <a href="privacy.html">aviso de privacidad</a>.</p>
+          </form>
+
+          <div class="done" id="done" hidden>
+            <div class="done-h">
+              <div class="check" aria-hidden="true">&#10003;</div>
+              <div><h2 id="done-t" tabindex="-1">Listo, ya tienes lugar.</h2><p id="done-p"></p></div>
+            </div>
+            <div class="share"><small>Pásalo a tu tripulación</small>RosterLog ya viene para Android. Aparta tu lugar: rosterlog.app/android</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-col">
+        <div class="stage" role="img" aria-label="RosterLog en un teléfono Android: la tarjeta del próximo servicio y un aviso de cambio de puerta salen de la pantalla">
+          <div class="ground"></div>
+          <div class="phone" id="phone" aria-hidden="true">
+            <div class="front">
+              <div class="screen">
+                <div class="cam"></div>
+                <div class="status"><span>12:04</span><span class="sic"><span class="ms">wifi</span><span class="ms">signal_cellular_alt</span><span class="bat"><i></i><b>87</b></span></span></div>
+                <div class="topbar"><span class="t">Inicio</span><span class="ms">settings</span></div>
+                <div class="body">
+                  <div class="hello">Buenas tardes, José</div>
+                  <div class="acard perfil">
+                    <div class="foto"><svg viewBox="0 0 44 44" width="100%" height="100%" aria-hidden="true"><rect width="44" height="44" fill="#d5e0f1"/><path d="M4 44c0-9.5 8-14.5 18-14.5S40 34.500 40 44z" fill="#ffffff"/><rect x="18.500" y="23" width="7" height="9" rx="3" fill="#d6a27a"/><path d="M18.500 30.500l3.500 3 3.500-3 1.500 1.500-3 4h-4l-3-4z" fill="#eef2f8"/><path d="M22 33l-1.700 2.200L22 44l1.700-8.800z" fill="#243054"/><rect x="6.500" y="33" width="8" height="3.400" rx="1.200" transform="rotate(-20 10.500 34.700)" fill="#243054"/><rect x="29.500" y="33" width="8" height="3.400" rx="1.200" transform="rotate(20 33.500 34.700)" fill="#243054"/><circle cx="22" cy="17.500" r="8.500" fill="#e4b48c"/><path d="M13.200 17.500c-.4-6.500 3.800-10.300 8.800-10.300s9.200 3.800 8.800 10.300c-1.600-3.400-4-5-8.800-5s-7.200 1.600-8.800 5z" fill="#3a2d27"/></svg></div>
+                    <div><div class="n">José Pérez</div><div class="d l2">CAP · B737 · Aeroméxico</div></div>
+                    <span class="ms ch l3">chevron_right</span>
+                  </div>
+                  <div class="slot"></div>
+                  <div class="acard">
+                    <div class="tab-h"><b>HOY</b><span class="c l3">2 vuelos</span><span class="f l3" id="d-hoy">LUN 21 SEP</span></div>
+                    <div class="fila pasado">
+                      <div class="vuelo"><b>AM 231</b><span class="mono l2">XA-ADL</span><span class="mono l2">738</span></div>
+                      <div class="est"><span class="iata l2">GDL</span><span class="gate dato mono"><small>T1</small><small>·</small>B7</span><span class="h mono"><s>09:05</s><i class="l3">L</i></span></div>
+                      <span class="ms l3">arrow_forward</span>
+                      <div class="est"><span class="iata l2">MEX</span><span class="gate dato mono"><small>T2</small><small>·</small>71</span><span class="h mono"><s>10:30</s><i class="l3">L</i></span></div>
+                      <div class="estado llego mono">LLEGÓ<span class="ms"></span></div>
+                    </div>
+                    <div class="tab-div in"></div>
+                    <div class="fila">
+                      <div class="vuelo"><b>AM 783</b><span class="mono l2">XA-ADL</span><span class="mono l2">738</span></div>
+                      <div class="est"><span class="iata l2">MEX</span><span class="gate pro mono"><small>T2</small><small>·</small>62</span><span class="h mono">13:50<i class="l3">L</i></span></div>
+                      <span class="ms l3">arrow_forward</span>
+                      <div class="est"><span class="iata l2">HMO</span><span class="gate dato sinterm mono"><small>–</small><small>·</small>4</span><span class="h mono">15:45<i class="l3">L</i></span></div>
+                      <div class="estado mono">A TIEMPO<span class="ms">expand_more</span></div>
+                    </div>
+                    <div class="tab-fin"></div>
+                  </div>
+                  <div class="acard avisos">
+                    <div class="ci"><span class="ms">mark_email_unread</span></div>
+                    <div><div class="tt">Avisos<em>1/4</em></div><div class="ss l2" id="d-aviso">Último: 14 sep</div></div>
+                    <span class="ms l3">chevron_right</span>
+                  </div>
+                </div>
+                <div class="bottom">
+                  <div class="on"><span class="pill"><span class="ms">home</span></span>Inicio</div>
+                  <div><span class="pill"><span class="ms">flight</span></span>Roster</div>
+                  <div><span class="pill"><span class="ms">calendar_month</span></span>Eventos</div>
+                  <div><span class="pill"><span class="ms">group</span></span>Amigos</div>
+                  <div><span class="pill"><span class="ms">more_horiz</span></span>Más</div>
+                </div>
+                <div class="sysnav"><span class="rec"><i></i><i></i><i></i></span><span class="hom"></span><span class="bck"></span></div>
+              </div>
+            </div>
+
+            <div class="prox pop">
+              <div class="prox-h"><span><span class="ms">schedule</span>PRÓXIMO SERVICIO</span><span class="cnt">En 1h 46m</span></div>
+              <div class="prox-b">
+                <div class="prox-t"><b>Vuelo</b><span>AM 783</span></div>
+                <div class="ruta">
+                  <div class="col"><b>MEX</b><span class="l2">13:50<i class="l3">L</i></span></div>
+                  <span class="ms l2">arrow_forward</span>
+                  <div class="col"><b>HMO</b><span class="l2">15:45<i class="l3">L</i></span></div>
+                </div>
+                <div class="prox-f l2" id="d-largo">Lunes 21 De Septiembre</div>
+              </div>
+            </div>
+
+            <div class="notif">
+              <div class="app"><i><span class="ms">flight</span></i>RosterLog · ahora</div>
+              <b>Cambio de puerta · AM 783</b>
+              <p>MEX: ahora sales por 62</p>
+            </div>
+          </div>
+        </div>
+        <p class="cap">Imagen ilustrativa. Los datos del vuelo son de ejemplo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="incluye">
+    <div class="wrap">
+      <div class="sec-h">
+        <h2>Hecha para cuando traes el teléfono en la mano</h2>
+        <p>En el aeropuerto no sacas el iPad. Sacas el celular. Ahí es donde RosterLog te va a responder.</p>
+      </div>
+      <div class="grid">
+        <div class="feat">
+          <div class="pv" aria-hidden="true"><div class="pv-gate"><span class="chip mono"><small>T2</small><small>·</small>62</span></div></div>
+          <h3>Tu puerta, antes que la pantalla de la sala</h3>
+          <p>Te avisamos en cuanto asignan o cambian la puerta de tu vuelo. Llegas directo, sin buscar pantallas.</p>
+        </div>
+        <div class="feat">
+          <div class="pv" aria-hidden="true"><div class="pv-rol"><div><b>Vuelo</b><span class="n">783</span></div><div><b>MEX → HMO</b><div class="h">13:50<i>L</i> - 15:45<i>L</i></div><div class="z">19:50<i>Z</i> - 22:45<i>Z</i></div></div><div><b>Total</b><span class="t">2:55</span></div></div></div>
+          <h3>Tu rol siempre contigo</h3>
+          <p>Vuelos, pernoctas y días libres, siempre al día. Misma cuenta que en tu iPad, todo sincronizado solo.</p>
+        </div>
+        <div class="feat">
+          <div class="pv" aria-hidden="true"><div class="pv-wid"><div><div class="l">PRÓXIMA SALIDA</div><div class="hr mono">13:50</div><div class="r">AM 783 · MEX → HMO</div></div><span class="chip mono"><small>T2</small><small>·</small>62</span></div></div>
+          <h3>Tu próxima salida de un vistazo</h3>
+          <p>Hora y puerta en tu pantalla de inicio. Ni siquiera tienes que abrir la app.</p>
+        </div>
+        <div class="feat">
+          <div class="pv" aria-hidden="true"><div class="pv-am"><div class="st"><span style="background:#5856D6">MR</span><span style="background:#2E9457">LG</span></div><div><b>2 amigos en HMO</b><small>Coinciden en tu pernocta</small></div></div></div>
+          <h3>Sabe con quién coincides</h3>
+          <p>Mira qué amigos pernoctan donde tú o andan en base cuando regresas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-h"><h2>De la lista a tu Android en tres pasos</h2></div>
+      <div class="steps">
+        <div class="step">
+          <span class="num">1</span>
+          <h3>Te apuntas hoy</h3>
+          <p>Eliges tu aerolínea y dejas tu correo.</p>
+          <div class="tile" aria-hidden="true"><div class="mini"><span class="ico" style="background:#3DDC84;color:#07301a"><span class="ms">android</span></span><div class="tx"><small>Tu lugar en la beta</small><b>tu@correo.com</b></div><span class="ok">&#10003;</span></div></div>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <h3>Te llega tu invitación</h3>
+          <p>Directo a tu correo en cuanto abra la beta. Quien se apunta antes, entra antes.</p>
+          <div class="tile" aria-hidden="true"><div class="mini"><span class="ico" style="background:var(--accent)"><span class="ms">mail</span></span><div class="tx"><small>RosterLog</small><b>Tu invitación está lista</b></div></div></div>
+        </div>
+        <div class="step fin">
+          <span class="num">3</span>
+          <h3>La instalas antes que nadie</h3>
+          <p>Y nos cuentas qué quieres ver después.</p>
+          <div class="tile" aria-hidden="true"><div class="mini"><span class="ico" style="background:#3373D1"><span class="ms">flight</span></span><div class="tx"><small>Beta</small><b>RosterLog</b></div><span class="get">Instalar</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="preguntas">
+    <div class="wrap">
+      <div class="sec-h"><h2>Preguntas frecuentes</h2></div>
+      <div class="faq">
+        <details open>
+          <summary>¿Cuándo podré probarla?</summary>
+          <p>Lo antes posible. Estamos trabajando para que llegue pronto a tus manos, y quienes están en la lista entran primero.</p>
+        </details>
+        <details>
+          <summary>Ya pago RosterLog en mi iPad. ¿Pago otra vez?</summary>
+          <p>No. Tu suscripción va contigo: entras con tu misma cuenta y listo.</p>
+        </details>
+        <details>
+          <summary>No vuelo en Aeroméxico. ¿Me apunto?</summary>
+          <p>Claro. Entre más tripulantes de tu aerolínea se apunten, más rápido llegamos a ella.</p>
+        </details>
+        <details>
+          <summary>¿Qué hacen con mi correo?</summary>
+          <p>Solo avisarte cuando sea tu turno. Nada de spam, no se comparte con nadie y lo borramos cuando nos digas.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap closing">
+      <h2>¿Tu tripulación usa Android?</h2>
+      <p class="lead">Pásales la voz. Entre más seamos, más rápido llega.</p>
+      <a class="btn" href="#lista">Quiero probarla</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 RosterLog. Todos los derechos reservados.</p>
+    <p style="margin-top:6px">Android es una marca comercial de Google LLC.</p>
+    <div class="fl"><a href="privacy.html">Aviso de Privacidad</a><a href="terms.html">Términos de Servicio</a><a href="support.html">Soporte</a></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var f = document.getElementById('f');
+  var done = document.getElementById('done');
+  var doneT = document.getElementById('done-t');
+  var doneP = document.getElementById('done-p');
+  var err = document.getElementById('err');
+  var correo = document.getElementById('correo');
+  var phone = document.getElementById('phone');
+  var dHoy = document.getElementById('d-hoy');
+  var dMan = document.getElementById('d-man');
+  var dLargo = document.getElementById('d-largo');
+  var dAviso = document.getElementById('d-aviso');
+
+  /* Grosor del teléfono: capas apiladas hacia atrás */
+  if (phone) {
+    var capas = 16;
+    for (var i = capas; i >= 1; i--) {
+      var c = document.createElement('div');
+      c.className = 'layer';
+      c.style.transform = 'translateZ(calc(var(--t) * -' + (i / capas).toFixed(4) + '))';
+      if (i >= 5 && i <= 11) { c.innerHTML = '<span class="kb vol"></span><span class="kb pwr"></span>'; }
+      phone.insertBefore(c, phone.firstChild);
+    }
+  }
+
+  /* La fecha del teléfono siempre es la de hoy, con el formato de la app */
+  try {
+    var DC = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+    var DL = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    var MC = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+    var ML = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    var hoy = new Date();
+    var man = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
+    var avi = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - 7);
+    if (dHoy) { dHoy.textContent = DC[hoy.getDay()] + ' ' + hoy.getDate() + ' ' + MC[hoy.getMonth()]; }
+    if (dMan) { dMan.textContent = DC[man.getDay()] + ' ' + man.getDate() + ' ' + MC[man.getMonth()]; }
+    if (dLargo) { dLargo.textContent = DL[hoy.getDay()] + ' ' + hoy.getDate() + ' De ' + ML[hoy.getMonth()]; }
+    if (dAviso) { dAviso.textContent = 'Último: ' + avi.getDate() + ' ' + MC[avi.getMonth()].toLowerCase(); }
+  } catch (e) { /* se quedan las fechas escritas en el HTML */ }
+
+  if (!f || !done) { return; }
+
+  var ENDPOINT = (document.documentElement.getAttribute('data-endpoint') || '').trim();
+  var nombre = document.getElementById('nombre');
+  var sitio = document.getElementById('sitio');
+  var enviar = document.getElementById('enviar');
+
+  function falla(msg, campo) {
+    err.textContent = msg;
+    err.hidden = false;
+    if (campo && campo.focus) { campo.focus(); }
+  }
+  function listo(mail) {
+    doneP.textContent = 'Te escribimos a ' + mail + ' cuando abra la beta.';
+    f.hidden = true;
+    done.hidden = false;
+    if (doneT.focus) { doneT.focus(); }
+    try { if (window.plausible) { window.plausible('Lista Android'); } } catch (e) {}
+  }
+  function origen() {
+    try {
+      var q = new URLSearchParams(location.search);
+      return (q.get('ref') || q.get('utm_source') || '').slice(0, 40);
+    } catch (e) { return ''; }
+  }
+  function modelo() {
+    try {
+      var d = navigator.userAgentData;
+      if (!d || !d.getHighEntropyValues) { return Promise.resolve(''); }
+      return d.getHighEntropyValues(['model']).then(function (v) { return (v && v.model) || ''; }, function () { return ''; });
+    } catch (e) { return Promise.resolve(''); }
+  }
+  var MENSAJES = {
+    aerolinea: 'Elige tu aerolínea.',
+    puesto: 'Elige si eres piloto o sobrecargo.',
+    nombre: 'Escribe tu nombre y un apellido.',
+    correo: 'Revisa tu correo. Debe verse como tu@correo.com.',
+    limite: 'Demasiados intentos desde esta red. Prueba de nuevo en una hora.'
+  };
+
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    err.hidden = true;
+    var aero = f.querySelector('input[name="aerolinea"]:checked');
+    var puesto = f.querySelector('input[name="puesto"]:checked');
+    var nom = (nombre.value || '').replace(/\s+/g, ' ').trim();
+    var mail = (correo.value || '').trim();
+    if (!aero) { return falla(MENSAJES.aerolinea, document.getElementById('a-amx')); }
+    if (!puesto) { return falla(MENSAJES.puesto, document.getElementById('p-pil')); }
+    if (nom.split(' ').length < 2) { return falla(MENSAJES.nombre, nombre); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { return falla(MENSAJES.correo, correo); }
+
+    // La maqueta no tiene endpoint: muestra la confirmación sin enviar nada.
+    if (!ENDPOINT) { return listo(mail); }
+
+    enviar.disabled = true;
+    var rotulo = enviar.textContent;
+    enviar.textContent = 'Apuntándote…';
+    function fin() { enviar.disabled = false; enviar.textContent = rotulo; }
+
+    modelo().then(function (mod) {
+      return fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          aerolinea: aero.value, puesto: puesto.value, nombre: nom, correo: mail,
+          modelo: mod, origen: origen(), sitio: sitio ? sitio.value : ''
+        })
+      });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
+    }).then(function (x) {
+      fin();
+      if (x.status === 200 && x.j && x.j.ok) { return listo(mail); }
+      var clave = x.j && x.j.error;
+      falla(MENSAJES[clave] || 'No pudimos apuntarte. Intenta de nuevo en un momento.', clave === 'nombre' ? nombre : correo);
+    }).catch(function () {
+      fin();
+      falla('Sin conexión. Revisa tu internet e intenta de nuevo.', enviar);
+    });
+  });
+})();
+</script>
+</body>
+</html>
