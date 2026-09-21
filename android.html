@@ -28,7 +28,7 @@
     <script defer data-domain="rosterlog.app" src="https://plausible.io/js/script.js"></script>
     <script src="assets/theme.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&icon_names=android,arrow_forward,calendar_month,chevron_right,expand_more,flight,group,home,mail,mark_email_unread,more_horiz,schedule,settings,signal_cellular_alt,wifi&display=block">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&icon_names=android,arrow_forward,calendar_month,chevron_right,expand_more,flight,group,home,lock,mail,mark_email_unread,more_horiz,schedule,settings,signal_cellular_alt,wifi&display=block">
 <style>
 /* Tokens del sitio rosterlog.app (index.html), tal cual */
 :root {
@@ -177,6 +177,8 @@ form { display: grid; gap: 14px; }
 .btn[disabled] { opacity: 0.6; cursor: progress; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .err { font-size: 13px; color: var(--danger); font-weight: 500; padding-left: 8px; }
+.priv { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.4; color: var(--text); padding-left: 8px; margin-top: 2px; }
+.priv .ms { font-size: 17px; color: var(--android); flex: none; margin-top: 1px; }
 .fine { font-size: 12px; color: var(--text-secondary); padding-left: 8px; }
 .fine a { color: inherit; }
 
@@ -537,6 +539,7 @@ footer a { color: var(--text-secondary); text-decoration: none; }
               <button class="btn" type="submit" id="enviar">Quiero probarla</button>
             </div>
             <p class="err" id="err" role="alert" hidden></p>
+            <p class="priv"><span class="ms">lock</span><span>Tu información es privada. No la compartimos con nadie, tampoco con tu aerolínea.</span></p>
             <p class="fine">Sin spam. Al apuntarte aceptas el <a href="privacy.html">aviso de privacidad</a>.</p>
           </form>
 
