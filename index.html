@@ -158,242 +158,44 @@
             padding: 8px 14px; border-radius: 999px;
             border: 1px solid var(--border);
         }
-        /* ──────────────────────────────────────────────────────────
-         * Marco iPad Pro 11" realista (CSS avanzado)
-         * Técnicas:
-         *  • Layered gradient para bezel (efecto brushed metal sutil)
-         *  • Outer edge highlight con linear-gradient (brillo metálico)
-         *  • Inner shadow en el screen recess (la pantalla parece hundida)
-         *  • Camera multi-layer (ring + lens + reflection point)
-         *  • Bottom shadow ambient (el iPad "descansa" sobre superficie)
-         *  • Aspect-ratio 2388:1668 nativo del iPad Pro 11"
-         * ────────────────────────────────────────────────────────── */
-        .ipad-frame {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            padding: 3.17%;
-            box-sizing: border-box;
-            border-radius: clamp(16px, 2.6%, 30px);
-            /* Bezel: gradient diagonal sutil simula brushed metal */
-            background:
-                linear-gradient(135deg, #2a2a2c 0%, #1d1d1f 50%, #1a1a1c 100%);
-            /* Highlight metálico exterior + ambient shadow inferior */
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.5),
-                0 1px 2px rgba(0, 0, 0, 0.15),
-                0 12px 32px -8px rgba(0, 0, 0, 0.18);
-        }
-        @media (prefers-color-scheme: dark) {
-            .ipad-frame {
-                background:
-                    linear-gradient(135deg, #38383a 0%, #2c2c2e 50%, #28282a 100%);
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
-                    0 1px 2px rgba(0, 0, 0, 0.4),
-                    0 16px 40px -10px rgba(0, 0, 0, 0.5);
-            }
-        }
-        /* Camera frontal del iPad Pro 11" M2 — 3 capas: ring exterior,
-         * lente con reflejo, sombra interior. Posición: lado IZQUIERDO
-         * vertical-center (orientación landscape estándar — el camera
-         * está en el lado largo del device cuando lo sostienes en
-         * landscape con el conector USB-C abajo).
-         */
-        .ipad-frame::before {
-            content: "";
-            position: absolute;
-            top: 50%; left: 1.6%;
-            transform: translateY(-50%);
-            width: 0.6%;
-            aspect-ratio: 1;
-            min-width: 5px;
-            border-radius: 50%;
-            background:
-                radial-gradient(circle at 30% 30%,
-                    rgba(80, 110, 140, 0.85) 0%,
-                    rgba(20, 25, 35, 0.95) 60%,
-                    rgba(0, 0, 0, 1) 100%);
-            box-shadow:
-                inset 0 0 0 0.5px rgba(0, 0, 0, 0.6),
-                0 0 0 1px rgba(255, 255, 255, 0.02);
-        }
-        /* Pantalla recessed con sombra interior leve */
-        .ipad-frame .ipad-screen {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 2388 / 1668;
-            border-radius: clamp(8px, 1.4%, 16px);
-            overflow: hidden;
-            background: var(--bg);
-            box-shadow:
-                inset 0 0 0 0.5px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(0, 0, 0, 0.08);
-        }
-        .ipad-frame .ipad-screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        /* ──────────────────────────────────────────────────────────
-         * Marco iPhone 15 Pro Max realista (CSS)
-         * Specs físicas reales:
-         *  • 159.9 × 76.7 mm (aspect 2.085)
-         *  • Bezel uniforme ~1.55mm = 2.02% del ancho del device
-         *  • Outer corner radius ~13.5mm = 17.6% width = 8.4% height
-         *  • Display corner radius ~13mm = 17% width = 8.1% height
-         *  • Dynamic Island 125×36pt (~29% display width)
-         *  • Display 1290×2796px (aspect 1:2.167)
-         * IMPORTANTE: usamos notación X%/Y% en border-radius para que las
-         * esquinas sean CIRCULARES (no elípticas como sale con un solo %).
-         * ────────────────────────────────────────────────────────── */
-        /* iPhone 15 Pro Max — bezel ULTRA fino real (~1.55mm sobre body
-         * 76.7mm = 2% pero visualmente Apple los hace lucir aún más
-         * delgados con tono casi-negro continuo entre bezel y screen).
-         * Trick clave: el bezel y el área del Dynamic Island deben ser
-         * del MISMO color para que se fundan visualmente. El screenshot
-         * propio del iOS ya lleva el área negra del status bar, así que
-         * la "thickness aparente" del top viene de eso, no del bezel CSS.
-         */
-        .iphone-frame {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            padding: 0.7%;
-            box-sizing: border-box;
-            border-radius: 18% / 8.6%;
-            background: #0a0a0c;
-            box-shadow:
-                inset 0 0 0 0.5px rgba(60, 60, 65, 0.4),
-                0 1px 2px rgba(0, 0, 0, 0.2),
-                0 14px 36px -8px rgba(0, 0, 0, 0.3);
-        }
-        @media (prefers-color-scheme: dark) {
-            .iphone-frame {
-                background: #1a1a1c;
-                box-shadow:
-                    inset 0 0 0 0.5px rgba(80, 80, 85, 0.35),
-                    0 1px 2px rgba(0, 0, 0, 0.5),
-                    0 18px 48px -10px rgba(0, 0, 0, 0.65);
-            }
-        }
-        .iphone-frame .iphone-screen {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1290 / 2796;
-            border-radius: 17.5% / 8.3%;
-            overflow: hidden;
-            background: #000;
-        }
-        /* Dynamic Island — el screenshot ya tiene el área de status bar
-         * negra; sólo necesitamos overlay del pill shape exacto encima.
-         * Width 28% (real Apple specs), top offset 1.3% (11pt sobre 932pt).
-         */
-        .iphone-frame .iphone-screen::before {
-            content: "";
-            position: absolute;
-            top: 1.3%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 28%;
-            aspect-ratio: 125 / 36;
-            border-radius: 999px;
-            background: #000;
-            z-index: 2;
-        }
-        .iphone-frame .iphone-screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-        /* Side buttons — Camera Control derecho + Action button izquierdo,
-         * detalles realistas del iPhone 15 Pro Max.
-         */
-        .iphone-frame::after {
-            /* Camera Control button (lado derecho, ~30% from top) */
-            content: "";
-            position: absolute;
-            right: -0.4%;
-            top: 28%;
-            width: 0.8%;
-            height: 9%;
-            border-radius: 1px;
-            background: linear-gradient(90deg, #1a1a1c 0%, #2c2c2e 50%, #1a1a1c 100%);
-        }
-        .iphone-frame .iphone-screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        /* ────────── Hero ──────────
-         * iPad frame + iPhone overlay (en duo) con glow ambient debajo
+        /* ────────── Hero y showcase: escenas 3D ──────────
+         * Las imágenes son mockups generados con tools/mockups-web del repo de
+         * la app (iPad Pro 11" y iPhone 17 Pro a medida real, UI portada del
+         * código Swift). Fondo transparente: la sombra ya viene en la imagen.
          */
         .hero-mockup {
-            margin: 72px auto 0;
-            max-width: 640px;
+            margin: 40px auto 0;
+            max-width: 1120px;
             position: relative;
             animation: floatIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
         }
-        .hero-mockup .iphone-frame {
-            position: absolute;
-            right: -8%;
-            bottom: -12%;
-            width: 24%;
-            z-index: 2;
-            animation: floatIn 0.9s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .hero-mockup .iphone-frame { animation: none; }
+        .hero-mockup img, .showcase-media img.mockup {
+            display: block; width: 100%; height: auto;
         }
         .hero-mockup::before {
             content: "";
             position: absolute;
-            left: 6%; right: 6%; bottom: -40px;
-            height: 100px;
-            background: radial-gradient(
-                ellipse at center,
-                rgba(0, 122, 255, 0.22) 0%,
-                rgba(88, 86, 214, 0.13) 40%,
-                transparent 75%
-            );
-            filter: blur(32px);
+            left: 12%; right: 12%; bottom: 4%;
+            height: 30%;
+            background: radial-gradient(ellipse at center, rgba(0, 122, 255, 0.16) 0%, rgba(88, 86, 214, 0.08) 45%, transparent 75%);
+            filter: blur(40px);
             z-index: -1;
             pointer-events: none;
         }
         @media (prefers-color-scheme: dark) {
             .hero-mockup::before {
-                background: radial-gradient(
-                    ellipse at center,
-                    rgba(10, 132, 255, 0.36) 0%,
-                    rgba(88, 86, 214, 0.22) 40%,
-                    transparent 75%
-                );
+                background: radial-gradient(ellipse at center, rgba(10, 132, 255, 0.30) 0%, rgba(88, 86, 214, 0.16) 45%, transparent 75%);
             }
         }
         @keyframes floatIn {
             from { opacity: 0; transform: translateY(24px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @media (prefers-reduced-motion: reduce) {
-            .hero-mockup { animation: none; }
-        }
-
-        /* ────────── Showcase media ──────────
-         * iPad frame + reveal-on-scroll + hover lift sutil
-         */
-        .showcase-media .ipad-frame {
+        .showcase-media img.mockup {
+            max-width: 680px;
             transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .showcase-media:hover .ipad-frame {
-            transform: translateY(-4px);
-        }
+        .showcase-media:hover img.mockup { transform: translateY(-6px); }
         .showcase-row {
             opacity: 0;
             transform: translateY(32px);
@@ -405,25 +207,14 @@
             transform: translateY(0);
         }
         @media (prefers-reduced-motion: reduce) {
+            .hero-mockup { animation: none; }
             .showcase-row { opacity: 1; transform: none; transition: none; }
-            .showcase-media .ipad-frame { transition: none; }
-            .showcase-media:hover .ipad-frame { transform: none; }
-        }
-
-        @media (max-width: 900px) {
-            .hero-mockup { max-width: 540px; margin-top: 56px; }
-            .hero-mockup .iphone-frame {
-                right: -6%; bottom: -10%; width: 22%;
-            }
+            .showcase-media img.mockup { transition: none; }
+            .showcase-media:hover img.mockup { transform: none; }
         }
         @media (max-width: 600px) {
-            .hero-mockup { max-width: 96%; margin-top: 40px; }
+            .hero-mockup { margin-top: 28px; }
             .hero-mockup::before { display: none; }
-            .ipad-frame { padding: 2.4%; }
-            .hero-mockup .iphone-frame {
-                width: 20%;
-                right: -4%; bottom: -8%;
-            }
         }
 
         /* ───────── Showcase (estilo Apple marketing) ─────────
@@ -445,6 +236,7 @@
         .showcase-row + .showcase-row {
             border-top: 1px solid var(--border);
         }
+        .showcase-row.reverse { grid-template-columns: 1fr 1.4fr; }
         .showcase-row.reverse .showcase-media { order: 2; }
         .showcase-row.reverse .showcase-text { order: 1; }
         .showcase-media {
@@ -509,7 +301,7 @@
         }
         @media (max-width: 900px) {
             .showcase { padding: 72px 0; }
-            .showcase-row {
+            .showcase-row, .showcase-row.reverse {
                 grid-template-columns: 1fr;
                 gap: 40px;
                 padding: 56px 0;
@@ -558,8 +350,12 @@
             width: 44px; height: 44px;
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
             margin-bottom: 24px;
+        }
+        .feature-icon .ms {
+            font-family: "Material Symbols Rounded"; font-size: 24px; line-height: 1;
+            font-feature-settings: "liga"; -webkit-font-smoothing: antialiased;
+            white-space: nowrap; overflow: hidden; width: 24px;
         }
         .feature-card h3 {
             font-size: 19px; font-weight: 600;
@@ -702,6 +498,7 @@
             nav .nav-links a { font-size: 12px; }
         }
     </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&icon_names=calendar_month,cloud_sync,description,map,menu_book,payments&display=block">
     <link rel="stylesheet" href="assets/shared.css">
     <style>
         /* Overrides data-theme para la landing (mantiene sus tokens propios
@@ -804,16 +601,8 @@
         </div>
 
         <div class="hero-mockup">
-            <div class="ipad-frame" aria-label="RosterLog en iPad">
-                <div class="ipad-screen">
-                    <img src="assets/screenshots/raw/ipad-inicio.png" alt="Pantalla de inicio de RosterLog en iPad">
-                </div>
-            </div>
-            <div class="iphone-frame" aria-hidden="true">
-                <div class="iphone-screen">
-                    <img src="assets/screenshots/raw/iphone-inicio.png" alt="">
-                </div>
-            </div>
+            <img src="assets/mockups/hero.webp" width="1373" height="896" fetchpriority="high"
+                 alt="RosterLog en iPad y iPhone: Inicio con tu próximo servicio, el tablero de vuelos de hoy con puertas y el aviso de cambio de puerta">
         </div>
     </div>
 </section>
@@ -826,34 +615,34 @@
         </div>
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(0,122,255,0.1);">&#128203;</div>
+                <div class="feature-icon" style="background:rgba(0,122,255,0.1);"><span class="ms" style="color:#007aff" aria-hidden="true">description</span></div>
                 <h3>Importa tu Roster</h3>
-                <p>Carga tu rol de servicios desde el PDF en segúndos. Todos tus vuelos organizados automáticamente.</p>
+                <p>Carga tu rol de servicios desde el PDF en segundos. Todos tus vuelos organizados automáticamente.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(88,86,214,0.1);">&#128202;</div>
+                <div class="feature-icon" style="background:rgba(88,86,214,0.1);"><span class="ms" style="color:#5856d6" aria-hidden="true">map</span></div>
                 <h3>Estadísticas de vuelo</h3>
                 <p>Visualiza tus rutas en un mapa, países visitados, aeropuertos y distancia volada.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(255,149,0,0.1);">&#9201;</div>
+                <div class="feature-icon" style="background:rgba(255,149,0,0.1);"><span class="ms" style="color:#ff9500" aria-hidden="true">payments</span></div>
                 <h3>Cálculo de Extras</h3>
                 <p>Tiempos extra calculados automáticamente según el Contrato Colectivo de Trabajo.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(52,199,89,0.1);">&#9729;</div>
+                <div class="feature-icon" style="background:rgba(52,199,89,0.1);"><span class="ms" style="color:#34c759" aria-hidden="true">cloud_sync</span></div>
                 <h3>Sincronización en la nube</h3>
                 <p>Tus datos seguros y sincronizados entre todos tus dispositivos al instante.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(175,82,222,0.1);">&#9992;</div>
+                <div class="feature-icon" style="background:rgba(175,82,222,0.1);"><span class="ms" style="color:#af52de" aria-hidden="true">menu_book</span></div>
                 <h3>Bitácora completa</h3>
                 <p>Registra matrículas, tripulación, notas y tiempos de cada vuelo.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(255,69,58,0.1);">&#128197;</div>
+                <div class="feature-icon" style="background:rgba(255,69,58,0.1);"><span class="ms" style="color:#ff453a" aria-hidden="true">calendar_month</span></div>
                 <h3>Calendario de eventos</h3>
-                <p>Visualiza tus servicios por día con detalle de rutas, horarios locales, Zulu y countdown.</p>
+                <p>Tus servicios día por día con rutas, horarios locales y Zulu, plataforma y pernoctas.</p>
             </div>
         </div>
     </div>
@@ -863,19 +652,15 @@
     <div class="container">
         <article class="showcase-row">
             <div class="showcase-media">
-                <div class="ipad-frame">
-                    <div class="ipad-screen">
-                        <img src="assets/screenshots/raw/ipad-eventos.png" alt="Calendario de eventos en RosterLog" loading="lazy">
-                    </div>
-                </div>
+                <img class="mockup" src="assets/mockups/eventos.webp" width="1062" height="803" loading="lazy" alt="Eventos de la semana en RosterLog para iPad: vuelos, plataforma y pernoctas">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Eventos</span>
                 <h2>Tu mes, claro de un vistazo.</h2>
-                <p>Visualiza tus servicios día por día. Horarios locales y Zulu, rutas, y countdown al próximo check-in.</p>
+                <p>Tus servicios día por día: rutas, horarios locales y Zulu, tiempo en plataforma y pernoctas.</p>
                 <ul class="showcase-bullets">
-                    <li>Vista mensual y semanal con un toque.</li>
-                    <li>Detalle de cada vuelo en un swipe.</li>
+                    <li>Cambia de mes o vuelve a hoy con un toque.</li>
+                    <li>Plataforma y horas de pernocta calculadas solas.</li>
                     <li>Sincronizado entre iPhone y iPad al instante.</li>
                 </ul>
             </div>
@@ -883,19 +668,15 @@
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <div class="ipad-frame">
-                    <div class="ipad-screen">
-                        <img src="assets/screenshots/raw/ipad-roster.png" alt="Roster del piloto en RosterLog" loading="lazy">
-                    </div>
-                </div>
+                <img class="mockup" src="assets/mockups/roster.webp" width="1070" height="803" loading="lazy" alt="Roster en iPad con Zulu Real capturado, matrícula y equipo">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Roster</span>
                 <h2>Tu rol completo, importado en segundos.</h2>
                 <p>Sube el PDF y la app organiza todos tus vuelos. Sin escribir nada a mano.</p>
                 <ul class="showcase-bullets">
-                    <li>Soporta múltiples aerolíneas mexicanas.</li>
-                    <li>Detección automática de mes y horarios.</li>
+                    <li>Captura tu Zulu Real y ve la diferencia contra el itinerario.</li>
+                    <li>Matrícula y equipo de cada vuelo.</li>
                     <li>Servicios, intocables y reservas reconocidos.</li>
                 </ul>
             </div>
@@ -903,40 +684,32 @@
 
         <article class="showcase-row">
             <div class="showcase-media">
-                <div class="ipad-frame">
-                    <div class="ipad-screen">
-                        <img src="assets/screenshots/raw/ipad-estadisticas.jpg" alt="Estadísticas de vuelo en RosterLog" loading="lazy">
-                    </div>
-                </div>
+                <img class="mockup" src="assets/mockups/estadisticas.webp" width="1062" height="803" loading="lazy" alt="Estadísticas en iPad: mapa de rutas, vuelos, distancia, países y aeropuertos">
             </div>
             <div class="showcase-text">
                 <span class="showcase-eyebrow">Estadísticas</span>
                 <h2>Mira hasta dónde has volado.</h2>
                 <p>Mapas de rutas, países visitados, aeropuertos y distancias. Tu carrera entera en una vista.</p>
                 <ul class="showcase-bullets">
-                    <li>Resumen mensual y anual.</li>
-                    <li>Tiempo total volado y rutas más frecuentes.</li>
-                    <li>Logbook clásico para tus archivos.</li>
+                    <li>Por semana, mes, año o toda tu carrera.</li>
+                    <li>Vuelos, distancia, países, aeropuertos y rutas.</li>
+                    <li>Cuánto te falta para llegar a la Luna.</li>
                 </ul>
             </div>
         </article>
 
         <article class="showcase-row reverse">
             <div class="showcase-media">
-                <div class="ipad-frame">
-                    <div class="ipad-screen">
-                        <img src="assets/screenshots/raw/ipad-metar.jpg" alt="Información de aeropuertos y METAR" loading="lazy">
-                    </div>
-                </div>
+                <img class="mockup" src="assets/mockups/clima.webp" width="1069" height="803" loading="lazy" alt="METAR y TAF de MMMX en RosterLog para iPad">
             </div>
             <div class="showcase-text">
-                <span class="showcase-eyebrow">Aeropuertos</span>
-                <h2>METAR, TAF y datos al instante.</h2>
-                <p>Información actualizada de cada aeropuerto que visitas. Sin abrir 5 apps distintas.</p>
+                <span class="showcase-eyebrow">Clima</span>
+                <h2>METAR y TAF al instante.</h2>
+                <p>Busca por código ICAO o IATA y lee el reporte con lo importante resaltado. Sin abrir 5 apps distintas.</p>
                 <ul class="showcase-bullets">
-                    <li>METAR y TAF en formato legible.</li>
-                    <li>Coordenadas, elevación y zona horaria.</li>
-                    <li>Histórico de tus visitas a cada aeropuerto.</li>
+                    <li>Viento, tormentas y fenómenos resaltados por color.</li>
+                    <li>Antigüedad del METAR y vigencia del TAF a la vista.</li>
+                    <li>Tus aeropuertos favoritos a un toque.</li>
                 </ul>
             </div>
         </article>
