@@ -1,11 +1,14 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "app.rosterlog.android",
       "sha256_cert_fingerprints": [
-        "C0:64:D3:4F:32:A5:A1:9E:AF:65:6F:53:84:BA:4A:B6:C5:B2:9E:27:F0:1F:46:18:CB:76:7D:BA:0A:4C:93:DF"
+        "C0:64:D3:4F:32:A5:A1:9E:AF:65:6F:53:84:BA:4A:B6:C5:B2:9E:27:F0:1F:46:18:CB:76:7D:BA:0A:4C:93:DF",
+        "7B:D5:09:50:AD:4E:4E:18:92:76:66:00:F4:42:A6:8B:9C:AF:62:A2:E6:8E:B1:C5:7B:E4:0E:4D:9E:9F:75:5D"
       ]
     }
   }
