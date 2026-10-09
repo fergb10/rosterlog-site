@@ -36,11 +36,22 @@
     transform-box: fill-box; transform-origin: center;
     animation: ring 2.8s ease-out infinite;
 }
-.hero-sky .apt text {
-    fill: var(--text-secondary); font: 600 13px -apple-system, BlinkMacSystemFont, sans-serif;
-    letter-spacing: 0.08em; opacity: 0.7;
+/* Jet: degradado gris-azulado discreto, leve difuminado y estelas */
+.hero-sky {
+    --jet-a: #c3ccd9; --jet-b: #8794a8; --jet-c: #5d6a7e;
+    --trail: rgba(120, 140, 170, 0.45);
 }
-.hero-sky .plane path { fill: currentColor; }
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .hero-sky { --jet-a: #eef2f8; --jet-b: #b4bfcf; --jet-c: #7f8ba0; --trail: rgba(200, 215, 240, 0.35); }
+}
+[data-theme="dark"] .hero-sky { --jet-a: #eef2f8; --jet-b: #b4bfcf; --jet-c: #7f8ba0; --trail: rgba(200, 215, 240, 0.35); }
+.hero-sky .plane .jet { opacity: 0.88; }
+.hero-sky .plane .spine { stroke: var(--jet-a); opacity: 0.6; }
+.hero-sky .jet-a { stop-color: var(--jet-a); }
+.hero-sky .jet-b { stop-color: var(--jet-b); }
+.hero-sky .jet-c { stop-color: var(--jet-c); }
+.hero-sky .trail-0 { stop-color: var(--trail); stop-opacity: 0; }
+.hero-sky .trail-1 { stop-color: var(--trail); stop-opacity: 1; }
 @keyframes routeDraw { to { stroke-dashoffset: 0; } }
 @keyframes ring {
     0% { transform: scale(0.6); opacity: 0.6; }
@@ -48,7 +59,6 @@
 }
 @media (max-width: 600px) {
     .hero-sky { height: 520px; aspect-ratio: auto; }
-    .hero-sky .apt text { display: none; }
 }
 
 /* ── Hero: entrada escalonada ── */

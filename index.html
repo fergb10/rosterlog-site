@@ -575,12 +575,40 @@
             <mask id="routeMask" maskUnits="userSpaceOnUse">
                 <path class="route-draw" pathLength="1" d="M 80 470 C 330 90, 870 40, 1120 300" fill="none" stroke="#fff" stroke-width="8"/>
             </mask>
+            <linearGradient id="jetGrad" x1="0" y1="-1" x2="0" y2="1" gradientUnits="objectBoundingBox">
+                <stop offset="0" class="jet-a"/><stop offset="0.5" class="jet-b"/><stop offset="1" class="jet-c"/>
+            </linearGradient>
+            <linearGradient id="trailGrad" x1="0" x2="1">
+                <stop offset="0" class="trail-0"/><stop offset="1" class="trail-1"/>
+            </linearGradient>
+            <filter id="jetSoft" x="-50%" y="-50%" width="200%" height="250%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="soft"/>
+                <feDropShadow in="soft" dx="0" dy="9" stdDeviation="5" flood-color="#0a2a5c" flood-opacity="0.22"/>
+            </filter>
+            <filter id="trailBlur" x="-10%" y="-300%" width="120%" height="700%"><feGaussianBlur stdDeviation="1.4"/></filter>
         </defs>
         <path id="heroRoute" class="route" d="M 80 470 C 330 90, 870 40, 1120 300" fill="none" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round" mask="url(#routeMask)"/>
-        <g class="apt"><circle class="ring" cx="80" cy="470" r="6"/><circle class="dot" cx="80" cy="470" r="4"/><text x="80" y="500" text-anchor="middle">MEX</text></g>
-        <g class="apt"><circle class="ring" cx="1120" cy="300" r="6"/><circle class="dot" cx="1120" cy="300" r="4"/><text x="1120" y="330" text-anchor="middle">CUN</text></g>
+        <g class="apt"><circle class="ring" cx="80" cy="470" r="6"/><circle class="dot" cx="80" cy="470" r="4"/></g>
+        <g class="apt"><circle class="ring" cx="1120" cy="300" r="6"/><circle class="dot" cx="1120" cy="300" r="4"/></g>
         <g class="plane" opacity="0">
-            <path transform="rotate(90) translate(-12,-12)" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+            <g transform="scale(1.05)">
+                <!-- Estelas detrás de los motores -->
+                <g class="contrail" filter="url(#trailBlur)">
+                    <rect x="-150" y="-11.2" width="148" height="2.4" rx="1.2" fill="url(#trailGrad)"/>
+                    <rect x="-150" y="8.8" width="148" height="2.4" rx="1.2" fill="url(#trailGrad)"/>
+                </g>
+                <!-- Jet de línea visto desde arriba, apunta a +x -->
+                <g class="jet" filter="url(#jetSoft)" fill="url(#jetGrad)">
+                    <path d="M8 -3 L-12 -25.5 Q-14 -27.6 -16.6 -27 L-9 -3 Z"/>
+                    <path d="M8 3 L-12 25.5 Q-14 27.6 -16.6 27 L-9 3 Z"/>
+                    <path d="M-21 -2.6 L-29 -11 Q-30.5 -12 -32.3 -11.4 L-28.2 -2.6 Z"/>
+                    <path d="M-21 2.6 L-29 11 Q-30.5 12 -32.3 11.4 L-28.2 2.6 Z"/>
+                    <ellipse cx="3" cy="-10" rx="4.4" ry="1.7"/>
+                    <ellipse cx="3" cy="10" rx="4.4" ry="1.7"/>
+                    <path d="M31 0 C31 -2.3 28.4 -3.3 24 -3.3 L-23 -3.3 C-28 -3.3 -32 -1.4 -34 0 C-32 1.4 -28 3.3 -23 3.3 L24 3.3 C28.4 3.3 31 2.3 31 0 Z"/>
+                    <path class="spine" d="M27 0 L-30 0" fill="none" stroke-width="0.8"/>
+                </g>
+            </g>
             <animateMotion dur="11s" begin="2s" repeatCount="indefinite" rotate="auto" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1"><mpath href="#heroRoute"/></animateMotion>
             <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.9;1" dur="11s" begin="2s" repeatCount="indefinite"/>
         </g>
