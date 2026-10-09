@@ -1,0 +1,215 @@
+/* ────────── Motion de la landing ──────────
+ * Todo lo animado vive aquí. Reglas:
+ *  - Sin JS (`html.js` ausente) todo se ve estático y completo.
+ *  - `prefers-reduced-motion: reduce` apaga todo al final del archivo.
+ *  - Solo se anima transform/opacity (y una var de ángulo en el borde de
+ *    precios) para que corra a 60 fps en iPhone.
+ */
+:root { --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+/* ── Barra de progreso de scroll bajo el nav ── */
+.scroll-progress {
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, #007aff, #5856d6, #af52de);
+    transform-origin: 0 50%;
+    transform: scaleX(var(--scroll, 0));
+    pointer-events: none;
+}
+
+/* ── Hero: ruta con avión ── */
+.hero { position: relative; overflow: hidden; }
+.hero > .container { position: relative; z-index: 1; }
+.hero-sky {
+    position: absolute; left: 0; right: 0; top: 0;
+    width: 100%; height: auto; aspect-ratio: 1200 / 720;
+    pointer-events: none; z-index: 0;
+    color: var(--accent);
+}
+.hero-sky .route { stroke: currentColor; opacity: 0.35; }
+.hero-sky .route-draw {
+    stroke-dasharray: 1; stroke-dashoffset: 1;
+    animation: routeDraw 1.6s 0.5s var(--ease-out) forwards;
+}
+.hero-sky .apt circle.dot { fill: currentColor; opacity: 0.6; }
+.hero-sky .apt circle.ring {
+    fill: none; stroke: currentColor; stroke-width: 1.5;
+    transform-box: fill-box; transform-origin: center;
+    animation: ring 2.8s ease-out infinite;
+}
+.hero-sky .apt text {
+    fill: var(--text-secondary); font: 600 13px -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.08em; opacity: 0.7;
+}
+.hero-sky .plane path { fill: currentColor; }
+@keyframes routeDraw { to { stroke-dashoffset: 0; } }
+@keyframes ring {
+    0% { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(2.6); opacity: 0; }
+}
+@media (max-width: 600px) {
+    .hero-sky { height: 520px; aspect-ratio: auto; }
+    .hero-sky .apt text { display: none; }
+}
+
+/* ── Hero: entrada escalonada ── */
+.js [data-hero] {
+    animation: heroIn 0.9s var(--ease-out) backwards;
+    animation-delay: calc(var(--d, 0) * 1s);
+}
+@keyframes heroIn {
+    from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+    to { opacity: 1; transform: none; filter: blur(0); }
+}
+/* .hero-sub ya usa transform: scale(.5); solo se desvanece */
+.js .hero-sub[data-hero] { animation-name: fadeIn; }
+@keyframes fadeIn { from { opacity: 0; } }
+
+.hero h1 .gradient {
+    background-image: linear-gradient(100deg, #007aff 0%, #5856d6 30%, #af52de 50%, #5856d6 70%, #007aff 100%);
+    background-size: 200% 100%;
+    animation: shimmer 8s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.hero-cta { position: relative; overflow: hidden; transition: background 0.2s ease, transform 0.25s var(--ease-out), box-shadow 0.25s; }
+.hero-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 30px -10px rgba(0, 122, 255, 0.6); }
+.hero-cta::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s var(--ease-out);
+}
+.hero-cta:hover::after { transform: translateX(120%); }
+
+/* Mockup del hero: se endereza conforme entra al scroll (estilo apple.com) */
+.hero-mockup .tilt {
+    transform: perspective(1600px) rotateX(calc(var(--tilt, 0) * 14deg)) scale(calc(1 - var(--tilt, 0) * 0.06));
+    transform-origin: 50% 100%;
+    will-change: transform;
+}
+
+/* ── Reveal genérico ── */
+.js [data-reveal],
+.js [data-stagger] > * {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 90ms);
+}
+.js [data-reveal].in,
+.js [data-stagger].in > * { opacity: 1; transform: none; }
+.js [data-stagger].done > * { transition-delay: 0s; }
+
+/* Showcase: imagen entra de lado, texto y bullets en cascada.
+ * overflow-x: clip evita scroll horizontal mientras la imagen está fuera. */
+.showcase { overflow-x: clip; }
+.js .showcase-row .showcase-media { transform: translateX(-48px); opacity: 0; transition: transform 1s var(--ease-out), opacity 1s var(--ease-out); }
+.js .showcase-row.reverse .showcase-media { transform: translateX(48px); }
+.js .showcase-row.visible .showcase-media { transform: none; opacity: 1; }
+.js .showcase-text > * { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+.js .showcase-row.visible .showcase-text > * { opacity: 1; transform: none; }
+.js .showcase-row.visible .showcase-text > :nth-child(2) { transition-delay: 0.08s; }
+.js .showcase-row.visible .showcase-text > :nth-child(3) { transition-delay: 0.16s; }
+.js .showcase-row.visible .showcase-text > :nth-child(4) { transition-delay: 0.24s; }
+.js .showcase-bullets li::before { transform: scale(0); transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.js .showcase-row.visible .showcase-bullets li::before { transform: scale(1); }
+.js .showcase-row.visible .showcase-bullets li:nth-child(1)::before { transition-delay: 0.45s; }
+.js .showcase-row.visible .showcase-bullets li:nth-child(2)::before { transition-delay: 0.6s; }
+.js .showcase-row.visible .showcase-bullets li:nth-child(3)::before { transition-delay: 0.75s; }
+
+/* ── Tarjetas de funciones: reflector que sigue al cursor ── */
+.feature-card { position: relative; overflow: hidden; isolation: isolate; }
+.feature-card::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 122, 255, 0.12), transparent 60%);
+    opacity: 0; transition: opacity 0.35s;
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-card .feature-icon { transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.feature-card:hover .feature-icon { transform: translateY(-3px) rotate(-6deg) scale(1.06); }
+/* el reveal de la tarjeta usa transform; el hover lo retoma una vez dentro */
+.js .features-grid.in > .feature-card:hover { transform: translateY(-4px); }
+
+/* ── Pasos: ruta que se dibuja y avión que la recorre ── */
+.steps { position: relative; }
+.steps-route { display: none; }
+@media (min-width: 820px) {
+    .steps-route {
+        display: block; position: absolute; z-index: 0;
+        top: 17px; left: calc(100% / 6); right: calc(100% / 6); height: 2px;
+        background-image: linear-gradient(90deg, var(--accent) 50%, transparent 50%);
+        background-size: 10px 2px; opacity: 0.45;
+        transform-origin: 0 50%;
+    }
+    .steps-route .plane {
+        position: absolute; top: -9px; left: 0; width: 20px; height: 20px;
+        margin-left: -10px; fill: var(--accent); opacity: 0;
+    }
+    .js .steps-route { transform: scaleX(0); transition: transform 1.4s 0.2s var(--ease-out); }
+    .js .steps.in .steps-route { transform: scaleX(1); }
+    .js .steps.in .steps-route .plane { animation: stepsFly 1.4s 0.2s var(--ease-out) forwards; }
+}
+@keyframes stepsFly {
+    0% { left: 0; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+}
+.step { position: relative; z-index: 1; }
+.step-number { position: relative; box-shadow: 0 0 0 6px var(--bg); }
+.js .steps > .step .step-number { transform: scale(0.4); transition: transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); transition-delay: calc(0.2s + var(--i, 0) * 0.45s); }
+.js .steps.in > .step .step-number { transform: scale(1); }
+.js .steps > .step { transition-delay: calc(0.1s + var(--i, 0) * 0.45s); }
+
+/* ── Precios: borde animado en la tarjeta destacada ── */
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.price-card { transition: transform 0.35s var(--ease-out), box-shadow 0.35s; }
+.price-card.featured {
+    border: 1.5px solid transparent;
+    background:
+        linear-gradient(var(--bg-alt), var(--bg-alt)) padding-box,
+        conic-gradient(from var(--angle), #007aff, #5856d6, #af52de, #5856d6, #007aff) border-box;
+    animation: spinBorder 6s linear infinite;
+}
+@keyframes spinBorder { to { --angle: 360deg; } }
+.js .pricing-grid.in > .price-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -24px rgba(0, 122, 255, 0.45); }
+
+/* ── FAQ: la respuesta entra suave ── */
+.faq details { transition: border-color 0.25s; }
+.faq details[open] { border-color: rgba(0, 122, 255, 0.35); }
+.faq details[open] p { animation: faqIn 0.35s var(--ease-out); }
+@keyframes faqIn { from { opacity: 0; transform: translateY(-6px); } }
+
+/* ── Espectador: aurora suave y luna flotando ── */
+.spectator-card { position: relative; overflow: hidden; isolation: isolate; }
+.spectator-card::before {
+    content: ""; position: absolute; z-index: -1;
+    width: 520px; height: 520px; left: 50%; top: -260px; margin-left: -260px;
+    background: radial-gradient(circle, rgba(88, 86, 214, 0.22), transparent 65%);
+    filter: blur(20px);
+    animation: aurora 14s ease-in-out infinite alternate;
+}
+@keyframes aurora {
+    0% { transform: translate(-30%, 0) scale(1); }
+    100% { transform: translate(30%, 40px) scale(1.2); }
+}
+.spectator-card h2 .moon { display: inline-block; animation: bob 4s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px) rotate(-8deg); } }
+
+/* ── Movimiento reducido: todo quieto y visible ── */
+@media (prefers-reduced-motion: reduce) {
+    .hero-sky .plane, .hero-sky .apt circle.ring { display: none; }
+    .hero-sky .route-draw { animation: none; stroke-dashoffset: 0; }
+    .js [data-hero], .hero h1 .gradient, .price-card.featured,
+    .spectator-card::before, .spectator-card h2 .moon,
+    .faq details[open] p { animation: none; }
+    .hero-mockup .tilt { transform: none; }
+    .js [data-reveal], .js [data-stagger] > *,
+    .js .showcase-row .showcase-media, .js .showcase-text > *,
+    .js .steps-route, .js .steps > .step .step-number,
+    .js .showcase-bullets li::before {
+        opacity: 1; transform: none; transition: none;
+    }
+    .steps-route .plane { display: none; }
+    .hero-cta::after { display: none; }
+}
