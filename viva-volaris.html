@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RosterLog para Viva y Volaris</title>
     <meta name="description" content="RosterLog llega a Viva y Volaris: tu rol, tus puertas y tu bitácora en un solo lugar. Déjanos tus datos y entérate primero.">
-    <meta name="theme-color" content="#071330">
+    <meta name="theme-color" content="#F4F6FA" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d1118" media="(prefers-color-scheme: dark)">
     <link rel="canonical" href="https://rosterlog.app/viva-volaris">
     <!-- Open Graph: es la vista previa que arma WhatsApp al compartir el enlace -->
     <meta property="og:type" content="website">
@@ -29,17 +30,16 @@
     <script src="assets/theme.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&icon_names=calendar_month,devices,group,lock&display=block">
 <style>
-/* Layout: banda azul noche (hero y cierre) que enmarca secciones claras; cada
-   función es una fila texto + escena 3D sobre un escenario con el MISMO
-   relleno en los cuatro lados. Espaciado en múltiplos de 8. */
+/* Layout claro como la app: fondo agrupado de iOS en hero y cierre, un solo
+   acento (el azul de la app, #007AFF); el amarillo de la puerta vive solo dentro de las
+   pantallas. Cada función es una fila texto + escena 3D sobre un escenario con
+   el MISMO relleno en los cuatro lados. Espaciado en múltiplos de 8. */
 :root {
   /* Marca */
-  --noche: #071330;          /* cielo del hero y del cierre */
-  --noche-2: #0E2456;
-  --ambar: #F5B301;          /* el chip de puerta de la app: el color insignia */
-  --ambar-ink: #1d1500;
-  --brand: #3373D1;          /* DS.Colors.brand */
-  --cielo: #7FB0FF;          /* azul claro legible sobre la noche */
+  --brand: #007AFF;          /* azul de la app: botones y fondos de acento */
+  --acc: #007AFF;            /* texto de acento (más claro en oscuro) */
+  --noche: #243054;          /* DS.Colors.brandDark: escenario de la pantalla bloqueada */
+  --noche-2: #1A2340;
   /* Página (tema claro) */
   --bg: #ffffff;
   --bg-alt: #F4F6FA;
@@ -50,7 +50,6 @@
   --ok: #2E9457;
   --danger: #D93838;
   --stage-a: #E9F0FC;        /* escenarios de las imágenes */
-  --stage-b: #FFF4D6;
   /* Espaciado */
   --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s6: 48px; --s8: 64px; --s12: 96px;
   --r-lg: 32px; --r-md: 20px; --r-sm: 14px;
@@ -60,16 +59,16 @@
   :root:not([data-theme="light"]) {
     --bg: #05070d; --bg-alt: #0d1118; --text: #f2f4f8; --text-2: #9aa3b2;
     --line: rgba(255,255,255,0.10); --field: rgba(255,255,255,0.22);
-    --ok: #4cc47f; --danger: #ff6b6b;
-    --stage-a: #0f1a33; --stage-b: #221b08;
+    --ok: #4cc47f; --danger: #ff6b6b; --acc: #0A84FF;
+    --stage-a: #0f1a33;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #05070d; --bg-alt: #0d1118; --text: #f2f4f8; --text-2: #9aa3b2;
   --line: rgba(255,255,255,0.10); --field: rgba(255,255,255,0.22);
-  --ok: #4cc47f; --danger: #ff6b6b;
-  --stage-a: #0f1a33; --stage-b: #221b08;
+  --ok: #4cc47f; --danger: #ff6b6b; --acc: #0A84FF;
+  --stage-a: #0f1a33;
   color-scheme: dark;
 }
 
@@ -79,52 +78,45 @@ html { scroll-behavior: smooth; }
 body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
-:focus-visible { outline: 3px solid var(--ambar); outline-offset: 3px; border-radius: 8px; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 8px; }
 .wrap { max-width: 1160px; margin: 0 auto; padding-inline: var(--s4); }
 @media (max-width: 600px) { .wrap { padding-inline: var(--s2); } }
 .ms { font-family: "Material Symbols Rounded"; font-weight: 500; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }
 
-/* ── Nav: sobre la noche ── */
-.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(7,19,48,0.78); -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+/* ── Nav ── */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid var(--line); }
 .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: var(--s2); }
-.logo { font-size: 18px; font-weight: 700; color: #fff; text-decoration: none; display: flex; align-items: center; gap: var(--s1); }
+.logo { font-size: 18px; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: var(--s1); }
 .nav-links { display: flex; align-items: center; gap: var(--s3); }
-.nav-links a { font-size: 14px; color: rgba(255,255,255,0.72); text-decoration: none; }
-.nav-links a:hover { color: #fff; }
-.nav-links a.cta { color: var(--ambar-ink); background: var(--ambar); font-weight: 700; padding: var(--s1) var(--s2); border-radius: 999px; }
+.nav-links a { font-size: 14px; color: var(--text-2); text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-links a.cta { color: #fff; background: var(--brand); font-weight: 700; padding: var(--s1) var(--s2); border-radius: 999px; }
 @media (max-width: 640px) { .nav-links a.hide-sm { display: none; } }
 
 /* ── Hero ── */
 .hero {
-  position: relative; overflow: hidden; color: #fff;
-  background:
-    radial-gradient(60% 70% at 78% 40%, rgba(51,115,209,0.45) 0%, rgba(51,115,209,0) 70%),
-    radial-gradient(50% 60% at 10% 100%, rgba(245,179,1,0.14) 0%, rgba(245,179,1,0) 70%),
-    linear-gradient(180deg, var(--noche) 0%, var(--noche-2) 100%);
+  position: relative; overflow: hidden; color: var(--text);
+  background: radial-gradient(60% 70% at 78% 40%, rgba(0,122,255,0.18) 0%, rgba(0,122,255,0) 70%), var(--bg-alt);
   padding-block: var(--s8) var(--s12);
-}
-/* Luces de pista: la única ornamentación, al pie del hero */
-.hero::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: var(--s4); height: 4px;
-  background: repeating-linear-gradient(90deg, rgba(245,179,1,0.55) 0 6px, transparent 6px 48px);
-  -webkit-mask: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
-  mask: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
 }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s6); align-items: center; }
 @media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s4); } .hero { padding-block: var(--s6) var(--s8); } }
-.pre { display: inline-flex; align-items: center; gap: var(--s1); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ambar); border: 1.5px solid rgba(245,179,1,0.55); padding: 6px 14px; border-radius: 999px; }
-.pre i { width: 8px; height: 8px; border-radius: 50%; background: var(--ambar); box-shadow: 0 0 0 4px rgba(245,179,1,0.22); }
+.pre { display: inline-flex; align-items: center; gap: var(--s1); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc); border: 1.5px solid color-mix(in srgb, var(--acc) 45%, transparent); padding: 6px 14px; border-radius: 999px; }
+.pre i { width: 8px; height: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 22%, transparent); }
 .hero h1 { font-size: clamp(42px, 6.4vw, 76px); line-height: 1.0; font-weight: 800; margin-block: var(--s3) var(--s3); }
-.hero h1 em { font-style: normal; color: var(--ambar); display: block; }
-.hero .lead { font-size: clamp(18px, 2vw, 21px); color: rgba(255,255,255,0.78); max-width: 32em; }
+.hero h1 em { font-style: normal; color: var(--acc); display: block; }
+.hero .lead { font-size: clamp(18px, 2vw, 21px); color: var(--text-2); max-width: 32em; }
 .hero-img { position: relative; }
-.hero-img img { width: 124%; max-width: none; margin-left: -8%; filter: drop-shadow(0 40px 60px rgba(0,0,0,0.35)); }
-@media (max-width: 900px) { .hero-img img { width: 100%; max-width: 520px; margin-inline: auto; } }
+/* La imagen trae ~75 px de aire transparente alrededor para que la sombra
+   del aviso no se corte en la orilla; los márgenes negativos (en % del ancho
+   de la columna) lo devuelven para que el iPhone quede del mismo tamaño. */
+.hero-img img { width: 146.6%; max-width: none; margin: -10.7% 0 -11.3% -19.9%; }
+@media (max-width: 900px) { .hero-img img { --w: min(118.2%, 615px); width: var(--w); max-width: none; margin: calc(var(--w) * -0.073) 0 calc(var(--w) * -0.077) calc((100% - var(--w)) / 2); } }
 
-/* Formulario: tarjeta blanca sobre la noche, mismo relleno en los 4 lados */
-.form-card { margin-top: var(--s4); background: #fff; color: #0b1220; border-radius: var(--r-lg); padding: var(--s4); box-shadow: 0 30px 80px rgba(0,0,0,0.35); }
+/* Formulario: tarjeta blanca sobre el fondo agrupado, mismo relleno en los 4 lados */
+.form-card { margin-top: var(--s4); background: #fff; color: #0b1220; border-radius: var(--r-lg); padding: var(--s4); box-shadow: 0 20px 60px rgba(11,18,32,0.14); }
 @media (max-width: 600px) { .form-card { padding: var(--s3); border-radius: 26px; } }
 .form-card h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; }
 .form-card .sub { font-size: 15px; color: #5a6475; margin-top: 4px; }
@@ -134,7 +126,7 @@ form { display: grid; gap: var(--s2); }
 .seg { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s1); }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg label { min-height: 48px; display: grid; place-items: center; font-size: 16px; font-weight: 600; color: #0b1220; background: #F4F6FA; border: 1.5px solid transparent; border-radius: var(--r-sm); cursor: pointer; transition: background .15s, border-color .15s; }
-.seg label:hover { border-color: rgba(51,115,209,0.35); }
+.seg label:hover { border-color: rgba(0,122,255,0.35); }
 .seg input:checked + label { background: #0b1220; color: #fff; }
 .seg input:focus-visible + label { outline: 3px solid var(--brand); outline-offset: 2px; }
 .campos { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s1); }
@@ -142,9 +134,9 @@ form { display: grid; gap: var(--s2); }
 @media (max-width: 480px) { .campos { grid-template-columns: 1fr; } }
 .campo input { width: 100%; height: 52px; padding-inline: var(--s2); font: inherit; font-size: 16px; color: #0b1220; background: #F4F6FA; border: 1.5px solid transparent; border-radius: var(--r-sm); outline: none; }
 .campo input::placeholder { color: #7a8394; }
-.campo input:focus { border-color: var(--brand); background: #fff; box-shadow: 0 0 0 4px rgba(51,115,209,0.15); }
-.btn { display: inline-flex; justify-content: center; align-items: center; gap: var(--s1); min-height: 56px; padding: 0 var(--s4); border: 0; border-radius: var(--r-sm); background: var(--ambar); color: var(--ambar-ink); font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; text-decoration: none; transition: transform .15s, box-shadow .15s; box-shadow: 0 10px 24px rgba(245,179,1,0.35); }
-.btn:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(245,179,1,0.45); }
+.campo input:focus { border-color: var(--brand); background: #fff; box-shadow: 0 0 0 4px rgba(0,122,255,0.15); }
+.btn { display: inline-flex; justify-content: center; align-items: center; gap: var(--s1); min-height: 56px; padding: 0 var(--s4); border: 0; border-radius: var(--r-sm); background: var(--brand); color: #fff; font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; text-decoration: none; transition: transform .15s, box-shadow .15s; box-shadow: 0 10px 24px rgba(0,122,255,0.30); }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(0,122,255,0.40); }
 .btn[disabled] { opacity: 0.6; cursor: progress; transform: none; }
 form .btn { width: 100%; }
 .trampa { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -184,13 +176,13 @@ form .btn { width: 100%; }
 .row p { font-size: 18px; color: var(--text-2); margin-top: var(--s2); max-width: 30em; }
 .row ul { list-style: none; display: grid; gap: var(--s1); margin-top: var(--s3); }
 .row li { display: flex; gap: var(--s1); align-items: baseline; font-size: 16px; font-weight: 500; }
-.row li::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--ambar); flex: none; transform: translateY(-1px); }
+.row li::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--brand); flex: none; transform: translateY(-1px); }
 /* Escenario: mismo relleno arriba, abajo y a los lados */
 .stage { border-radius: var(--r-lg); padding: var(--s6); display: grid; place-items: center; overflow: hidden; }
 @media (max-width: 600px) { .stage { padding: var(--s3); border-radius: 24px; } }
-.stage.azul { background: radial-gradient(80% 80% at 50% 40%, rgba(51,115,209,0.22), rgba(51,115,209,0) 70%), var(--stage-a); }
-.stage.noche { background: radial-gradient(70% 70% at 50% 35%, rgba(51,115,209,0.55), rgba(51,115,209,0) 70%), linear-gradient(180deg, var(--noche), var(--noche-2)); }
-.stage.ambar { background: radial-gradient(80% 80% at 50% 40%, rgba(245,179,1,0.28), rgba(245,179,1,0) 70%), var(--stage-b); }
+.stage.azul { background: radial-gradient(80% 80% at 50% 40%, rgba(0,122,255,0.22), rgba(0,122,255,0) 70%), var(--stage-a); }
+.stage.noche { background: radial-gradient(70% 70% at 50% 35%, rgba(0,122,255,0.55), rgba(0,122,255,0) 70%), linear-gradient(180deg, var(--noche), var(--noche-2)); }
+
 .stage img { width: 100%; }
 .stage img.alto { width: auto; max-height: 640px; }
 @media (max-width: 600px) { .stage img.alto { max-height: 440px; } }
@@ -215,16 +207,16 @@ details[open] summary::after { content: "–"; }
 details p { margin-top: var(--s1); font-size: 17px; color: var(--text-2); max-width: 62ch; }
 
 /* ── Cierre ── */
-.cierre { color: #fff; text-align: center; padding-block: var(--s12);
-  background: radial-gradient(60% 80% at 50% 0%, rgba(51,115,209,0.45), rgba(51,115,209,0) 70%), linear-gradient(180deg, var(--noche-2), var(--noche)); }
+.cierre { color: var(--text); text-align: center; padding-block: var(--s12);
+  background: radial-gradient(60% 80% at 50% 0%, rgba(0,122,255,0.18), rgba(0,122,255,0) 70%), var(--bg-alt); }
 .cierre .wrap { display: grid; gap: var(--s3); justify-items: center; }
 .cierre h2 { font-size: clamp(32px, 4.6vw, 54px); font-weight: 800; line-height: 1.05; max-width: 16em; }
-.cierre h2 em { font-style: normal; color: var(--ambar); }
-.cierre p { font-size: 19px; color: rgba(255,255,255,0.75); max-width: 34em; }
-footer { padding-block: var(--s6); background: var(--noche); color: rgba(255,255,255,0.55); text-align: center; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.08); }
+.cierre h2 em { font-style: normal; color: var(--acc); }
+.cierre p { font-size: 19px; color: var(--text-2); max-width: 34em; }
+footer { padding-block: var(--s6); background: var(--bg); color: var(--text-2); text-align: center; font-size: 13px; border-top: 1px solid var(--line); }
 footer .fl { display: flex; justify-content: center; gap: var(--s3); flex-wrap: wrap; margin-top: var(--s2); }
 footer a { text-decoration: none; }
-footer a:hover { color: #fff; }
+footer a:hover { color: var(--text); }
 @media (prefers-reduced-motion: no-preference) {
   .hero-img img { animation: entra 0.9s cubic-bezier(.2,.8,.2,1) both; }
   @keyframes entra { from { transform: translateY(24px); } to { transform: none; } }
@@ -301,7 +293,7 @@ footer a:hover { color: #fff; }
       </div>
 
       <div class="hero-img">
-        <img src="assets/mockups/vv-hero.webp" width="834" height="1073" alt="RosterLog en un iPhone 18 Pro Max: Inicio con el próximo vuelo VB 2176 de Cancún a Monterrey, la puerta A9 en amarillo y el aviso de cambio de puerta">
+        <img src="assets/mockups/vv-hero.webp" width="986" height="1221" alt="RosterLog en un iPhone 18 Pro Max: Inicio con el próximo vuelo VB 2176 de Cancún a Monterrey, la puerta A9 en amarillo y el aviso de cambio de puerta">
       </div>
     </div>
   </section>
@@ -349,7 +341,7 @@ footer a:hover { color: #fff; }
             <p>Vuelos, distancia, aeropuertos y rutas por semana, mes, año o de toda tu carrera, con tu mapa de rutas.</p>
             <ul><li>Se llena sola con cada vuelo</li><li>Tus rutas en el mapa</li><li>Siempre respaldada en tu cuenta</li></ul>
           </div>
-          <div class="stage ambar"><img src="assets/mockups/estadisticas.webp" width="2124" height="1606" alt="Estadísticas en iPad: mapa de rutas, 15 vuelos, 9269 NM, 8 aeropuertos y 7 rutas en el mes"></div>
+          <div class="stage azul"><img src="assets/mockups/vv-estadisticas.webp" width="2124" height="1606" alt="Estadísticas en iPad: mapa de rutas, 15 vuelos, 9269 NM, 8 aeropuertos y 7 rutas en el mes"></div>
         </div>
       </div>
     </div>
@@ -363,7 +355,7 @@ footer a:hover { color: #fff; }
       </div>
       <div class="tiles">
         <div class="tile">
-          <span class="ico" style="background:#5856D6"><span class="ms">group</span></span>
+          <span class="ico" style="background:var(--brand)"><span class="ms">group</span></span>
           <h3>Con quién coincides</h3>
           <p>Mira qué amigos pernoctan donde tú o andan en base cuando regresas.</p>
         </div>
@@ -373,7 +365,7 @@ footer a:hover { color: #fff; }
           <p>Mándalo a tu calendario de iPhone o de Google y compártelo con tu familia.</p>
         </div>
         <div class="tile">
-          <span class="ico" style="background:#2E9457"><span class="ms">devices</span></span>
+          <span class="ico" style="background:var(--brand)"><span class="ms">devices</span></span>
           <h3>En todos tus dispositivos</h3>
           <p>iPhone, iPad, Apple Watch y Android. Con la misma cuenta, todo se sincroniza solo.</p>
         </div>
