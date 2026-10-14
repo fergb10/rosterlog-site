@@ -93,6 +93,17 @@ h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }
 .nav-links a { font-size: 14px; color: var(--text-2); text-decoration: none; }
 .nav-links a:hover { color: var(--text); }
 .nav-links a.cta { color: #fff; background: var(--brand); font-weight: 700; padding: var(--s1) var(--s2); border-radius: 999px; }
+/* Mismo botón de tema que el resto del sitio (shared.css), con los tokens de esta página */
+.theme-toggle { background: none; border: 1px solid var(--line); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: var(--text); display: inline-flex; align-items: center; justify-content: center; padding: 0; flex: none; transition: background .15s, border-color .15s; }
+.theme-toggle:hover { background: var(--bg-alt); border-color: var(--text-2); }
+.theme-toggle svg { width: 16px; height: 16px; fill: currentColor; }
+.theme-toggle .icon-sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
+  :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
+}
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 @media (max-width: 640px) { .nav-links a.hide-sm { display: none; } }
 
 /* ── Hero ── */
@@ -232,6 +243,10 @@ footer a:hover { color: var(--text); }
       <a class="hide-sm" href="#que-es">Qué es</a>
       <a class="hide-sm" href="#preguntas">Preguntas</a>
       <a class="cta" href="#lista">Avísenme</a>
+      <button class="theme-toggle" type="button" aria-label="Cambiar tema">
+        <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 4.5a1 1 0 0 1-1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 1-1 1zm0 17a1 1 0 0 1-1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 1-1 1zm8.5-8.5a1 1 0 0 1 0-2h1a1 1 0 1 1 0 2h-1zm-17 0a1 1 0 0 1 0-2h1a1 1 0 1 1 0 2h-1zm14.04-6.04a1 1 0 0 1 0-1.41l.7-.71a1 1 0 1 1 1.42 1.41l-.71.71a1 1 0 0 1-1.41 0zm-12.08 12.08a1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0zm12.08 0a1 1 0 0 1-1.41 0l-.71-.7a1 1 0 1 1 1.41-1.42l.71.71a1 1 0 0 1 0 1.41zm-12.08-12.08a1 1 0 0 1-1.42 0l-.7-.71A1 1 0 1 1 4.17 4.33l.71.7a1 1 0 0 1 0 1.42zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+      </button>
     </div>
   </div>
 </nav>
