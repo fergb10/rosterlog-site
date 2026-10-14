@@ -28,7 +28,7 @@
     <!-- Analytics (privacy-friendly, sin cookies) -->
     <script defer data-domain="rosterlog.app" src="https://plausible.io/js/script.js"></script>
     <script src="assets/theme.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&icon_names=calendar_month,devices,insights,lock&display=block">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&icon_names=calendar_month,devices,insights,key,lock,smartphone,visibility_off&display=block">
 <style>
 /* Layout claro como la app: fondo agrupado de iOS en hero y cierre, un solo
    acento (el azul de la app, #007AFF); el amarillo de la puerta vive solo dentro de las
@@ -200,7 +200,8 @@ form .btn { width: 100%; }
 
 /* ── Además ── */
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3); }
-@media (max-width: 900px) { .tiles { grid-template-columns: minmax(0, 1fr); } }
+.tiles.dos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) { .tiles, .tiles.dos { grid-template-columns: minmax(0, 1fr); } }
 .tile { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s4); display: grid; gap: var(--s2); align-content: start; }
 .sec.alt { background: var(--bg-alt); }
 .tile .ico { width: 48px; height: 48px; border-radius: var(--r-sm); display: grid; place-items: center; color: #fff; }
@@ -364,7 +365,7 @@ footer a:hover { color: var(--text); }
             <span class="eyebrow">Amigos</span>
             <h2>Coincide con tus amigos.</h2>
             <p>Agrega a tus amigos con su código, aunque vuelen en otra aerolínea. Comparten sus roles y RosterLog te dice qué días coinciden: en un vuelo, en una pernocta o en base en tus días libres.</p>
-            <ul><li>Tripulantes de cualquier aerolínea, en una sola lista</li><li>Matches por vuelo, pernocta y base</li><li>Dónde anda cada quien hoy</li></ul>
+            <ul><li>Tripulantes de cualquier aerolínea, a quien tú invites</li><li>Matches por vuelo, pernocta y base</li><li>Dónde anda cada quien hoy</li></ul>
           </div>
           <div class="stage azul"><img class="alto" src="assets/mockups/vv-amigos.webp" width="1746" height="2396" alt="Pantalla Amigos de RosterLog: credencial con código de tripulante, amigos de Volaris y Viva Aerobus, y Matches con pernocta en CUN y base en MTY"></div>
         </div>
@@ -373,7 +374,7 @@ footer a:hover { color: var(--text); }
           <div class="txt">
             <span class="eyebrow">Para tu familia</span>
             <h2>Tu rol, en el celular de tu familia.</h2>
-            <p>Comparte tu rol con tu familia o tus amigos sin costo extra: va incluido en tu suscripción. Lo ven claro y siempre al día, sin PDFs ni capturas de pantalla, y saben cuándo ya llegaste.</p>
+            <p>Comparte tu rol con tu familia o tus amigos sin costo extra: va incluido en tu suscripción. Lo ven claro y siempre al día, sin PDFs ni capturas de pantalla, y enterándose en vivo de tu llegada.</p>
             <ul><li>Les mandas un código, un enlace o un QR</li><li>Gratis para ellos: solo descargan RosterLog</li><li>Un aviso cuando despegas y cuando llegas</li></ul>
           </div>
           <div class="stage azul"><img class="alto" src="assets/mockups/vv-espectador.webp" width="1736" height="2252" alt="El rol de Luis visto por su familia en RosterLog, con el aviso «Luis ya llegó: VB 2176 aterrizó en MTY a las 13:47»"></div>
@@ -408,7 +409,39 @@ footer a:hover { color: var(--text); }
     </div>
   </section>
 
-  <section class="sec" id="preguntas">
+  <section class="sec" id="seguridad">
+    <div class="wrap">
+      <div class="sec-h">
+        <span class="eyebrow">Seguridad</span>
+        <h2>Tus datos, bien guardados.</h2>
+        <p>Tu bitácora, tus documentos y tus roles son tuyos. Los protegemos como lo que son: información personal.</p>
+      </div>
+      <div class="tiles dos">
+        <div class="tile">
+          <span class="ico" style="background:var(--brand)"><span class="ms">lock</span></span>
+          <h3>Cifrado siempre</h3>
+          <p>Todo viaja cifrado (TLS 1.3) y se guarda cifrado (AES-256). Tu bitácora, tus documentos y tus PDFs quedan ligados a tu cuenta, con reglas de acceso estrictas.</p>
+        </div>
+        <div class="tile">
+          <span class="ico" style="background:var(--brand)"><span class="ms">smartphone</span></span>
+          <h3>Lo más sensible no sale de tu teléfono</h3>
+          <p>Las fotos de tu licencia, pasaporte o visa se guardan solo en tu dispositivo. Nunca se suben a nuestros servidores.</p>
+        </div>
+        <div class="tile">
+          <span class="ico" style="background:var(--brand)"><span class="ms">key</span></span>
+          <h3>Tu contraseña, en tu llavero</h3>
+          <p>Si conectas el portal de tu aerolínea, tu contraseña se guarda en el llavero de tu dispositivo, no en nuestros servidores.</p>
+        </div>
+        <div class="tile">
+          <span class="ico" style="background:var(--brand)"><span class="ms">visibility_off</span></span>
+          <h3>No vendemos tus datos</h3>
+          <p>Ni los vendemos ni los rentamos, y nada se usa para publicidad. Tú decides a quién invitas a ver tu rol.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="preguntas">
     <div class="wrap">
       <div class="sec-h"><span class="eyebrow">Preguntas</span><h2>Lo que nos preguntan.</h2></div>
       <div class="faq">
