@@ -159,8 +159,6 @@ form .btn { width: 100%; }
 .done .check { width: 56px; height: 56px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; font-size: 28px; font-weight: 800; }
 .done h2 { font-size: 24px; }
 .done p { color: #5a6475; }
-.share { background: #F4F6FA; border-radius: var(--r-sm); padding: var(--s2); font-size: 15px; }
-.share small { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5a6475; margin-bottom: 4px; }
 
 /* ── Franja de marca ── */
 .marca { background: var(--bg); border-bottom: 1px solid var(--line); }
@@ -229,9 +227,50 @@ footer { padding-block: var(--s6); background: var(--bg); color: var(--text-2); 
 footer .fl { display: flex; justify-content: center; gap: var(--s3); flex-wrap: wrap; margin-top: var(--s2); }
 footer a { text-decoration: none; }
 footer a:hover { color: var(--text); }
+/* Hero animado: tres capas del mismo lienzo encima de la imagen final.
+   Sin animación (reduced motion) solo se ve la final, que ya trae todo. */
+.hero-img .capa { position: absolute; top: 0; left: 0; opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: no-preference) {
-  .hero-img img { animation: entra 0.9s cubic-bezier(.2,.8,.2,1) both; }
+  .hero-img { animation: entra 0.9s cubic-bezier(.2,.8,.2,1) both; }
   @keyframes entra { from { transform: translateY(24px); } to { transform: none; } }
+  .hero-img img.final { opacity: 0; }
+  .hero-img .capa.antes { opacity: 1; }
+  .hero-img .capa.telefono { animation: aparece .35s ease 1.8s both; }
+  .hero-img .capa.aviso { animation: cae .7s cubic-bezier(.2,.9,.25,1.15) 1.6s both; }
+  @keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes cae { from { opacity: 0; transform: translateY(-5%) scale(.97); } to { opacity: 1; transform: none; } }
+}
+
+/* ── Marcador Viva vs Volaris (solo aparece con 50+ por aerolínea) ── */
+.marcador { margin-top: var(--s4); display: grid; gap: var(--s1); max-width: 32em; }
+.mc-h { display: flex; align-items: center; gap: var(--s1); font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
+.mc-h .vivo { display: inline-flex; align-items: center; gap: 6px; color: var(--acc); }
+.mc-h .vivo i { width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation: late 1.6s ease-in-out infinite; }
+@keyframes late { 50% { opacity: .35; } }
+.mc-fila { display: grid; grid-template-columns: 7.5em minmax(0, 1fr) 3.5em; align-items: center; gap: var(--s2); font-size: 15px; font-weight: 600; }
+.mc-barra { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.mc-barra i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--brand); transition: width 1.2s cubic-bezier(.2,.8,.2,1); }
+.mc-fila.segundo .mc-barra i { background: color-mix(in srgb, var(--brand) 50%, transparent); }
+.mc-fila .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 17px; }
+
+/* ── Después de anotarse: compartir y la pregunta (dentro de la tarjeta blanca) ── */
+.bloque { background: #F4F6FA; border-radius: var(--r-sm); padding: var(--s3); display: grid; gap: var(--s2); }
+.bloque small { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5a6475; }
+.bloque p { font-size: 15px; color: #0b1220; }
+.acciones { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.acciones .btn { min-height: 48px; font-size: 16px; padding: 0 var(--s3); flex: 1 1 auto; }
+.btn svg { width: 20px; height: 20px; fill: currentColor; }
+.btn-sec { min-height: 48px; padding: 0 var(--s3); border-radius: var(--r-sm); border: 1.5px solid rgba(11,18,32,0.18); background: #fff; color: #0b1220; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; flex: 1 1 auto; }
+.btn-sec:hover { border-color: var(--brand); }
+.opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s1); }
+.opciones button { min-height: 48px; padding: var(--s1) var(--s2); border-radius: var(--r-sm); border: 1.5px solid transparent; background: #fff; color: #0b1220; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; line-height: 1.25; }
+.opciones button:hover { border-color: rgba(0,122,255,0.4); }
+.opciones button[aria-pressed="true"] { background: var(--brand); color: #fff; }
+.gracias { font-weight: 600; color: var(--ok) !important; }
+.acciones .btn, .btn-sec { white-space: nowrap; }
+@media (max-width: 600px) {
+  .bloque { padding: var(--s2); }
+  .acciones .btn, .acciones .btn-sec { flex-basis: 100%; }
 }
 </style>
 </head>
@@ -259,6 +298,11 @@ footer a:hover { color: var(--text); }
         <span class="pre"><i></i>Próximamente</span>
         <h1>RosterLog llega a <em>Viva y Volaris.</em></h1>
         <p class="lead">La app que ya usan cientos de tripulantes en México. Tu rol, tus puertas y tu bitácora, en un solo lugar.</p>
+        <div class="marcador" id="marcador" hidden>
+          <div class="mc-h"><span class="vivo"><i></i>En vivo</span>· Tripulantes anotados</div>
+          <div class="mc-fila" data-a="VIVA"><span>Viva Aerobus</span><div class="mc-barra"><i></i></div><span class="n">0</span></div>
+          <div class="mc-fila" data-a="VOLARIS"><span>Volaris</span><div class="mc-barra"><i></i></div><span class="n">0</span></div>
+        </div>
 
         <div class="form-card" id="lista">
           <form id="f" novalidate>
@@ -303,13 +347,34 @@ footer a:hover { color: var(--text); }
           <div class="done" id="done" hidden>
             <div class="check" aria-hidden="true">&#10003;</div>
             <div><h2 id="done-t" tabindex="-1">Listo, eres de los primeros.</h2><p id="done-p"></p></div>
-            <div class="share"><small>Pásalo a tu tripulación</small>RosterLog llega a Viva y Volaris. Entérate primero: rosterlog.app/viva-volaris</div>
+            <div class="bloque">
+              <small>Pásalo a tu tripulación</small>
+              <p>Entre más se anoten de tu aerolínea, mejor sabremos cuántos la esperan.</p>
+              <div class="acciones">
+                <a class="btn" id="wa" href="https://wa.me/?text=RosterLog%20llega%20a%20Viva%20y%20Volaris%3A%20https%3A%2F%2Frosterlog.app%2Fviva-volaris" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>Compartir por WhatsApp</a>
+                <button class="btn-sec" type="button" id="copiar">Copiar enlace</button>
+              </div>
+            </div>
+            <div class="bloque" id="pregunta">
+              <small>Una última pregunta</small>
+              <p>¿Qué es lo que más te urge?</p>
+              <div class="opciones">
+                <button type="button" data-v="PUERTAS" aria-pressed="false">Saber mi puerta</button>
+                <button type="button" data-v="ROL" aria-pressed="false">Ver mi rol claro</button>
+                <button type="button" data-v="AMIGOS" aria-pressed="false">Coincidir con amigos</button>
+                <button type="button" data-v="FAMILIA" aria-pressed="false">Que mi familia vea mi rol</button>
+              </div>
+              <p class="gracias" id="gracias" hidden>¡Gracias! Lo tomamos en cuenta.</p>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="hero-img">
-        <img src="assets/mockups/vv-hero.webp" width="986" height="1221" alt="RosterLog en un iPhone 18 Pro Max: Inicio con el próximo vuelo VB 2176 de Cancún a Monterrey, la puerta A9 en amarillo y el aviso de cambio de puerta">
+        <img class="capa antes" src="assets/mockups/vv-hero-antes.webp" width="986" height="1221" alt="" aria-hidden="true">
+        <img class="capa telefono" src="assets/mockups/vv-hero-telefono.webp" width="986" height="1221" alt="" aria-hidden="true">
+        <img class="capa aviso" src="assets/mockups/vv-hero-aviso.webp" width="986" height="1221" alt="" aria-hidden="true">
+        <img class="final" src="assets/mockups/vv-hero.webp" width="986" height="1221" alt="RosterLog en un iPhone 18 Pro Max: Inicio con el próximo vuelo VB 2176 de Cancún a Monterrey, la puerta A9 en amarillo y el aviso de cambio de puerta">
       </div>
     </div>
   </section>
@@ -498,6 +563,41 @@ footer a:hover { color: var(--text); }
 
   var ENDPOINT = (document.documentElement.getAttribute('data-endpoint') || '').trim();
   var NOMBRE_AEROLINEA = { VIVA: 'Viva', VOLARIS: 'Volaris' };
+  var QUIETO = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ultimoCorreo = '';
+
+  /* ── Marcador: GET al mismo endpoint; el servidor solo lo da con 50+ por aerolínea ── */
+  var marcador = document.getElementById('marcador');
+  var cuenta = null;
+  function pintaMarcador(animar) {
+    if (!marcador || !cuenta) { return; }
+    var filas = [].slice.call(marcador.querySelectorAll('.mc-fila'));
+    var max = Math.max(cuenta.VIVA, cuenta.VOLARIS) || 1;
+    filas.sort(function (a, b) { return cuenta[b.dataset.a] - cuenta[a.dataset.a]; });
+    filas.forEach(function (fila, i) {
+      marcador.appendChild(fila);
+      fila.classList.toggle('segundo', i > 0);
+      var n = cuenta[fila.dataset.a];
+      fila.querySelector('.mc-barra i').style.width = Math.max(4, Math.round(n / max * 100)) + '%';
+      var el = fila.querySelector('.n');
+      if (!animar || QUIETO) { el.textContent = n; return; }
+      var t0 = null;
+      (function paso(t) {
+        t0 = t0 || t;
+        var k = Math.min(1, (t - t0) / 1200);
+        el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) { requestAnimationFrame(paso); }
+      })(performance.now());
+    });
+  }
+  if (marcador && ENDPOINT) {
+    fetch(ENDPOINT, { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.mostrar) { return; }
+      cuenta = { VIVA: j.viva, VOLARIS: j.volaris };
+      marcador.hidden = false;
+      requestAnimationFrame(function () { pintaMarcador(true); });
+    }).catch(function () {});
+  }
 
   /* Mismo criterio que normalizarTelefono() del servidor (functions/listaPrueba.js) */
   function telE164(v) {
@@ -524,8 +624,17 @@ footer a:hover { color: var(--text); }
     err.hidden = false;
     if (campo && campo.focus) { campo.focus(); }
   }
-  function listo(tel, aero) {
+  function enlaceInvitacion(ref) {
+    return 'https://rosterlog.app/viva-volaris' + (/^[0-9a-f]{10}$/.test(ref || '') ? '?ref=' + ref : '');
+  }
+  function listo(tel, aero, ref) {
     doneP.textContent = 'Te escribimos por WhatsApp al ' + bonito(tel) + ' en cuanto RosterLog salga para ' + (NOMBRE_AEROLINEA[aero] || 'tu aerolínea') + '.';
+    var link = enlaceInvitacion(ref);
+    var wa = document.getElementById('wa');
+    if (wa) { wa.href = 'https://wa.me/?text=' + encodeURIComponent('Ya me anoté para saber cuándo sale RosterLog para Viva y Volaris ✈️ Anótate tú también: ' + link); }
+    var copiar = document.getElementById('copiar');
+    if (copiar) { copiar.dataset.link = link; }
+    if (cuenta && cuenta[aero] !== undefined) { cuenta[aero] += 1; pintaMarcador(false); }
     f.hidden = true;
     done.hidden = false;
     if (doneT.focus) { doneT.focus(); }
@@ -569,7 +678,8 @@ footer a:hover { color: var(--text); }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { return falla(MENSAJES.correo, correo); }
 
     // La maqueta no tiene endpoint: muestra la confirmación sin enviar nada.
-    if (!ENDPOINT) { return listo(tel, aero.value); }
+    ultimoCorreo = mail;
+    if (!ENDPOINT) { return listo(tel, aero.value, null); }
 
     enviar.disabled = true;
     var rotulo = enviar.textContent;
@@ -589,7 +699,7 @@ footer a:hover { color: var(--text); }
       return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
     }).then(function (x) {
       fin();
-      if (x.status === 200 && x.j && x.j.ok) { return listo(tel, aero.value); }
+      if (x.status === 200 && x.j && x.j.ok) { return listo(tel, aero.value, x.j.ref); }
       var clave = x.j && x.j.error;
       falla(MENSAJES[clave] || 'No pudimos registrarte. Intenta de nuevo en un momento.', CAMPO[clave] || correo);
     }).catch(function () {
@@ -597,6 +707,39 @@ footer a:hover { color: var(--text); }
       falla('Sin conexión. Revisa tu internet e intenta de nuevo.', enviar);
     });
   });
+
+  var wa = document.getElementById('wa');
+  if (wa) {
+    wa.addEventListener('click', function () {
+      try { if (window.plausible) { window.plausible('Compartir Viva Volaris', { props: { via: 'whatsapp' } }); } } catch (e) {}
+    });
+  }
+  var copiar = document.getElementById('copiar');
+  if (copiar) {
+    copiar.addEventListener('click', function () {
+      var link = copiar.dataset.link || enlaceInvitacion(null);
+      function ok() { copiar.textContent = '¡Enlace copiado!'; setTimeout(function () { copiar.textContent = 'Copiar enlace'; }, 2000); }
+      function aMano() { copiar.textContent = link; }
+      try { navigator.clipboard.writeText(link).then(ok, aMano); } catch (e) { aMano(); }
+      try { if (window.plausible) { window.plausible('Compartir Viva Volaris', { props: { via: 'copiar' } }); } } catch (e) {}
+    });
+  }
+  var pregunta = document.getElementById('pregunta');
+  if (pregunta) {
+    [].forEach.call(pregunta.querySelectorAll('.opciones button'), function (b) {
+      b.addEventListener('click', function () {
+        [].forEach.call(pregunta.querySelectorAll('.opciones button'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        document.getElementById('gracias').hidden = false;
+        try { if (window.plausible) { window.plausible('Urge Viva Volaris', { props: { interes: b.dataset.v } }); } } catch (e) {}
+        if (!ENDPOINT || !ultimoCorreo) { return; }
+        fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accion: 'interes', correo: ultimoCorreo, interes: b.dataset.v })
+        }).catch(function () {});
+      });
+    });
+  }
 })();
 </script>
 </body>
