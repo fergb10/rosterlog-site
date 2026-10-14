@@ -357,7 +357,7 @@ footer a:hover { color: var(--text); }
             </div>
             <div class="bloque" id="pregunta">
               <small>Una última pregunta</small>
-              <p>¿Qué es lo que más te urge?</p>
+              <p>¿Qué es lo que más te serviría?</p>
               <div class="opciones">
                 <button type="button" data-v="PUERTAS" aria-pressed="false">Saber mi puerta</button>
                 <button type="button" data-v="ROL" aria-pressed="false">Ver mi rol claro</button>
@@ -730,7 +730,7 @@ footer a:hover { color: var(--text); }
       b.addEventListener('click', function () {
         [].forEach.call(pregunta.querySelectorAll('.opciones button'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
         document.getElementById('gracias').hidden = false;
-        try { if (window.plausible) { window.plausible('Urge Viva Volaris', { props: { interes: b.dataset.v } }); } } catch (e) {}
+        try { if (window.plausible) { window.plausible('Servir Viva Volaris', { props: { interes: b.dataset.v } }); } } catch (e) {}
         if (!ENDPOINT || !ultimoCorreo) { return; }
         fetch(ENDPOINT, {
           method: 'POST',
