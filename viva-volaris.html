@@ -7,6 +7,8 @@
     <meta name="description" content="RosterLog llega a Viva y Volaris: tu rol, tus puertas y tu bitácora en un solo lugar. Déjanos tus datos y entérate primero.">
     <meta name="theme-color" content="#F4F6FA" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0d1118" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="canonical" href="https://rosterlog.app/viva-volaris">
     <!-- Open Graph: es la vista previa que arma WhatsApp al compartir el enlace -->
     <meta property="og:type" content="website">
@@ -89,6 +91,10 @@ h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }
 .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid var(--line); }
 .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: var(--s2); }
 .logo { font-size: 18px; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: var(--s1); }
+/* Ícono de la app con la esquina continua de iOS (~22.5 %) y su orilla fina */
+.app-ico { display: block; border-radius: 22.5%; box-shadow: 0 0 0 0.5px var(--line); }
+.logo img { width: 28px; height: 28px; border-radius: 22.5%; box-shadow: 0 0 0 0.5px var(--line); }
+.cierre .app-ico { width: 96px; height: 96px; box-shadow: 0 0 0 0.5px var(--line), 0 14px 32px rgba(0,40,110,0.22); }
 .nav-links { display: flex; align-items: center; gap: var(--s3); }
 .nav-links a { font-size: 14px; color: var(--text-2); text-decoration: none; }
 .nav-links a:hover { color: var(--text); }
@@ -278,7 +284,7 @@ footer a:hover { color: var(--text); }
 
 <nav class="nav" aria-label="Principal">
   <div class="wrap">
-    <a class="logo" href="/">&#9992; RosterLog</a>
+    <a class="logo" href="/"><img src="assets/app-icon.webp" width="28" height="28" alt="">RosterLog</a>
     <div class="nav-links">
       <a class="hide-sm" href="#que-es">Qué es</a>
       <a class="hide-sm" href="#preguntas">Preguntas</a>
@@ -300,7 +306,7 @@ footer a:hover { color: var(--text); }
         <p class="lead">La app que ya usan cientos de tripulantes en México. Tu rol, tus puertas y tu bitácora, en un solo lugar.</p>
         <div class="marcador" id="marcador" hidden>
           <div class="mc-h"><span class="vivo"><i></i>En vivo</span>· Tripulantes anotados</div>
-          <div class="mc-fila" data-a="VIVA"><span>Viva Aerobus</span><div class="mc-barra"><i></i></div><span class="n">0</span></div>
+          <div class="mc-fila" data-a="VIVA"><span>Viva</span><div class="mc-barra"><i></i></div><span class="n">0</span></div>
           <div class="mc-fila" data-a="VOLARIS"><span>Volaris</span><div class="mc-barra"><i></i></div><span class="n">0</span></div>
         </div>
 
@@ -313,7 +319,7 @@ footer a:hover { color: var(--text); }
             <fieldset class="q">
               <legend>Tu aerolínea</legend>
               <div class="seg">
-                <input type="radio" name="aerolinea" id="a-viv" value="VIVA"><label for="a-viv">Viva Aerobus</label>
+                <input type="radio" name="aerolinea" id="a-viv" value="VIVA"><label for="a-viv">Viva</label>
                 <input type="radio" name="aerolinea" id="a-vol" value="VOLARIS"><label for="a-vol">Volaris</label>
               </div>
             </fieldset>
@@ -432,7 +438,7 @@ footer a:hover { color: var(--text); }
             <p>Agrega a tus amigos con su código, aunque vuelen en otra aerolínea. Comparten sus roles y RosterLog te dice qué días coinciden: en un vuelo, en una pernocta o en base en tus días libres.</p>
             <ul><li>Tripulantes de cualquier aerolínea, a quien tú invites</li><li>Matches por vuelo, pernocta y base</li><li>Dónde anda cada quien hoy</li></ul>
           </div>
-          <div class="stage azul"><img class="alto" src="assets/mockups/vv-amigos.webp" width="1746" height="2396" alt="Pantalla Amigos de RosterLog: credencial con código de tripulante, amigos de Volaris y Viva Aerobus, y Matches con pernocta en CUN y base en MTY"></div>
+          <div class="stage azul"><img class="alto" src="assets/mockups/vv-amigos.webp" width="1746" height="2396" alt="Pantalla Amigos de RosterLog: credencial con código de tripulante, amigos de Volaris y Viva, y Matches con pernocta en CUN y base en MTY"></div>
         </div>
 
         <div class="row">
@@ -532,6 +538,7 @@ footer a:hover { color: var(--text); }
 
   <section class="cierre">
     <div class="wrap">
+      <img class="app-ico" src="assets/app-icon.webp" width="96" height="96" alt="Ícono de RosterLog">
       <h2>¿Tu tripulación vuela en <em>Viva o Volaris?</em></h2>
       <p>Pásales la voz. Entre más seamos, antes llega a tu aerolínea.</p>
       <a class="btn" href="#lista">Avísenme cuando salga</a>
@@ -542,7 +549,7 @@ footer a:hover { color: var(--text); }
 <footer>
   <div class="wrap">
     <p>&copy; 2026 RosterLog. Todos los derechos reservados.</p>
-    <p style="margin-top:6px">Viva Aerobus y Volaris son marcas de sus respectivos titulares. RosterLog es una app independiente y no está afiliada a ninguna aerolínea. Imágenes ilustrativas con datos de ejemplo.</p>
+    <p style="margin-top:6px">Viva y Volaris son marcas de sus respectivos titulares. RosterLog es una app independiente y no está afiliada a ninguna aerolínea. Imágenes ilustrativas con datos de ejemplo.</p>
     <div class="fl"><a href="privacy.html">Aviso de Privacidad</a><a href="terms.html">Términos de Servicio</a><a href="support.html">Soporte</a></div>
   </div>
 </footer>
