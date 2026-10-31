@@ -67,6 +67,7 @@ nav.site-nav .logo {
     text-decoration: none; display: flex; align-items: center; gap: 8px;
     white-space: nowrap;
 }
+.logo img { width: 28px; height: 28px; border-radius: 22.5%; flex: none; }
 nav.site-nav .nav-links {
     display: flex; gap: 22px; align-items: center;
     flex: 1; justify-content: flex-end;
