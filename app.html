@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Descarga RosterLog</title>
+    <meta name="description" content="Descarga RosterLog en iPhone, iPad o Android.">
+    <link rel="canonical" href="https://rosterlog.app/app">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <meta name="theme-color" content="#03050b">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rosterlog.app/app">
+    <meta property="og:site_name" content="RosterLog">
+    <meta property="og:title" content="Descarga RosterLog">
+    <meta property="og:description" content="Disponible en iPhone, iPad y Android.">
+    <meta property="og:image" content="https://rosterlog.app/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://rosterlog.app/assets/og-image.png">
+    <meta name="apple-itunes-app" content="app-id=6761634082">
+    <script>
+        // Una sola liga para todos: el iPhone/iPad se va a App Store y el Android a Google Play.
+        // En computadora (o si la tienda no abre) se queda esta página con los dos botones y un QR.
+        var TIENDA_IOS = 'https://apps.apple.com/mx/app/rosterlog/id6761634082';
+        var TIENDA_ANDROID = 'https://play.google.com/store/apps/details?id=app.rosterlog.android';
+        (function () {
+            var ua = navigator.userAgent || '';
+            var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+            var destino = ios ? TIENDA_IOS : (/Android/.test(ua) ? TIENDA_ANDROID : null);
+            if (destino && !/[?&]ver=1/.test(location.search)) location.replace(destino);
+        })();
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { background: #03050b; }
+        body { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 44px 24px 32px; color: #f4f6fb;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased;
+            background: radial-gradient(110% 60% at 50% -8%, #132657 0%, #070c1c 46%, #03050b 78%) no-repeat #03050b; }
+        main { width: 100%; max-width: 760px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .marca { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+        .marca img { width: 36px; height: 36px; border-radius: 9px; box-shadow: 0 0 0 1px rgba(255,255,255,.16), 0 6px 18px rgba(10,132,255,.35); }
+        .eb { margin-top: 30px; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #6db4ff; }
+        h1 { margin-top: 12px; font-size: clamp(38px, 10vw, 60px); line-height: 1.02; font-weight: 700; letter-spacing: -.035em; }
+        h1 em { font-style: normal; color: #2b95ff; }
+        .sub { margin-top: 14px; max-width: 440px; font-size: 17px; line-height: 1.4; color: rgba(244,246,251,.68); }
+        .botones { margin-top: 28px; width: 100%; max-width: 420px; display: grid; gap: 12px; }
+        .boton { display: block; padding: 15px 20px 16px; border-radius: 999px; font-size: 18px; font-weight: 700; letter-spacing: -.02em; text-decoration: none; color: #fff;
+            background: linear-gradient(180deg, #2b95ff, #0A84FF 55%, #0a6fe0); box-shadow: 0 10px 30px rgba(10,132,255,.5), inset 0 1px 0 rgba(255,255,255,.35); }
+        .boton.dos { background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+        .qr { display: none; }
+        .tel { position: relative; width: 100%; max-width: 640px; margin: 40px auto 0; }
+        .tel img { position: relative; display: block; width: 100%; height: auto; }
+        .tel::before { content: ""; position: absolute; inset: 8% -4% 0; filter: blur(52px);
+            background: radial-gradient(closest-side at 24% 60%, rgba(245,140,60,.5), transparent), radial-gradient(closest-side at 52% 50%, rgba(10,132,255,.9), transparent), radial-gradient(closest-side at 80% 58%, rgba(104,92,240,.75), transparent); }
+        .nota { margin-top: 30px; font-size: 12px; color: rgba(244,246,251,.4); }
+        .nota a { color: inherit; }
+        /* Computadora: los botones van lado a lado y aparece un QR para pasarse al teléfono. */
+        @media (min-width: 900px) {
+            body { padding: 56px 40px 40px; }
+            .botones { max-width: none; grid-template-columns: auto auto; justify-content: center; gap: 14px; }
+            .boton { padding: 15px 28px 16px; white-space: nowrap; }
+            .qr { display: flex; align-items: center; gap: 16px; margin-top: 30px; padding: 12px 20px 12px 12px; border-radius: 20px; text-align: left;
+                background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); font-size: 14px; line-height: 1.4; color: rgba(244,246,251,.68); }
+            .qr img { width: 96px; height: 96px; border-radius: 12px; background: #fff; }
+            .qr b { display: block; font-size: 16px; color: #f4f6fb; }
+            .tel { margin-top: 48px; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="marca"><img src="/assets/app-icon.webp" width="36" height="36" alt="">RosterLog</div>
+    <p class="eb">Ya disponible</p>
+    <h1>Descarga <em>RosterLog.</em></h1>
+    <p class="sub">Tu rol, tus avisos de puerta y tu vuelo en vivo. En iPhone, iPad y Android.</p>
+    <div class="botones">
+        <a class="boton" href="https://apps.apple.com/mx/app/rosterlog/id6761634082">Descargar para iPhone y iPad</a>
+        <a class="boton dos" href="https://play.google.com/store/apps/details?id=app.rosterlog.android">Descargar para Android</a>
+    </div>
+    <div class="qr"><img src="/assets/qr-app.svg" width="96" height="96" alt="Código QR de rosterlog.app/app">
+        <span><b>¿Estás en la computadora?</b>Escanéalo con tu teléfono y te lleva directo a tu tienda.</span></div>
+    <div class="tel"><img src="/assets/mockups/hero.webp" width="2746" height="1792" alt="RosterLog en iPad y iPhone: el próximo vuelo, el rol del día y un aviso de cambio de puerta"></div>
+    <p class="nota"><a href="/">rosterlog.app</a> · <a href="/privacy.html">Privacidad</a> · <a href="/terms.html">Términos</a> · <a href="/support.html">Soporte</a></p>
+</main>
+</body>
+</html>
