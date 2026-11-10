@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RosterLog para pilotos de Viva</title>
-    <meta name="description" content="Importa tu rol de Viva, recibe avisos de puerta, sigue tu vuelo en vivo y compártelo con tu familia. Pruébalo 7 días gratis en iPhone y Android.">
+    <meta name="description" content="Importa tu rol de Viva, recibe avisos de puerta, sigue tu vuelo en vivo y compártelo con tu familia. Pruébalo 7 días gratis en iPhone, iPad y Android.">
     <link rel="canonical" href="https://rosterlog.app/viva">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48.png">
@@ -15,7 +15,7 @@
     <meta property="og:url" content="https://rosterlog.app/viva">
     <meta property="og:site_name" content="RosterLog">
     <meta property="og:title" content="RosterLog para pilotos de Viva · 7 días gratis">
-    <meta property="og:description" content="Tu rol, tus puertas y tu vuelo en vivo. En iPhone y Android.">
+    <meta property="og:description" content="Tu rol, tus puertas y tu vuelo en vivo. En iPhone, iPad y Android.">
     <meta property="og:image" content="https://rosterlog.app/assets/og-viva.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -62,15 +62,15 @@
         .nota a { color: inherit; }
         .qr { display: none; }
         /* Computadora: dos columnas (texto y teléfono) y un QR para pasarse al teléfono. */
-        @media (min-width: 900px) {
+        @media (min-width: 1040px) {
             body { align-items: center; padding: 48px 56px; }
-            main { max-width: 1160px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); column-gap: 56px; align-items: center; text-align: left; }
+            main { max-width: 1160px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 46%); column-gap: 56px; align-items: center; text-align: left; }
             .texto { grid-column: 1; }
             .eb { margin-top: 44px; font-size: 12px; }
-            h1 { font-size: 68px; }
+            h1 { font-size: clamp(44px, 4.4vw, 68px); }
             .sub { font-size: 19px; max-width: 520px; }
-            .botones { grid-auto-flow: column; justify-content: start; }
-            .boton { padding: 15px 28px 16px; }
+            .botones { display: flex; flex-wrap: wrap; }
+            .boton { padding: 15px 24px 16px; font-size: 17px; white-space: nowrap; }
             .gratis { font-size: 15px; }
             .qr { display: flex; align-items: center; gap: 16px; margin-top: 34px; font-size: 14px; line-height: 1.4; color: rgba(244,246,251,.68); }
             .qr img { width: 104px; height: 104px; padding: 4px; border-radius: 14px; background: #fff; }
@@ -88,10 +88,10 @@
     <h1>Tu rol de Viva,<br><em>claro como nunca.</em></h1>
     <p class="sub">Importa tu rol, recibe avisos de puerta, sigue tu vuelo en vivo y compártelo con tu familia.</p>
     <div class="botones">
-        <a class="boton" id="ios" href="https://apps.apple.com/mx/app/rosterlog/id6761634082">Descargar para iPhone</a>
+        <a class="boton" id="ios" href="https://apps.apple.com/mx/app/rosterlog/id6761634082">Descargar para iPhone y iPad</a>
         <a class="boton dos" id="android" href="https://play.google.com/store/apps/details?id=app.rosterlog.android">Descargar para Android</a>
     </div>
-    <p class="gratis"><b>7 días gratis.</b> En iPhone y Android.</p>
+    <p class="gratis"><b>7 días gratis.</b> En iPhone, iPad y Android.</p>
     <div class="qr"><img src="/assets/qr-viva.svg" width="104" height="104" alt="Código QR de rosterlog.app/viva">
         <span><b>¿Estás en la computadora?</b>Escanéalo con tu teléfono y te lleva directo a tu tienda.</span></div>
     </div>
